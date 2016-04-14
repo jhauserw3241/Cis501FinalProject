@@ -1,0 +1,2 @@
+<!-- Remove contact "newUser420" FROM "admin"s contact list -->
+<rmCont username="newUser420" from="admin" />

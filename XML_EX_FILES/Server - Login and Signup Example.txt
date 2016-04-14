@@ -1,0 +1,11 @@
+<login username="admin">
+<content>
+<!-- JSON string goes in here so the client can build it's copy -->
+[DataContract]
+public class Example
+{
+    [DataMember]
+    <!-- Rest of the JSON goes here... -->
+}
+</content>
+</login>

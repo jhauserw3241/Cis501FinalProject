@@ -1,0 +1,6 @@
+<!-- Invite FROM "newUser420" TO "admin" for the newly created "Conv_Name" -->
+<crConv from="newUser420" to="admin">
+<content>
+Conv_Name
+</content>
+</crConv>

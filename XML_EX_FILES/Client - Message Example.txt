@@ -1,0 +1,5 @@
+<msg from="admin" to="Conv_Name">
+<content>
+Listen here 'newUser420', I don't like your name or your attitude.
+</content>
+</msg>

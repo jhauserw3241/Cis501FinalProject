@@ -1,0 +1,2 @@
+<!-- Auto-accept invitation FROM "newUser420" TO join "Conv_Name" -->
+<addPa from="newUser420" to="Conv_Name" />

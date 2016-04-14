@@ -1,0 +1,1 @@
+<sign username="newUser420" password="1a2b3c" />

@@ -1,0 +1,2 @@
+<!-- Invite "newUser69" to the already existing "Conv_Name" -->
+<addPa username="newUser69" to="Conv_Name" />
