@@ -11,6 +11,7 @@ namespace serverChat
         // Declare the server lists
         private List<ServerConversation> conversationList = new List<ServerConversation>();
         private List<ServerUser> userList = new List<ServerUser>();
+        private List<Dictionary<string, List<string>>> contactRelationshipList = new List<Dictionary<string, List<string>>>();
 
         // Get Conversation List
         //
@@ -30,6 +31,15 @@ namespace serverChat
             return userList;
         }
 
+        // Get Contact Relationship List
+        //
+        // Get the list of all contact relationships that have been created
+        // @return the list of contact relationships
+        public List<Dictionary<string, List<string>>> GetContactRelationshipList()
+        {
+            return contactRelationshipList;
+        }
+
         // Set Conversation List
         //
         // Set the list of all conversations that have been created
@@ -46,6 +56,15 @@ namespace serverChat
         public void SetUserList(List<ServerUser> list)
         {
             userList = list;
+        }
+
+        // Set Contact Relationship List
+        //
+        // Set the list of all contact relationships that have been created
+        // @arg list A list of contact relationships created since the user started
+        public void SetContactRelationshipList(List<Dictionary<string, List<string>>> list)
+        {
+            contactRelationshipList = list;
         }
     }
 }
