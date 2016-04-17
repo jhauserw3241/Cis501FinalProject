@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace serverChat
 {
-    class ServerModel
+    public class ServerModel
     {
         // Declare the server lists
         private List<serverConversation> conversationList = new List<serverConversation>();
