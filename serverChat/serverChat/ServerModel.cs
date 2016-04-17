@@ -10,6 +10,7 @@ namespace serverChat
     {
         // Declare the server lists
         private List<serverConversation> conversationList = new List<serverConversation>();
+        private List<serverUser> userList = new List<serverUser>();
 
         // Get Conversation List
         //
@@ -20,6 +21,15 @@ namespace serverChat
             return conversationList;
         }
 
+        // Get User List
+        //
+        // Get the list of all users that have been created
+        // @return the list of server users
+        List<serverUser> GetUserList()
+        {
+            return userList;
+        }
+
         // Set Conversation List
         //
         // Set the list of all conversations that have been created
@@ -27,6 +37,15 @@ namespace serverChat
         void SetConversationList(List<serverConversation> list)
         {
             conversationList = list;
+        }
+
+        // Set User List
+        //
+        // Set the list of all users that have been created
+        // @arg list A list of users created since the user started
+        void SetUserList(List<serverUser> list)
+        {
+            userList = list;
         }
     }
 }
