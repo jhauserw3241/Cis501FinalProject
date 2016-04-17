@@ -9,14 +9,14 @@ namespace serverChat
     public class ServerModel
     {
         // Declare the server lists
-        private List<serverConversation> conversationList = new List<serverConversation>();
-        private List<serverUser> userList = new List<serverUser>();
+        private List<ServerConversation> conversationList = new List<ServerConversation>();
+        private List<ServerUser> userList = new List<ServerUser>();
 
         // Get Conversation List
         //
         // Get the list of all conversations that have been created
         // @return the list of server conversations
-        List<serverConversation> GetConversationList()
+        public List<ServerConversation> GetConversationList()
         {
             return conversationList;
         }
@@ -25,7 +25,7 @@ namespace serverChat
         //
         // Get the list of all users that have been created
         // @return the list of server users
-        List<serverUser> GetUserList()
+        public List<ServerUser> GetUserList()
         {
             return userList;
         }
@@ -34,7 +34,7 @@ namespace serverChat
         //
         // Set the list of all conversations that have been created
         // @arg list A list of conversations created since the server started
-        void SetConversationList(List<serverConversation> list)
+        public void SetConversationList(List<ServerConversation> list)
         {
             conversationList = list;
         }
@@ -43,7 +43,7 @@ namespace serverChat
         //
         // Set the list of all users that have been created
         // @arg list A list of users created since the user started
-        void SetUserList(List<serverUser> list)
+        public void SetUserList(List<ServerUser> list)
         {
             userList = list;
         }
