@@ -1,6 +1,6 @@
 ﻿namespace serverChat
 {
-    partial class Form1
+    partial class ChatForm
     {
         /// <summary>
         /// Required designer variable.
