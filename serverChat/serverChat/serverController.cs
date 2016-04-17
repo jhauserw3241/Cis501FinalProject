@@ -26,6 +26,38 @@ namespace serverChat
             data.SetUserList(userList);
         }
 
+        // Add Participant To Conversation
+        //
+        // Add the specified participant to the specified conversation
+        // @arg convName The name of the conversation
+        // @arg username The username of the new participant
+        // @return whether or not the participant was added to the conversation
+        public bool AddParticipantToConversation(string convName, string username)
+        {
+            Dictionary<string, List<string>> convRelationships = data.GetContactRelationshipDict();
+            List<string> participants = GetConvParticipants(convName);
+
+            // Determine if the current conversation exists or not
+            if (participants == new List<string>())
+            {
+                return false;
+            }
+
+            // Put the username of the new participant into the list of participants
+            participants.Add(username);
+
+            // Remove the current conversation from the list
+            convRelationships.Remove(convName);
+
+            // Add the new list of participants to the contact relationship list
+            convRelationships.Add(convName, participants);
+
+            // Set the current list of names to the list on the server
+            data.SetContactRelationshipList(convRelationships);
+
+            return true;
+        }
+
         // Get Conversation Participants
         //
         // Get the list of participants from the specified conversation
