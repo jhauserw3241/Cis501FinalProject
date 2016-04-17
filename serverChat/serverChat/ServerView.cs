@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace serverChat
 {
-    public partial class ChatForm : Form
+    public partial class ServerView : Form
     {
-        public ChatForm()
+        public ServerView()
         {
             InitializeComponent();
         }
