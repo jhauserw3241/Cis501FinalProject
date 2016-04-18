@@ -16,6 +16,7 @@ namespace serverChat
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
 
+        // Initialize the form
         public ServerView()
         {
             InitializeComponent();
