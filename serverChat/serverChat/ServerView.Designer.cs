@@ -53,6 +53,8 @@
             this.usersComboBox.Name = "usersComboBox";
             this.usersComboBox.Size = new System.Drawing.Size(141, 21);
             this.usersComboBox.TabIndex = 1;
+            this.usersComboBox.SelectedIndexChanged += new System.EventHandler(this.usersComboBox_SelectedIndexChanged);
+            //
             // convLabel
             //
             this.convLabel.AutoSize = true;
