@@ -45,5 +45,33 @@ namespace serverChat
 
             // TODO: Get the conversation object from the list of all users
         }
+
+        // Enter Button Clicked
+        //
+        // Handle the when the enter button is clicked
+        private void enterButton_Click(object sender, EventArgs e)
+        {
+            // Create any text currently in the textbox
+            currentInfo.Clear();
+
+            // Determine if the user object is present
+            if (user != new ServerUser())
+            {
+                currentInfo.AppendText("User display name: ra");
+                currentInfo.AppendText("Username: random");
+                currentInfo.AppendText("Password: pass");
+                return;
+            }
+
+            // Determine if the conversation object is present
+            if (conv != new ServerConversation())
+            {
+                currentInfo.AppendText("Conversation name: current name");
+                return;
+            }
+
+            // Send error to user
+            MessageBox.Show("You need to select either a user or a conversation!");
+        }
     }
 }

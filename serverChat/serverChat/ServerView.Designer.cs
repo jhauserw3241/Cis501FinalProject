@@ -82,6 +82,7 @@
             this.enterButton.TabIndex = 4;
             this.enterButton.Text = "Enter";
             this.enterButton.UseVisualStyleBackColor = true;
+            this.enterButton.Click += new System.EventHandler(this.enterButton_Click);
             //
             // currentInfo
             //
