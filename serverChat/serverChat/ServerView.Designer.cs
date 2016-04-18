@@ -28,32 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.contactsLabel = new System.Windows.Forms.Label();
-            this.contactsComboBox = new System.Windows.Forms.ComboBox();
+            this.usersLabel = new System.Windows.Forms.Label();
+            this.usersComboBox = new System.Windows.Forms.ComboBox();
             this.convLabel = new System.Windows.Forms.Label();
             this.convComboBox = new System.Windows.Forms.ComboBox();
             this.enterButton = new System.Windows.Forms.Button();
             this.currentInfo = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             //
-            // contactsLabel
+            // usersLabel
             //
-            this.contactsLabel.AutoSize = true;
-            this.contactsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.contactsLabel.Location = new System.Drawing.Point(9, 9);
-            this.contactsLabel.Name = "contactsLabel";
-            this.contactsLabel.Size = new System.Drawing.Size(61, 13);
-            this.contactsLabel.TabIndex = 0;
-            this.contactsLabel.Text = "Contacts:";
+            this.usersLabel.AutoSize = true;
+            this.usersLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.usersLabel.Location = new System.Drawing.Point(9, 9);
+            this.usersLabel.Name = "usersLabel";
+            this.usersLabel.Size = new System.Drawing.Size(43, 13);
+            this.usersLabel.TabIndex = 0;
+            this.usersLabel.Text = "Users:";
             //
-            // contactsComboBox
+            // usersComboBox
             //
-            this.contactsComboBox.FormattingEnabled = true;
-            this.contactsComboBox.Location = new System.Drawing.Point(12, 25);
-            this.contactsComboBox.Name = "contactsComboBox";
-            this.contactsComboBox.Size = new System.Drawing.Size(141, 21);
-            this.contactsComboBox.TabIndex = 1;
-            //
+            this.usersComboBox.FormattingEnabled = true;
+            this.usersComboBox.Location = new System.Drawing.Point(12, 25);
+            this.usersComboBox.Name = "usersComboBox";
+            this.usersComboBox.Size = new System.Drawing.Size(141, 21);
+            this.usersComboBox.TabIndex = 1;
             // convLabel
             //
             this.convLabel.AutoSize = true;
@@ -109,8 +108,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Label contactsLabel;
-        private System.Windows.Forms.ComboBox contactsComboBox;
+        private System.Windows.Forms.Label usersLabel;
+        private System.Windows.Forms.ComboBox usersComboBox;
         private System.Windows.Forms.Label convLabel;
         private System.Windows.Forms.ComboBox convComboBox;
         private System.Windows.Forms.Button enterButton;
