@@ -14,6 +14,7 @@ namespace serverChat
     {
         // Declare objects
         private ServerUser user = new ServerUser();
+        private ServerConversation conv = new ServerConversation();
 
         public ServerView()
         {
@@ -30,6 +31,19 @@ namespace serverChat
             convComboBox.Enabled = false;
 
             // TODO: Get the user object from the list of all users
+        }
+
+        // Conversation Combobox Selected Index Changed
+        //
+        // Handle the when the user chooses a value from the conversation drop down
+        // list that isn't the base value
+        private void convComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Disable the conversation drop down box
+            usersComboBox.AllowDrop = false;
+            usersComboBox.Enabled = false;
+
+            // TODO: Get the conversation object from the list of all users
         }
     }
 }

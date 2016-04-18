@@ -72,6 +72,7 @@
             this.convComboBox.Name = "convComboBox";
             this.convComboBox.Size = new System.Drawing.Size(141, 21);
             this.convComboBox.TabIndex = 3;
+            this.convComboBox.SelectedIndexChanged += new System.EventHandler(this.convComboBox_SelectedIndexChanged);
             //
             // enterButton
             //
