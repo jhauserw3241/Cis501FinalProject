@@ -88,7 +88,7 @@
             this.currentInfo.TabIndex = 5;
             this.currentInfo.Text = "";
             //
-            // ChatForm
+            // ServerView
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -99,7 +99,7 @@
             this.Controls.Add(this.convLabel);
             this.Controls.Add(this.contactsComboBox);
             this.Controls.Add(this.contactsLabel);
-            this.Name = "ChatForm";
+            this.Name = "ServerView";
             this.Text = "Server Information";
             this.ResumeLayout(false);
             this.PerformLayout();
