@@ -29,6 +29,15 @@ namespace serverChat
         {
             usersComboBox.Items.Add(username);
         }
+
+        // Remove User from User ComboBox
+        //
+        // Remove a username from the list of usernames in the User ComboBox
+        // @arg username The username of the user that has been removed
+        private void removeUserOption(string username)
+        {
+            usersComboBox.Items.Remove(username);
+        }
         // Users Combobox Selected Index Changed
         //
         // Handle the when the user chooses a value from the user drop down list
