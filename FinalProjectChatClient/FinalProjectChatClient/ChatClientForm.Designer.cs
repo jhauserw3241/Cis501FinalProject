@@ -8,7 +8,7 @@ namespace FinalProjectChatClient
         private StatusStrip infoStrip;
         private ToolStripStatusLabel connectionStatus;
         private MenuStrip mainMenu;
-        private ToolStripMenuItem fileMenu;
+        private ToolStripMenuItem profileMenu;
         private ListBox contactsList;
         private TabControl conversationTabController;
         private TextBox messageBox;
@@ -27,7 +27,7 @@ namespace FinalProjectChatClient
         }
         public ToolStripMenuItem FileMenu
         {
-            get { return fileMenu; }
+            get { return profileMenu; }
         }
         public ListBox ContactsList
         {
@@ -71,10 +71,21 @@ namespace FinalProjectChatClient
             this.infoStrip = new System.Windows.Forms.StatusStrip();
             this.connectionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
-            this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.profileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.contactsList = new System.Windows.Forms.ListBox();
             this.conversationTabController = new System.Windows.Forms.TabControl();
             this.messageBox = new System.Windows.Forms.TextBox();
+            this.contactsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.addContactOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeContactOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayNameProfileOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.conversationMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.createConversationOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.leaveConversationOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.profileStatusMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.onlineStatusOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.offlineStatusOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.logoutProfileOption = new System.Windows.Forms.ToolStripMenuItem();
             this.infoStrip.SuspendLayout();
             this.mainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -100,18 +111,24 @@ namespace FinalProjectChatClient
             // 
             this.mainMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenu});
+            this.profileMenu,
+            this.contactsMenu,
+            this.conversationMenu});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Size = new System.Drawing.Size(605, 33);
             this.mainMenu.TabIndex = 1;
             this.mainMenu.Text = "menuStrip1";
             // 
-            // fileMenu
+            // profileMenu
             // 
-            this.fileMenu.Name = "fileMenu";
-            this.fileMenu.Size = new System.Drawing.Size(50, 29);
-            this.fileMenu.Text = "File";
+            this.profileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.displayNameProfileOption,
+            this.profileStatusMenu,
+            this.logoutProfileOption});
+            this.profileMenu.Name = "profileMenu";
+            this.profileMenu.Size = new System.Drawing.Size(74, 29);
+            this.profileMenu.Text = "Profile";
             // 
             // contactsList
             // 
@@ -140,6 +157,81 @@ namespace FinalProjectChatClient
             this.messageBox.TabIndex = 4;
             this.messageBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.messageBox_KeyDown);
             // 
+            // contactsMenu
+            // 
+            this.contactsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addContactOption,
+            this.removeContactOption});
+            this.contactsMenu.Name = "contactsMenu";
+            this.contactsMenu.Size = new System.Drawing.Size(93, 29);
+            this.contactsMenu.Text = "Contacts";
+            // 
+            // addContactOption
+            // 
+            this.addContactOption.Name = "addContactOption";
+            this.addContactOption.Size = new System.Drawing.Size(211, 30);
+            this.addContactOption.Text = "Add...";
+            // 
+            // removeContactOption
+            // 
+            this.removeContactOption.Name = "removeContactOption";
+            this.removeContactOption.Size = new System.Drawing.Size(211, 30);
+            this.removeContactOption.Text = "Remove...";
+            // 
+            // displayNameProfileOption
+            // 
+            this.displayNameProfileOption.Name = "displayNameProfileOption";
+            this.displayNameProfileOption.Size = new System.Drawing.Size(211, 30);
+            this.displayNameProfileOption.Text = "Display Name";
+            // 
+            // conversationMenu
+            // 
+            this.conversationMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createConversationOption,
+            this.leaveConversationOption});
+            this.conversationMenu.Name = "conversationMenu";
+            this.conversationMenu.Size = new System.Drawing.Size(128, 29);
+            this.conversationMenu.Text = "Conversation";
+            // 
+            // createConversationOption
+            // 
+            this.createConversationOption.Name = "createConversationOption";
+            this.createConversationOption.Size = new System.Drawing.Size(211, 30);
+            this.createConversationOption.Text = "Create...";
+            // 
+            // leaveConversationOption
+            // 
+            this.leaveConversationOption.Name = "leaveConversationOption";
+            this.leaveConversationOption.Size = new System.Drawing.Size(211, 30);
+            this.leaveConversationOption.Text = "Leave...";
+            // 
+            // profileStatusMenu
+            // 
+            this.profileStatusMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.onlineStatusOption,
+            this.offlineStatusOption});
+            this.profileStatusMenu.Name = "profileStatusMenu";
+            this.profileStatusMenu.Size = new System.Drawing.Size(211, 30);
+            this.profileStatusMenu.Text = "Status";
+            // 
+            // onlineStatusOption
+            // 
+            this.onlineStatusOption.Name = "onlineStatusOption";
+            this.onlineStatusOption.Size = new System.Drawing.Size(211, 30);
+            this.onlineStatusOption.Text = "Online";
+            // 
+            // offlineStatusOption
+            // 
+            this.offlineStatusOption.Name = "offlineStatusOption";
+            this.offlineStatusOption.Size = new System.Drawing.Size(211, 30);
+            this.offlineStatusOption.Text = "Offline";
+            // 
+            // logoutProfileOption
+            // 
+            this.logoutProfileOption.Name = "logoutProfileOption";
+            this.logoutProfileOption.Size = new System.Drawing.Size(211, 30);
+            this.logoutProfileOption.Text = "Logout";
+            // 
             // ChatClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -163,6 +255,18 @@ namespace FinalProjectChatClient
         }
 
         #endregion
+
+        private ToolStripMenuItem displayNameProfileOption;
+        private ToolStripMenuItem profileStatusMenu;
+        private ToolStripMenuItem onlineStatusOption;
+        private ToolStripMenuItem offlineStatusOption;
+        private ToolStripMenuItem logoutProfileOption;
+        private ToolStripMenuItem contactsMenu;
+        private ToolStripMenuItem addContactOption;
+        private ToolStripMenuItem removeContactOption;
+        private ToolStripMenuItem conversationMenu;
+        private ToolStripMenuItem createConversationOption;
+        private ToolStripMenuItem leaveConversationOption;
     }
 }
 
