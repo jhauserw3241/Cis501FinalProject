@@ -48,6 +48,17 @@ namespace serverChat
         {
             convComboBox.Items.Add(name);
         }
+
+        // Remove Conversation from Conversation ComboBox
+        //
+        // Remove a conversation from the list of conversations in
+        // the Conversations ComboBox
+        // @arg name The name of the conversation to be removed
+        private void removeConvOption(string name)
+        {
+            convComboBox.Items.Remove(name);
+        }
+
         // Users Combobox Selected Index Changed
         //
         // Handle the when the user chooses a value from the user drop down list
