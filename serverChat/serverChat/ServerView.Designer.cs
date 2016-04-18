@@ -97,8 +97,8 @@
             this.Controls.Add(this.enterButton);
             this.Controls.Add(this.convComboBox);
             this.Controls.Add(this.convLabel);
-            this.Controls.Add(this.contactsComboBox);
-            this.Controls.Add(this.contactsLabel);
+            this.Controls.Add(this.usersComboBox);
+            this.Controls.Add(this.usersLabel);
             this.Name = "ServerView";
             this.Text = "Server Information";
             this.ResumeLayout(false);
