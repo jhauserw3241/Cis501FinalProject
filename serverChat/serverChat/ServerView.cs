@@ -38,6 +38,16 @@ namespace serverChat
         {
             usersComboBox.Items.Remove(username);
         }
+
+        // Add Conversation to Conversation ComboBox
+        //
+        // Add a conversation to the list of conversations in the
+        // Conversations ComboBox
+        // @arg name The name of the conversation to be added
+        private void addConvOption(string name)
+        {
+            convComboBox.Items.Add(name);
+        }
         // Users Combobox Selected Index Changed
         //
         // Handle the when the user chooses a value from the user drop down list
