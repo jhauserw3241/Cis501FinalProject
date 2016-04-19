@@ -13,12 +13,19 @@ namespace serverChat
     public partial class ServerView : Form
     {
         // Declare objects
+        private ServerModel data;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
 
-        // Initialize the form
-        public ServerView()
+        // Constructor
+        //
+        // @arg d The model object instance
+        public ServerView(ServerModel d)
         {
+            // Update the server objects
+            data = d;
+
+            // Initialize the form
             InitializeComponent();
         }
 
