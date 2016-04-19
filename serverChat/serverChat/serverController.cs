@@ -67,44 +67,6 @@ namespace serverChat
             return true;
         }
 
-        // Get Conversation Participants
-        //
-        // Get the list of participants from the specified conversation
-        // @arg convName The name of the conversation
-        public List<string> GetConvParticipants(string convName)
-        {
-            // Get list of all conversation relationships
-            Dictionary<string, List<string>> convRelationships = data.GetContactRelationshipDict();
-
-            // Get the list of participants in the current conversation
-            List<string> participants = new List<string>();
-            convRelationships.TryGetValue(convName, out participants);
-
-            return participants;
-        }
-
-        // Get User Object
-        //
-        // Get the user object from the list in the model
-        // @arg username The username of the requested user object
-        // @return the user object
-        public ServerUser GetUserObj(string username)
-        {
-            List<ServerUser> usersList = data.GetUserList();
-            int usersListLen = usersList.Count;
-
-            if (usersListLen != 0)
-            {
-                for (int i = 0; i < usersListLen; i++)
-                {
-                    // TODO: Check if the user's username matches and return it
-                    return new ServerUser();
-                }
-            }
-
-            return new ServerUser();
-        }
-
         // Get Conversation Object
         //
         // Get the conversation from the list in the model
@@ -127,6 +89,22 @@ namespace serverChat
             return new ServerConversation();
         }
 
+        // Get Conversation Participants
+        //
+        // Get the list of participants from the specified conversation
+        // @arg convName The name of the conversation
+        public List<string> GetConvParticipants(string convName)
+        {
+            // Get list of all conversation relationships
+            Dictionary<string, List<string>> convRelationships = data.GetContactRelationshipDict();
+
+            // Get the list of participants in the current conversation
+            List<string> participants = new List<string>();
+            convRelationships.TryGetValue(convName, out participants);
+
+            return participants;
+        }
+
         // Get Conversation Relationship List
         //
         // Get the conversation relationship from the list in the model
@@ -147,6 +125,28 @@ namespace serverChat
             }
 
             return new List<string>();
+        }
+
+        // Get User Object
+        //
+        // Get the user object from the list in the model
+        // @arg username The username of the requested user object
+        // @return the user object
+        public ServerUser GetUserObj(string username)
+        {
+            List<ServerUser> usersList = data.GetUserList();
+            int usersListLen = usersList.Count;
+
+            if (usersListLen != 0)
+            {
+                for (int i = 0; i < usersListLen; i++)
+                {
+                    // TODO: Check if the user's username matches and return it
+                    return new ServerUser();
+                }
+            }
+
+            return new ServerUser();
         }
     }
 }

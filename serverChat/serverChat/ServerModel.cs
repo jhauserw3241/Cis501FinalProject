@@ -10,8 +10,8 @@ namespace serverChat
     {
         // Declare the server lists
         private List<ServerConversation> conversationList = new List<ServerConversation>();
-        private List<ServerUser> userList = new List<ServerUser>();
         private Dictionary<string, List<string>> contactRelationshipDict = new Dictionary<string, List<string>>();
+        private List<ServerUser> userList = new List<ServerUser>();
 
         // Get Conversation List
         //
@@ -20,15 +20,6 @@ namespace serverChat
         public List<ServerConversation> GetConversationList()
         {
             return conversationList;
-        }
-
-        // Get User List
-        //
-        // Get the list of all users that have been created
-        // @return the list of server users
-        public List<ServerUser> GetUserList()
-        {
-            return userList;
         }
 
         // Get Contact Relationship Dictionary
@@ -40,6 +31,15 @@ namespace serverChat
             return contactRelationshipDict;
         }
 
+        // Get User List
+        //
+        // Get the list of all users that have been created
+        // @return the list of server users
+        public List<ServerUser> GetUserList()
+        {
+            return userList;
+        }
+
         // Set Conversation List
         //
         // Set the list of all conversations that have been created
@@ -49,15 +49,6 @@ namespace serverChat
             conversationList = list;
         }
 
-        // Set User List
-        //
-        // Set the list of all users that have been created
-        // @arg list A list of users created since the user started
-        public void SetUserList(List<ServerUser> list)
-        {
-            userList = list;
-        }
-
         // Set Contact Relationship List
         //
         // Set the list of all contact relationships that have been created
@@ -65,6 +56,15 @@ namespace serverChat
         public void SetContactRelationshipList(Dictionary<string, List<string>> dict)
         {
             contactRelationshipDict = dict;
+        }
+
+        // Set User List
+        //
+        // Set the list of all users that have been created
+        // @arg list A list of users created since the user started
+        public void SetUserList(List<ServerUser> list)
+        {
+            userList = list;
         }
     }
 }
