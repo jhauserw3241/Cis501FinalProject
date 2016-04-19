@@ -167,5 +167,24 @@ namespace serverChat
             // Set the conversation list to the updated list
             data.SetConversationList(convList);
         }
+
+        // Remove User From List
+        //
+        // Remove the user from the list in the model
+        // @arg username The username for the current user
+        public void RemoveUserFromList(string username)
+        {
+            // Get the list of all users from the model
+            List<ServerUser> userList = data.GetUserList();
+
+            // Get the user object from the list in the model
+            ServerUser user = GetUserObj(username);
+
+            // Remove the user object from the list of all users from the model
+            userList.Remove(user);
+
+            // Set the user list to the updated list
+            data.SetUserList(userList);
+        }
     }
 }
