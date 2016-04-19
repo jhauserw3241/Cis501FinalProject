@@ -82,5 +82,27 @@ namespace serverChat
 
             return participants;
         }
+
+        // Get User Object
+        //
+        // Get the user object from the list in the model
+        // @arg username The username of the requested user object
+        // @return the user object
+        public ServerUser GetUserObj(string username)
+        {
+            List<ServerUser> usersList = data.GetUserList();
+            int usersListLen = usersList.Count;
+
+            if (usersListLen != 0)
+            {
+                for (int i = 0; i < usersListLen; i++)
+                {
+                    // TODO: Check if the user's username matches and return it
+                    return new ServerUser();
+                }
+            }
+
+            return new ServerUser();
+        }
     }
 }
