@@ -10,6 +10,15 @@ namespace serverChat
     {
         private ServerModel data = new ServerModel();
 
+        // Constructor
+        //
+        // @arg d The model object instance
+        public ServerController(ServerModel d)
+        {
+            // Update the server objects
+            data = d;
+        }
+
         // Add Contact To Model List
         //
         // Add the contact to the list of all of the users in the model
