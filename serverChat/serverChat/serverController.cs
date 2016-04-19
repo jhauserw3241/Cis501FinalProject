@@ -168,6 +168,32 @@ namespace serverChat
             data.SetConversationList(convList);
         }
 
+        // Remove Participant From Conversation Participants
+        //
+        // Remove the user with the specified username
+        // @arg username The username for the current user
+        // @arg name The name of the conversation
+        public void RemoveParFromConvPars(string username, string name)
+        {
+            // Get the list of contact relationships
+            Dictionary<string, List<string>> contRels = data.GetContactRelationshipDict();
+
+            // Get the list of participants from the current conversation
+            List<string> participants = GetConvParticipants(name);
+
+            // Remove the current conversation group from the list
+            contRels.Remove(name);
+
+            // Add new user to the current contact relationship
+            participants.Add(username);
+
+            // Add the new contact relationship
+            contRels.Add(name, participants);
+
+            // Set the new list of participants as a new relationship
+            data.SetContactRelationshipList(contRels);
+        }
+
         // Remove User From List
         //
         // Remove the user from the list in the model
