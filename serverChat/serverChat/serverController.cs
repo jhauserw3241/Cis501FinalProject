@@ -104,5 +104,27 @@ namespace serverChat
 
             return new ServerUser();
         }
+
+        // Get Conversation Object
+        //
+        // Get the conversation from the list in the model
+        // @arg name The name of the conversation
+        // @return the conversation object
+        public ServerConversation GetConvObj(string name)
+        {
+            List<ServerConversation> convList = data.GetConversationList();
+            int convListLen = convList.Count;
+
+            if (convListLen != 0)
+            {
+                for (int i = 0; i < convListLen; i++)
+                {
+                    // TODO: Check if the conversation is in the list and return it
+                    return new ServerConversation();
+                }
+            }
+
+            return new ServerConversation();
+        }
     }
 }
