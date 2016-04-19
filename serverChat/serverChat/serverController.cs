@@ -126,5 +126,27 @@ namespace serverChat
 
             return new ServerConversation();
         }
+
+        // Get Conversation Relationship List
+        //
+        // Get the conversation relationship from the list in the model
+        // @arg groupName The name of the group of contacts
+        // @return the list of usernames for the specified group
+        public List<string> GetConvRelList(string groupName)
+        {
+            Dictionary<string, List<string>> groupList = data.GetContactRelationshipDict();
+            int relationLen = groupList.Count;
+
+            if (relationLen != 0)
+            {
+                for (int i = 0; i < relationLen; i++)
+                {
+                    // TODO: Check if the conversation relationship list and return username list
+                    return new List<string>();
+                }
+            }
+
+            return new List<string>();
+        }
     }
 }
