@@ -148,5 +148,24 @@ namespace serverChat
 
             return new ServerUser();
         }
+
+        // Remove Conversation From List
+        //
+        // Remove the conversation from the list in the model
+        // @arg name The name of the conversation
+        public void RemoveConvFromList(string name)
+        {
+            // Get the list of all conversations from the model
+            List<ServerConversation> convList = new List<ServerConversation>();
+
+            // Get the conversation object from the list in the model
+            ServerConversation conv = GetConvObj(name);
+
+            // Remove the conversation object from the list of all conversations from the model
+            convList.Remove(conv);
+
+            // Set the conversation list to the updated list
+            data.SetConversationList(convList);
+        }
     }
 }
