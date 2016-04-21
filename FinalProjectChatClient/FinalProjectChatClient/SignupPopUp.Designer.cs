@@ -135,6 +135,7 @@
             this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.usernameTextBox);
             this.Name = "SignupPopUp";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sign Up";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -12,23 +12,26 @@ namespace FinalProjectChatClient
 {
     public partial class LoginPopUp : Form
     {
-        public event AccountInputHandler Input;
-
         public LoginPopUp()
         {
             InitializeComponent();
+            DialogResult = DialogResult.None;
         }
 
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (Input != null)
-                Input(DialogOption.Ok);
+            DialogResult = DialogResult.OK;
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            if (Input != null)
-                Input(DialogOption.Cancel);
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        public void ShowError(string text)
+        {
+            MessageBox.Show(text, "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

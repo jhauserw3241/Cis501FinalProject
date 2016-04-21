@@ -12,23 +12,39 @@ namespace FinalProjectChatClient
 {
     public partial class SignupPopUp : Form
     {
-        public event AccountInputHandler Input;
+        public string Username
+        {
+            get { return usernameTextBox.Text; }
+        }
+        public string Password1
+        {
+            get { return passwordTextBox.Text; }
+        }
+        public string Password2
+        {
+            get { return reEnterTextBox.Text; }
+        }
 
         public SignupPopUp()
         {
             InitializeComponent();
+            DialogResult = DialogResult.None;
         }
 
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (Input != null)
-                Input(DialogOption.Ok);
+            DialogResult = DialogResult.OK;
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            if (Input != null)
-                Input(DialogOption.Cancel);
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        public void ShowError(string text)
+        {
+            MessageBox.Show(text, "Signup Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

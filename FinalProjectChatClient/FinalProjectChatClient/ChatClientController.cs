@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace FinalProjectChatClient
 {
@@ -28,50 +29,67 @@ namespace FinalProjectChatClient
 
             clientModel = new ChatClientModel();
             clientForm = new ChatClientForm();
+            clientForm.Load += HandleLoadIn;
             entryForm = new EntryPopUp();
-            entryForm.Input += HandleEntry;
             loginForm = new LoginPopUp();
-            loginForm.Input += HandleLogin;
             signupForm = new SignupPopUp();
-            signupForm.Input += HandleSignup;
             ws = new WebSocket("ws://127.0.0.1:8001/chat");
-
-            Application.Run(entryForm);
-            switch (clientModel.Status)
-            {
-                case States.SigningUp:
-                    Application.Run(signupForm);
-                    break;
-                case States.LoggingIn:
-                    Application.Run(loginForm);
-                    break;
-            }
+            ws.OnMessage += HandleMessage;
+            ws.Connect();
+            
             Application.Run(clientForm);
         }
 
-        static void HandleEntry(EntryOption action)
+        static void HandleMessage(object sender, EventArgs e)
         {
-            switch (action)
+            switch (clientModel.Status)
             {
-                case EntryOption.Login:
-                    clientModel.Status = States.LoggingIn;
+                case States.SigningUp:
                     break;
-                case EntryOption.Signup:
-                    clientModel.Status = States.SigningUp;
+                case States.LoggingIn:
+                    break;
+                case States.Connected:
+                    break;
+                case States.LoggingOut:
+                    break;
+                default:
                     break;
             }
-
-            entryForm.Dispose();
         }
 
-        static void HandleLogin(DialogOption action)
+        static void HandleLoadIn(object sender, EventArgs e)
         {
-            loginForm.Dispose();
-        }
+            bool exit = false;
 
-        static void HandleSignup(DialogOption action)
-        {
-            signupForm.Dispose();
+            while (!exit)
+            {
+                switch (entryForm.ShowDialog())
+                {
+                    case DialogResult.Yes:
+                        switch (loginForm.ShowDialog())
+                        {
+                            case DialogResult.OK:
+                                exit = true;
+                                break;
+                            case DialogResult.Cancel:
+                                break;
+                        }
+                        break;
+                    case DialogResult.No:
+                        switch (signupForm.ShowDialog())
+                        {
+                            case DialogResult.OK:
+                                exit = true;
+                                break;
+                            case DialogResult.Cancel:
+                                break;
+                        }
+                        break;
+                    case DialogResult.Cancel:
+                        Application.Exit();
+                        break;
+                }
+            }
         }
     }
 }

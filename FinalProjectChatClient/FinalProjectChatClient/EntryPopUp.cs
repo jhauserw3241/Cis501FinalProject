@@ -12,23 +12,22 @@ namespace FinalProjectChatClient
 {
     public partial class EntryPopUp : Form
     {
-        public event EntryInputHandler Input;
-
         public EntryPopUp()
         {
             InitializeComponent();
+            DialogResult = DialogResult.None;
         }
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            if (Input != null)
-                Input(EntryOption.Login);
+            DialogResult = DialogResult.Yes;
+            Close();
         }
 
         private void signupButton_Click(object sender, EventArgs e)
         {
-            if (Input != null)
-                Input(EntryOption.Signup);
+            DialogResult = DialogResult.No;
+            Close();
         }
     }
 }

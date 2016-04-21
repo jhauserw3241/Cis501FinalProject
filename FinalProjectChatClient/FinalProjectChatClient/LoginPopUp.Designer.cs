@@ -111,7 +111,10 @@
             this.Controls.Add(this.passwordLabel);
             this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.usernameTextBox);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "LoginPopUp";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Log In";
             this.ResumeLayout(false);
             this.PerformLayout();

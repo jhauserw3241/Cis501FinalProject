@@ -2,6 +2,11 @@
 {
     partial class EntryPopUp
     {
+
+        private System.Windows.Forms.Label informationLabel;
+        private System.Windows.Forms.Button loginButton;
+        private System.Windows.Forms.Button signupButton;
+
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -65,7 +70,7 @@
             this.signupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.signupButton.AutoSize = true;
             this.signupButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.signupButton.Location = new System.Drawing.Point(373, 97);
+            this.signupButton.Location = new System.Drawing.Point(366, 97);
             this.signupButton.Name = "signupButton";
             this.signupButton.Size = new System.Drawing.Size(92, 35);
             this.signupButton.TabIndex = 2;
@@ -81,7 +86,10 @@
             this.Controls.Add(this.signupButton);
             this.Controls.Add(this.loginButton);
             this.Controls.Add(this.informationLabel);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "EntryPopUp";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Login or SingUp";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -89,9 +97,5 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label informationLabel;
-        private System.Windows.Forms.Button loginButton;
-        private System.Windows.Forms.Button signupButton;
     }
 }
