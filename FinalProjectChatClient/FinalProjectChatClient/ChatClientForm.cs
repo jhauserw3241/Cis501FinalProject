@@ -12,13 +12,15 @@ namespace FinalProjectChatClient
 {
     public partial class ChatClientForm : Form
     {
+        private ChatClientModel clientModel;
         private List<Tuple<TabPage, Label>> conversationTabs;
         private event ClientInputHandler input;
         private int tabCount = 5;
 
-        public ChatClientForm()
+        public ChatClientForm(ChatClientModel model)
         {
             InitializeComponent();
+            clientModel = model;
             conversationTabs = new List<Tuple<TabPage, Label>>();
             contactsList.Items.Add("admin");
         }
@@ -79,6 +81,15 @@ namespace FinalProjectChatClient
                     e.SuppressKeyPress = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Displays the provided error message.
+        /// </summary>
+        /// <param name="text">Detail of what error occured.</param>
+        public void ShowError(string text)
+        {
+            System.Windows.Forms.MessageBox.Show(text, "Signup Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

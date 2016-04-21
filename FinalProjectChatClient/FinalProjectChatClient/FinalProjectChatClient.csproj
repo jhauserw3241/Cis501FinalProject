@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="SignupPopUp.cs">
       <SubType>Form</SubType>
     </Compile>

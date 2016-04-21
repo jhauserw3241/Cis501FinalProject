@@ -12,6 +12,15 @@ namespace FinalProjectChatClient
 {
     public partial class LoginPopUp : Form
     {
+        public string Username
+        {
+            get { return usernameTextBox.Text; }
+        }
+        public string Password
+        {
+            get { return passwordTextBox.Text; }
+        }
+
         public LoginPopUp()
         {
             InitializeComponent();
@@ -27,11 +36,6 @@ namespace FinalProjectChatClient
         {
             DialogResult = DialogResult.Cancel;
             Close();
-        }
-
-        public void ShowError(string text)
-        {
-            MessageBox.Show(text, "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

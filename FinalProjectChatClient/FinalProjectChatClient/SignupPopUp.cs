@@ -41,10 +41,5 @@ namespace FinalProjectChatClient
             DialogResult = DialogResult.Cancel;
             Close();
         }
-
-        public void ShowError(string text)
-        {
-            MessageBox.Show(text, "Signup Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
     }
 }
