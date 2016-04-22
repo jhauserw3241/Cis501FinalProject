@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace FinalProjectChatClient
 {
-    public delegate void ClientInputHandler(FormInput action);
+    public delegate void ClientInputHandler(FormInput action, params object[] vars);
 
-    public delegate void ClientOutputHandler(FormOutput action);
+    public delegate void ClientOutputHandler(FormOutput action, params object[] vars);
     
     public enum DispState { Offline, Online };
 
     public enum FlowState { Entry, Access, Main, Exit };
 
-    public enum FormInput { };
+    public enum FormInput { AddCont, RemoveCont, CreateConv, LeaveCont, AddPart, Message };
 
-    public enum FormOutput { };
+    public enum FormOutput { Message };
 }

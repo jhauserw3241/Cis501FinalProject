@@ -52,14 +52,66 @@ namespace FinalProjectChatClient
         }
         
         /// <summary>
+        /// Returns the message in proper chat formating.
+        /// </summary>
+        /// <param name="msg">The content of the message.</param>
+        /// <returns></returns>
+        private string FormatForChat(string msg)
+        {
+            return String.Format("[{0:MM/dd/yyyy hh:mm:sstt}] {1}: {2}{3}", DateTime.Now, clientModel.DisplayName, msg, Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Handles messages from the server containing information about signing up or logging in.
+        /// </summary>
+        /// <param name="mssg">The dictionary of keywords and their values.</param>
+        private void HandleAccessMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+                clientForm.ShowError(mssg["error"]);
+            }
+            else
+            {
+                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
+                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
+                clientModel.DisplayName = mssg["dispName"];
+                clientModel.IPAddress = mssg["ip"];
+                clientModel.State = FlowState.Main;
+                clientModel.Status = DispState.Online;
+            }
+        }
+
+        /// <summary>
+        /// Handles messages from the server containing chatlogs.
+        /// </summary>
+        /// <param name="mssg">The dictionary of keywords and their values.</param>
+        private void HandleChatMessage(Dictionary<string, string> mssg)
+        {
+            Output(FormOutput.Message, clientModel.ConversationList.IndexOf(mssg["from"]), mssg["content"]);
+        }
+
+        /// <summary>
         /// Delegates input from the form to various methods.
         /// </summary>
         /// <param name="action">The action the form is trying to perform.</param>
-        public void HandleFormInput(FormInput action)
+        public void HandleFormInput(FormInput action, params object[] vars)
         {
             switch (action)
             {
-
+                case FormInput.AddCont:
+                    break;
+                case FormInput.RemoveCont:
+                    break;
+                case FormInput.CreateConv:
+                    break;
+                case FormInput.LeaveCont:
+                    break;
+                case FormInput.AddPart:
+                    break;
+                case FormInput.Message:
+                    ws.Send(String.Format("<msg from=\"{0}\" to=\"{1}\"><content>{2}</content></msg>", clientModel.IPAddress, clientModel.ConversationList[(int)vars[0]], FormatForChat((string)vars[1])));
+                    break;
             }
         }
 
@@ -124,30 +176,10 @@ namespace FinalProjectChatClient
                 case "addPa":
                     break;
                 case "msg":
+                    HandleChatMessage(mssg);
                     break;
                 default:
                     break;
-            }
-        }
-
-        /// <summary>
-        /// Handles messages from the server pertainging towards signing up.
-        /// </summary>
-        /// <param name="mssg">The dictionary of keywords and their values.</param>
-        private void HandleAccessMessage(Dictionary<string, string> mssg)
-        {
-            if (mssg.ContainsKey("error"))
-            {
-                clientForm.ShowError(mssg["error"]);
-            }
-            else
-            {
-                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
-                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
-                clientModel.DisplayName = mssg["dispName"];
-                clientModel.IPAddress = mssg["ip"];
-                clientModel.State = FlowState.Main;
-                clientModel.Status = DispState.Online;
             }
         }
 

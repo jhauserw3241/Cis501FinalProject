@@ -1,6 +1,6 @@
 <!-- The server has already determined who the message is going to so it is no longer needed in the message -->
 <msg from="admin">
 <content>
-Listen here 'newUser420', I don't like your name or your attitude.
+[04/22/2016 02:35pm] admin: Listen here 'newUser420', I don't like your name or your attitude.
 </content>
 </msg>

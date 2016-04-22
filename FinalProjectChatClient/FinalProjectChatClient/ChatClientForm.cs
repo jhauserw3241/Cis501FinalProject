@@ -68,11 +68,13 @@ namespace FinalProjectChatClient
         /// Updates the appropriate portions.
         /// </summary>
         /// <param name="action">What of the form to update.</param>
-        public void HandleFormOutput(FormOutput action)
+        public void HandleFormOutput(FormOutput action, params object[] vars)
         {
             switch (action)
             {
-
+                case FormOutput.Message:
+                    ((Label)conversationTabController.TabPages[(int)vars[0]].Controls[0]).Text += (string)vars[1];
+                    break;
             }
         }
 
@@ -87,7 +89,8 @@ namespace FinalProjectChatClient
                 {
                     if (conversationTabController.Controls.Count > 0)
                     {
-                        ((Label)conversationTabController.SelectedTab.Controls[0]).Text += messageBox.Text + Environment.NewLine;
+                        // ((Label)conversationTabController.SelectedTab.Controls[0]).Text += messageBox.Text + Environment.NewLine;
+                        Input(FormInput.Message, conversationTabController.SelectedIndex, messageBox.Text);
                     }
                     messageBox.Text = String.Empty;
                     e.SuppressKeyPress = true;
