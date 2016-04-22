@@ -1,11 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Xml;
+using System.Text;
 using WebSocketSharp;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Xml;
 
 namespace FinalProjectChatClient
 {
@@ -65,19 +68,25 @@ namespace FinalProjectChatClient
         /// </summary>
         public void HandleLoadIn(object sender, EventArgs e)
         {
+            DialogResult st = DialogResult.None;
             bool exit = false;
 
             while (!exit)
             {
-                switch (entryForm.ShowDialog())
+                if (clientModel.State == FlowState.Entry) st = entryForm.ShowDialog();
+                switch (st)
                 {
                     case DialogResult.Yes:
+                        clientModel.State = FlowState.Access;
                         LoginAction();
                         while (clientModel.WaitingMsg) { }
+                        if (clientModel.State == FlowState.Main) exit = true;
                         break;
                     case DialogResult.No:
+                        clientModel.State = FlowState.Access;
                         SignupAction();
                         while (clientModel.WaitingMsg) { }
+                        if (clientModel.State == FlowState.Main) exit = true;
                         break;
                     case DialogResult.Cancel:
                         Application.Exit();
@@ -99,9 +108,8 @@ namespace FinalProjectChatClient
             switch (mssg["action"])
             {
                 case "sign":
-                    HandleSignupMessage(mssg);
-                    break;
                 case "login":
+                    HandleAccessMessage(mssg);
                     break;
                 case "logout":
                     break;
@@ -126,15 +134,20 @@ namespace FinalProjectChatClient
         /// Handles messages from the server pertainging towards signing up.
         /// </summary>
         /// <param name="mssg">The dictionary of keywords and their values.</param>
-        private void HandleSignupMessage(Dictionary<string, string> mssg)
+        private void HandleAccessMessage(Dictionary<string, string> mssg)
         {
             if (mssg.ContainsKey("error"))
             {
-
+                clientForm.ShowError(mssg["error"]);
             }
             else
             {
-
+                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
+                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
+                clientModel.DisplayName = mssg["dispName"];
+                clientModel.IPAddress = mssg["ip"];
+                clientModel.State = FlowState.Main;
+                clientModel.Status = DispState.Online;
             }
         }
 
@@ -144,24 +157,29 @@ namespace FinalProjectChatClient
         /// <returns>Whether or not to exit the loop.</returns>
         private void LoginAction()
         {
-            if (loginForm.ShowDialog() == DialogResult.OK)
+            switch (loginForm.ShowDialog())
             {
-                if (!loginForm.Username.Equals(String.Empty))
-                {
-                    if (!loginForm.Password.Equals(String.Empty))
+                case DialogResult.OK:
+                    if (!loginForm.Username.Equals(String.Empty))
                     {
-                        ws.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-                        clientModel.WaitingMsg = true;
+                        if (!loginForm.Password.Equals(String.Empty))
+                        {
+                            ws.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                            clientModel.WaitingMsg = true;
+                        }
+                        else
+                        {
+                            clientForm.ShowError("The password cannot be empty.");
+                        }
                     }
                     else
                     {
-                        clientForm.ShowError("The password cannot be empty.");
+                        clientForm.ShowError("The username cannot be empty.");
                     }
-                }
-                else
-                {
-                    clientForm.ShowError("The username cannot be empty.");
-                }
+                    break;
+                case DialogResult.Cancel:
+                    clientModel.State = FlowState.Entry;
+                    break;
             }
         }
         
@@ -222,33 +240,38 @@ namespace FinalProjectChatClient
         /// <returns>Whether or not to exit the loop.</returns>
         private void SignupAction()
         {
-            if (signupForm.ShowDialog() == DialogResult.OK)
+            switch (signupForm.ShowDialog())
             {
-                if (!signupForm.Username.Equals(String.Empty))
-                {
-
-                    if (!signupForm.Password1.Equals(String.Empty))
+                case DialogResult.OK:
+                    if (!signupForm.Username.Equals(String.Empty))
                     {
 
-                        if (signupForm.Password1.Equals(signupForm.Password2))
+                        if (!signupForm.Password1.Equals(String.Empty))
                         {
-                            ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-                            clientModel.WaitingMsg = true;
+
+                            if (signupForm.Password1.Equals(signupForm.Password2))
+                            {
+                                ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                                clientModel.WaitingMsg = true;
+                            }
+                            else
+                            {
+                                clientForm.ShowError("The passwords do not match.");
+                            }
                         }
                         else
                         {
-                            clientForm.ShowError("The passwords do not match.");
+                            clientForm.ShowError("The password cannot be empty.");
                         }
                     }
                     else
                     {
-                        clientForm.ShowError("The password cannot be empty.");
+                        clientForm.ShowError("The username cannot be empty.");
                     }
-                }
-                else
-                {
-                    clientForm.ShowError("The username cannot be empty.");
-                }
+                    break;
+                case DialogResult.Cancel:
+                    clientModel.State = FlowState.Entry;
+                    break;
             }
         }
 

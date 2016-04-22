@@ -12,8 +12,10 @@ msg - sending a message
 
 tags: <a="">
 
+dispName
 username
 password
+ip
 to
 from
 error

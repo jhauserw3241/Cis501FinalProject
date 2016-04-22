@@ -8,7 +8,7 @@ namespace FinalProjectChatClient
 {
     public class ChatClientModel
     {
-        private List<string> contactList;
+        private List<Contact> contactList;
         private List<string> conversationList;
         private string displayName;
         private string ipAddress;
@@ -16,7 +16,7 @@ namespace FinalProjectChatClient
         private DispState status;
         private bool waitingMsg;
 
-        public List<string> ContactList
+        public List<Contact> ContactList
         {
             get { return contactList; }
             set { contactList = value; }
@@ -54,11 +54,11 @@ namespace FinalProjectChatClient
 
         public ChatClientModel()
         {
-            contactList = new List<string>();
+            contactList = new List<Contact>();
             conversationList = new List<string>();
             displayName = "";
             ipAddress = "";
-            state = FlowState.Disconnected;
+            state = FlowState.Entry;
             status = DispState.Offline;
             waitingMsg = false;
         }

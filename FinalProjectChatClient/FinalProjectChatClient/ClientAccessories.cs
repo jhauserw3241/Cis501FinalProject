@@ -12,7 +12,7 @@ namespace FinalProjectChatClient
     
     public enum DispState { Offline, Online };
 
-    public enum FlowState { Disconnected, LoggingIn, SigningUp, Connected, LoggingOut };
+    public enum FlowState { Entry, Access, Main, Exit };
 
     public enum FormInput { };
 
