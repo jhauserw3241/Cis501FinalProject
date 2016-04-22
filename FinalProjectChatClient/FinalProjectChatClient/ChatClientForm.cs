@@ -13,9 +13,9 @@ namespace FinalProjectChatClient
     public partial class ChatClientForm : Form
     {
         private ChatClientModel clientModel;
-        private List<Tuple<TabPage, Label>> conversationTabs;
-        private event ClientInputHandler input;
         private int tabCount = 5;
+        
+        public event ClientInputHandler Input;
 
         public ChatClientForm(ChatClientModel model)
         {
@@ -24,12 +24,20 @@ namespace FinalProjectChatClient
             conversationTabs = new List<Tuple<TabPage, Label>>();
             contactsList.Items.Add("admin");
         }
+        
+        /// <summary>
+        /// Creates a new conversation with the contact selected.
+        /// </summary>
+        private void contactsList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            CreateConversationTab(contactsList.Text);
+        }
 
         /// <summary>
         /// Creates a new tab to contain a conversation.
         /// </summary>
         /// <param name="convName">The name of the conversation and tab.</param>
-        public void CreateConversationTab(string convName)
+        private void CreateConversationTab(string convName)
         {
             TabPage newPage = new TabPage();
             Label newLabel = new Label();
@@ -57,11 +65,15 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
-        /// Creates a new conversation with the contact selected.
+        /// Updates the appropriate portions.
         /// </summary>
-        private void contactsList_MouseDoubleClick(object sender, MouseEventArgs e)
+        /// <param name="action">What of the form to update.</param>
+        public void HandleFormOutput(FormOutput action)
         {
-            CreateConversationTab(contactsList.Text);
+            switch (action)
+            {
+
+            }
         }
 
         /// <summary>

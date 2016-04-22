@@ -22,7 +22,9 @@ namespace FinalProjectChatClient
             ChatClientController clientController = new ChatClientController(clientModel);
             ChatClientForm clientForm = new ChatClientForm(clientModel);
             clientForm.Load += clientController.HandleLoadIn;
+            clientForm.Input += clientController.HandleFormInput;
             clientController.ClientForm = clientForm;
+            clientController.Output += clientForm.HandleFormOutput;
             clientController.EntryForm = new EntryPopUp();
             clientController.LoginForm = new LoginPopUp();
             clientController.SignupForm = new SignupPopUp();

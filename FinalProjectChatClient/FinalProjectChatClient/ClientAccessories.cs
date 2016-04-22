@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace FinalProjectChatClient
 {
-    public delegate void ClientInputHandler(string action);
+    public delegate void ClientInputHandler(FormInput action);
 
-    public delegate void ClientOutputHandler(string action);
+    public delegate void ClientOutputHandler(FormOutput action);
     
-    public enum States { Disconnected, LoggingIn, SigningUp, Connected, LoggingOut };
+    public enum DispState { Offline, Online };
+
+    public enum FlowState { Disconnected, LoggingIn, SigningUp, Connected, LoggingOut };
+
+    public enum FormInput { };
+
+    public enum FormOutput { };
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using WebSocketSharp;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -14,7 +15,6 @@ namespace FinalProjectChatClient
         private ChatClientModel clientModel;
         private EntryPopUp entryForm;
         private LoginPopUp loginForm;
-        private ClientOutputHandler output;
         private SignupPopUp signupForm;
         private WebSocket ws;
 
@@ -30,6 +30,7 @@ namespace FinalProjectChatClient
         {
             set { loginForm = value; }
         }
+        public event ClientOutputHandler Output;
         public SignupPopUp SignupForm
         {
             set { signupForm = value; }
@@ -48,6 +49,18 @@ namespace FinalProjectChatClient
         }
         
         /// <summary>
+        /// Delegates input from the form to various methods.
+        /// </summary>
+        /// <param name="action">The action the form is trying to perform.</param>
+        public void HandleFormInput(FormInput action)
+        {
+            switch (action)
+            {
+
+            }
+        }
+
+        /// <summary>
         /// Run entry loop until user manages to login or closes.
         /// </summary>
         public void HandleLoadIn(object sender, EventArgs e)
@@ -59,10 +72,12 @@ namespace FinalProjectChatClient
                 switch (entryForm.ShowDialog())
                 {
                     case DialogResult.Yes:
-                        exit = LoginAction();
+                        LoginAction();
+                        while (clientModel.WaitingMsg) { }
                         break;
                     case DialogResult.No:
-                        exit = SignupAction();
+                        SignupAction();
+                        while (clientModel.WaitingMsg) { }
                         break;
                     case DialogResult.Cancel:
                         Application.Exit();
@@ -74,18 +89,33 @@ namespace FinalProjectChatClient
         /// <summary>
         /// Hub for all incoming messages. Will be redistributed to seperate methods for handeling.
         /// </summary>
-        public void HandleMessage(object sender, EventArgs e)
+        public void HandleMessage(object sender, MessageEventArgs e)
         {
-            switch (clientModel.Status)
+            Dictionary<string, string> mssg = ReadXML(e.Data);
+
+            clientModel.WaitingMsg = false;
+            if (!mssg.ContainsKey("action")) return;
+
+            switch (mssg["action"])
             {
-                case States.SigningUp:
-                    // Read e.Data as an xml string
+                case "sign":
+                    HandleSignupMessage(mssg);
                     break;
-                case States.LoggingIn:
+                case "login":
                     break;
-                case States.Connected:
+                case "logout":
                     break;
-                case States.LoggingOut:
+                case "addCont":
+                    break;
+                case "rmCont":
+                    break;
+                case "leave":
+                    break;
+                case "crConv":
+                    break;
+                case "addPa":
+                    break;
+                case "msg":
                     break;
                 default:
                     break;
@@ -93,10 +123,26 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
+        /// Handles messages from the server pertainging towards signing up.
+        /// </summary>
+        /// <param name="mssg">The dictionary of keywords and their values.</param>
+        private void HandleSignupMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
+        /// <summary>
         /// Displays and interprets info from a login popup.
         /// </summary>
         /// <returns>Whether or not to exit the loop.</returns>
-        private bool LoginAction()
+        private void LoginAction()
         {
             if (loginForm.ShowDialog() == DialogResult.OK)
             {
@@ -104,9 +150,8 @@ namespace FinalProjectChatClient
                 {
                     if (!loginForm.Password.Equals(String.Empty))
                     {
-                        ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-
-                        return true;
+                        ws.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                        clientModel.WaitingMsg = true;
                     }
                     else
                     {
@@ -118,15 +163,64 @@ namespace FinalProjectChatClient
                     clientForm.ShowError("The username cannot be empty.");
                 }
             }
+        }
+        
+        /// <summary>
+        /// Reads the provided string and returns a dictionary containing the data it was able to parse.
+        /// </summary>
+        /// <param name="xml">The xml string to parse.</param>
+        /// <returns>A dictionary containing keywords and their corresponding values.</returns>
+        private Dictionary<string, string> ReadXML(string xml)
+        {
+            Dictionary<string, string> rtrn = new Dictionary<string, string>();
+            XmlDocument message = new XmlDocument();
+            string key = "";
 
-            return false;
+            message.LoadXml(xml);
+            foreach (XmlNode node in message)
+            {
+                switch (node.NodeType)
+                {
+                    case XmlNodeType.Element: // The node is an element.
+                        if (node.Attributes.Count > 0)
+                        {
+                            rtrn.Add("action", node.Name);
+
+                            foreach (XmlAttribute attr in node.Attributes)
+                            {
+                                rtrn.Add(attr.Name, attr.Value);
+                            }
+                        }
+                        else
+                        {
+                            key = node.Name;
+                        }
+                        break;
+                    case XmlNodeType.Text:
+                        rtrn.Add(key, node.Value);
+                        break;
+                    case XmlNodeType.EndElement: //Display the end of the element.
+                        if (node.Attributes.Count > 0)
+                        {
+                            rtrn.Add("action", node.Name);
+
+                            foreach (XmlAttribute attr in node.Attributes)
+                            {
+                                rtrn.Add(attr.Name, attr.Value);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            return rtrn;
         }
 
         /// <summary>
         /// Displays and interprets info from a signup popup.
         /// </summary>
         /// <returns>Whether or not to exit the loop.</returns>
-        private bool SignupAction()
+        private void SignupAction()
         {
             if (signupForm.ShowDialog() == DialogResult.OK)
             {
@@ -139,8 +233,7 @@ namespace FinalProjectChatClient
                         if (signupForm.Password1.Equals(signupForm.Password2))
                         {
                             ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-
-                            return true;
+                            clientModel.WaitingMsg = true;
                         }
                         else
                         {
@@ -157,8 +250,6 @@ namespace FinalProjectChatClient
                     clientForm.ShowError("The username cannot be empty.");
                 }
             }
-
-            return false;
         }
 
         /// <summary>

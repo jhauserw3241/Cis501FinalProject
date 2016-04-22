@@ -12,36 +12,44 @@ namespace FinalProjectChatClient
         private List<string> conversationList;
         private string displayName;
         private string ipAddress;
-        private States status;
+        private FlowState state;
+        private DispState status;
+        private bool waitingMsg;
 
         public List<string> ContactList
         {
             get { return contactList; }
             set { contactList = value; }
         }
-
         public List<string> ConversationList
         {
             get { return conversationList; }
             set { conversationList = value; }
         }
-
         public string DisplayName
         {
             get { return displayName; }
             set { displayName = value; }
         }
-
         public string IPAddress
         {
             get { return ipAddress; }
             set { ipAddress = value; }
         }
-
-        public States Status
+        public FlowState State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+        public DispState Status
         {
             get { return status; }
             set { status = value; }
+        }
+        public bool WaitingMsg
+        {
+            get { return waitingMsg; }
+            set { waitingMsg = value; }
         }
 
         public ChatClientModel()
@@ -50,7 +58,9 @@ namespace FinalProjectChatClient
             conversationList = new List<string>();
             displayName = "";
             ipAddress = "";
-            status = States.Disconnected;
+            state = FlowState.Disconnected;
+            status = DispState.Offline;
+            waitingMsg = false;
         }
     }
 }

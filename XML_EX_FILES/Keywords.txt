@@ -16,6 +16,7 @@ username
 password
 to
 from
+error
 
 Elements: <a></a>
 

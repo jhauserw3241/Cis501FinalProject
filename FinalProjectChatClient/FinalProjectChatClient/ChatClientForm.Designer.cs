@@ -1,33 +1,35 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace FinalProjectChatClient
 {
     partial class ChatClientForm
     {
-        private StatusStrip infoStrip;
+        private ToolStripMenuItem addContactOption;
         private ToolStripStatusLabel connectionStatus;
-        private MenuStrip mainMenu;
-        private ToolStripMenuItem profileMenu;
         private ListBox contactsList;
+        private ToolStripMenuItem contactsMenu;
+        private ToolStripMenuItem conversationMenu;
         private TabControl conversationTabController;
+        private List<Tuple<TabPage, Label>> conversationTabs;
+        private ToolStripMenuItem createConversationOption;
+        private ToolStripMenuItem displayNameProfileOption;
+        private StatusStrip infoStrip;
+        private ToolStripMenuItem leaveConversationOption;
+        private ToolStripMenuItem logoutProfileOption;
+        private MenuStrip mainMenu;
         private TextBox messageBox;
-        
-        public StatusStrip InfoStrip
-        {
-            get { return infoStrip; }
-        }
+        private ToolStripMenuItem offlineStatusOption;
+        private ToolStripMenuItem onlineStatusOption;
+        private ToolStripMenuItem profileMenu;
+        private ToolStripMenuItem profileStatusMenu;
+        private ToolStripMenuItem removeContactOption;
+
         public ToolStripStatusLabel ConnectionStatus
         {
             get { return connectionStatus; }
-        }
-        public MenuStrip MainMenu
-        {
-            get { return mainMenu; }
-        }
-        public ToolStripMenuItem FileMenu
-        {
-            get { return profileMenu; }
         }
         public ListBox ContactsList
         {
@@ -36,6 +38,18 @@ namespace FinalProjectChatClient
         public TabControl ConversationTabController
         {
             get { return conversationTabController; }
+        }
+        public List<Tuple<TabPage, Label>> ConversationTabs
+        {
+            get { return conversationTabs; }
+        }
+        public StatusStrip InfoStrip
+        {
+            get { return infoStrip; }
+        }
+        public MenuStrip MainMenu
+        {
+            get { return mainMenu; }
         }
         public TextBox MessageBox
         {
@@ -255,18 +269,6 @@ namespace FinalProjectChatClient
         }
 
         #endregion
-
-        private ToolStripMenuItem displayNameProfileOption;
-        private ToolStripMenuItem profileStatusMenu;
-        private ToolStripMenuItem onlineStatusOption;
-        private ToolStripMenuItem offlineStatusOption;
-        private ToolStripMenuItem logoutProfileOption;
-        private ToolStripMenuItem contactsMenu;
-        private ToolStripMenuItem addContactOption;
-        private ToolStripMenuItem removeContactOption;
-        private ToolStripMenuItem conversationMenu;
-        private ToolStripMenuItem createConversationOption;
-        private ToolStripMenuItem leaveConversationOption;
     }
 }
 
