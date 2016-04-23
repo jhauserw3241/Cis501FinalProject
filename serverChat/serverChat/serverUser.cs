@@ -24,9 +24,15 @@ namespace serverChat
             contacts.Add(contact);
         }
 
-        void RemoveContact()
         {
 
+        // Remove Contact
+        //
+        // Remove a contact from the list of contacts
+        // @param contact The user to be removed as a contact for the current user
+        public void RemoveContact(ServerUser contact)
+        {
+            contacts.Remove(contact);
         }
 
 
