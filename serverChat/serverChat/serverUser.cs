@@ -108,11 +108,5 @@ namespace serverChat
                 }
             }
         }
-
-
-
-
-
-
     }
 }
