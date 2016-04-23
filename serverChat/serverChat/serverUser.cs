@@ -117,5 +117,14 @@ namespace serverChat
         {
             ipAddress = address;
         }
+
+        // Set Status
+        //
+        // Set the status of the current user
+        // @param online Whether or not the user is online
+        public void SetStatus(bool online)
+        {
+            status = online;
+        }
     }
 }
