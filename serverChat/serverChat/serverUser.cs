@@ -15,9 +15,13 @@ namespace serverChat
         private bool status;
         private string username;
 
-        void AddContact()
+        // Add Contact
+        //
+        // Add a contact to the list of contacts
+        // @param contact The user to be added as another contact for the current user
+        public void AddContact(ServerUser contact)
         {
-
+            contacts.Add(contact);
         }
 
         void RemoveContact()
