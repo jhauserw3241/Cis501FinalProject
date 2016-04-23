@@ -118,6 +118,15 @@ namespace serverChat
             ipAddress = address;
         }
 
+        // Set Name
+        //
+        // Set the display name of the current user
+        // @param dName A string containing the display name
+        public void SetName(string dName)
+        {
+            name = dName;
+        }
+
         // Set Status
         //
         // Set the status of the current user
