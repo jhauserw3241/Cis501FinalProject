@@ -24,6 +24,14 @@ namespace serverChat
             contacts.Add(contact);
         }
 
+        // Get Contact List
+        //
+        // Get the list of contacts for the current user
+        // @return the list of user objects
+        public List<ServerUser> GetContactList()
+        {
+            return contacts;
+        }
         // Get Password
         //
         // Get the password for the current user
