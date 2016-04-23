@@ -8,12 +8,12 @@ namespace serverChat
 {
     public class ServerUser
     {
-        public List<ServerUser> contacts;
-        public string ipAddress;
-        public string username;
-        public string name;
-        public string password;
-        public bool status;
+        private List<ServerUser> contacts;
+        private string ipAddress;
+        private string name;
+        private string password;
+        private bool status;
+        private string username;
 
         void AddContact()
         {
