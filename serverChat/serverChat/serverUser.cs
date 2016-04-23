@@ -108,5 +108,14 @@ namespace serverChat
                 }
             }
         }
+
+        // Set IP Address
+        //
+        // Set the IP address for the current user
+        // @param address A string containing the user's IP address
+        public void SetIpAddress(string address)
+        {
+            ipAddress = address;
+        }
     }
 }
