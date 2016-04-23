@@ -42,7 +42,27 @@ namespace serverChat
             contacts.Remove(contact);
         }
 
+        // Remove Contact
+        //
+        // Remove a contact from the list of contacts
+        // @param contact The string that contains the username of the contact to be removed
+        public void RemoveContact(string username)
+        {
+            int size = contacts.Count;
 
+            for (int i = 0; i < size; i++)
+            {
+                // Get the current element information
+                ServerUser contact = contacts.ElementAt(i);
+
+                // Check if the current contact is the specfied contact
+                if (username == contact.GetUsername())
+                {
+                    contacts.Remove(contact);
+                    break;
+                }
+            }
+        }
 
 
 
