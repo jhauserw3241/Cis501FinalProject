@@ -9,6 +9,7 @@ namespace serverChat
     public class ServerConversation
     {
         private string name;
+        private string currentMessage;
 
         // Get Conversation Name
         //
@@ -19,6 +20,15 @@ namespace serverChat
             return name;
         }
 
+        // Get Current Message
+        //
+        // Get the current message in the conversation
+        // @return a string containing the current message
+        public string GetCurrentMessage()
+        {
+            return currentMessage;
+        }
+
         // Set Conversation Name
         //
         // Set the conversation name
@@ -26,6 +36,15 @@ namespace serverChat
         public void SetConversationName(string convName)
         {
             name = convName;
+        }
+
+        // Set Current Message
+        //
+        // Set the current message in the conversation
+        // @param message A string containing the current message
+        public void SetCurrentMessage(string message)
+        {
+            currentMessage = message;
         }
     }
 }
