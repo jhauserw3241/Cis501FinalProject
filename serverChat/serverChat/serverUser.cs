@@ -42,6 +42,15 @@ namespace serverChat
             return ipAddress;
         }
 
+        // Get Name
+        //
+        // Get the display name for the current user
+        // @return a string containing the display name
+        public string GetName()
+        {
+            return name;
+        }
+
         // Get Password
         //
         // Get the password for the current user
