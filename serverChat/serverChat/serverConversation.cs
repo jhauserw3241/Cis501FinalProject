@@ -10,6 +10,16 @@ namespace serverChat
     {
         private string name;
         private string currentMessage;
+        private List<string> messageHistory;
+
+        // Add Message To History
+        //
+        // Add message to the message history
+        // @param message The current message
+        public void AddMessageToHistory(string message)
+        {
+            messageHistory.Add(message);
+        }
 
         // Get Conversation Name
         //
@@ -27,6 +37,15 @@ namespace serverChat
         public string GetCurrentMessage()
         {
             return currentMessage;
+        }
+
+        // Get Message History
+        //
+        // Get the message history of the conversation
+        // @return a string list containing the messages of the conversation
+        public List<string> GetMessageHistory()
+        {
+            return messageHistory;
         }
 
         // Set Conversation Name
