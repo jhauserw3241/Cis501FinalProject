@@ -32,6 +32,16 @@ namespace serverChat
         {
             return contacts;
         }
+
+        // Get IP Address
+        //
+        // Get the IP address fro the current user
+        // @return a string containing the ip address
+        public string GetIpAddress()
+        {
+            return ipAddress;
+        }
+
         // Get Password
         //
         // Get the password for the current user
