@@ -24,7 +24,14 @@ namespace serverChat
             contacts.Add(contact);
         }
 
+        // Get Username
+        //
+        // Get the username for the current user
+        // @return a string containing the username
+        public string GetUsername()
         {
+            return username;
+        }
 
         // Remove Contact
         //
