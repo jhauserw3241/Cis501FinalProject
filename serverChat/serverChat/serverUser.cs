@@ -33,6 +33,23 @@ namespace serverChat
             return contacts;
         }
 
+        // Get Contact List Usernames
+        //
+        // Get the list of usernames for the contacts for the current user
+        // @return the list of usernames for the contact list
+        public List<string> GetContactListUsernames()
+        {
+            List<string> usernames = new List<string>();
+            int size = contacts.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                usernames.Add(contacts.ElementAt(i).GetUsername());
+            }
+
+            return usernames;
+        }
+
         // Get IP Address
         //
         // Get the IP address fro the current user
