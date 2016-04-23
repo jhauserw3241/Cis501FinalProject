@@ -60,6 +60,15 @@ namespace serverChat
             return password;
         }
 
+        // Get Status
+        //
+        // Get the status for the current user
+        // @return a boolean that determines whether or not the user is online
+        public bool GetStatus()
+        {
+            return status;
+        }
+
         // Get Username
         //
         // Get the username for the current user
