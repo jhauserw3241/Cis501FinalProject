@@ -8,59 +8,77 @@ namespace FinalProjectChatClient
 {
     public class ChatClientModel
     {
+        #region Fields
+
         private List<Contact> contactList;
-        private List<string> conversationList;
+        private Dictionary<string, List<Contact>> conversationList;
         private string displayName;
-        private string ipAddress;
+        private bool errorFlag;
+        private string userName;
         private FlowState state;
-        private DispState status;
-        private bool waitingMsg;
+        private string status;
+        private bool waitFlag;
+
+        #endregion
+
+        #region Properties
 
         public List<Contact> ContactList
         {
             get { return contactList; }
             set { contactList = value; }
         }
-        public List<string> ConversationList
+        public Dictionary<string, List<Contact>> ConversationList
         {
             get { return conversationList; }
-            set { conversationList = value; }
+            private set { conversationList = value; }
         }
         public string DisplayName
         {
             get { return displayName; }
             set { displayName = value; }
         }
-        public string IPAddress
+        public bool ErrorFlag
         {
-            get { return ipAddress; }
-            set { ipAddress = value; }
+            get { return errorFlag; }
+            set { errorFlag = value; }
+        }
+        public string Username
+        {
+            get { return userName; }
+            set { userName = value; }
         }
         public FlowState State
         {
             get { return state; }
             set { state = value; }
         }
-        public DispState Status
+        public string Status
         {
             get { return status; }
             set { status = value; }
         }
-        public bool WaitingMsg
+        public bool WaitFlag
         {
-            get { return waitingMsg; }
-            set { waitingMsg = value; }
+            get { return waitFlag; }
+            set { waitFlag = value; }
         }
+
+        #endregion
+
+        #region Public Methods
 
         public ChatClientModel()
         {
-            contactList = new List<Contact>();
-            conversationList = new List<string>();
+            contactList = new List<Contact>() { new Contact("admin", "Admin") };
+            conversationList = new Dictionary<string, List<Contact>>();
             displayName = "";
-            ipAddress = "";
+            userName = "";
             state = FlowState.Entry;
-            status = DispState.Offline;
-            waitingMsg = false;
+            status = "Offline";
+            waitFlag = false;
         }
+
+        #endregion
     }
 }

@@ -1,4 +1,4 @@
-<login dispName="admin" ip="120.0.0.1:8001">
+<login dispName="admin">
 <content>
 <!-- JSON string goes in here so the client can build it's copy -->
 [DataContract]

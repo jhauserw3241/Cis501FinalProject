@@ -9,6 +9,7 @@ leave - user leaving chat
 crConv - user creates new conversation
 addPa - add participant to conversation
 msg - sending a message
+status - changing the display status for the user
 
 tags: <a="">
 
@@ -19,6 +20,7 @@ ip
 to
 from
 error
+state
 
 Elements: <a></a>
 
