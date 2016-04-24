@@ -39,12 +39,6 @@ namespace xmlUsage
                             case XmlNodeType.Text: //Display the text in each element.
                                 output.Append("\t" + reader.Value + Environment.NewLine);
                                 break;
-                            case XmlNodeType.EndElement: //Display the end of the element.
-                                output.Append(reader.Name + ":" + Environment.NewLine);
-
-                                while (reader.MoveToNextAttribute()) // Read the attributes.
-                                    output.Append("\t" + reader.Name + " = " + reader.Value + Environment.NewLine);
-                                break;
                         }
                     }
 

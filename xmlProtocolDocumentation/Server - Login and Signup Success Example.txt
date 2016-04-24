@@ -1,4 +1,5 @@
-<login dispName="admin">
+<!-- action = login or sign (Depending on appropriate action) -->
+<action dispName="Admin">
 <content>
 <!-- JSON string goes in here so the client can build it's copy -->
 [DataContract]

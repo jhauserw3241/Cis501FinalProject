@@ -11,7 +11,7 @@ namespace FinalProjectChatClient
         #region Fields
 
         private List<Contact> contactList;
-        private Dictionary<string, List<Contact>> conversationList;
+        private Dictionary<string, List<string>> conversationList;
         private string displayName;
         private bool errorFlag;
         private string userName;
@@ -28,7 +28,7 @@ namespace FinalProjectChatClient
             get { return contactList; }
             set { contactList = value; }
         }
-        public Dictionary<string, List<Contact>> ConversationList
+        public Dictionary<string, List<string>> ConversationList
         {
             get { return conversationList; }
             private set { conversationList = value; }
@@ -71,7 +71,7 @@ namespace FinalProjectChatClient
         public ChatClientModel()
         {
             contactList = new List<Contact>() { new Contact("admin", "Admin") };
-            conversationList = new Dictionary<string, List<Contact>>();
+            conversationList = new Dictionary<string, List<string>>();
             displayName = "";
             userName = "";
             state = FlowState.Entry;

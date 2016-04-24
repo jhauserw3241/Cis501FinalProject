@@ -1,0 +1,4 @@
+<!-- The message that each participant receives contains everyone else in the conversation  -->
+<udConv dispName="Conv_Name">
+<addPa username="newUser420" />
+</udConv>

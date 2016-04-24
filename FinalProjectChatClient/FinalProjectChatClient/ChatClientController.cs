@@ -73,7 +73,7 @@ namespace FinalProjectChatClient
         /// <param name="action">The action the form is trying to perform.</param>
         public void HandleFormInput(string action, params object[] vars)
         {
-            List<Contact> party;
+            List<string> party;
             Contact participant;
             TabPage page;
             string name;
@@ -101,7 +101,7 @@ namespace FinalProjectChatClient
                 case "CreateConv":
                     name = (string)vars[0];
                     // Only get those members who are explicity not online
-                    party = ((List<Contact>)vars[1]).Where(x => !x.Status.Equals("Offline")).ToList();
+                    party = ((List<Contact>)vars[1]).Where(x => !x.Status.Equals("Offline")).Select(x => x.Username).ToList();
 
                     CreateConversation(name, party);
                     break;
@@ -116,7 +116,7 @@ namespace FinalProjectChatClient
                     name = (string)vars[0];
                     participant = clientModel.ContactList.Find(x => x.Username.Equals((string)vars[1]));
 
-                    if (participant != null) AddConvParticipant(name, participant);
+                    if (participant != null) AddConvParticipant(name, participant.Username);
                     else
                     {
                         ChatClientForm.ShowError("Username does not exist.");
@@ -154,7 +154,10 @@ namespace FinalProjectChatClient
                     case DialogResult.Yes:
                         clientModel.State = FlowState.Access;
                         LoginAction();
-                        while (clientModel.WaitFlag) { }
+                        while (clientModel.WaitFlag)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
@@ -165,7 +168,10 @@ namespace FinalProjectChatClient
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
                         SignupAction();
-                        while (clientModel.WaitFlag) { }
+                        while (clientModel.WaitFlag)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = signupForm.Username;
@@ -184,12 +190,12 @@ namespace FinalProjectChatClient
         /// </summary>
         public void HandleMessage(object sender, MessageEventArgs e)
         {
-            Dictionary<string, string> mssg = ReadXML(e.Data);
+            Dictionary<string, object> mssg = ReadXML(e.Data);
 
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
 
-            switch (mssg["action"])
+            switch ((string)mssg["action"])
             {
                 case "sign":
                 case "login":
@@ -201,14 +207,15 @@ namespace FinalProjectChatClient
                 case "rmCont":
                     HandleRemContactMessage(mssg);
                     break;
-                case "leave":
-                    HandleLeaveConvMessage(mssg);
-                    break;
-                case "crConv":
-                    HandleConvCreateMessage(mssg);
-                    break;
-                case "addPa":
-                    HandleParticipantMessage(mssg);
+                case "udConv":
+                    if (mssg.ContainsKey("addPa"))
+                    {
+                        HandleParticipantMessage(mssg);
+                    }
+                    else if (mssg.ContainsKey("leave"))
+                    {
+                        HandleLeaveConvMessage(mssg);
+                    }
                     break;
                 case "udCont":
                     if (mssg.ContainsKey("state"))
@@ -226,7 +233,7 @@ namespace FinalProjectChatClient
                 default:
                     if (mssg.ContainsKey("error"))
                     {
-                        ChatClientForm.ShowError(mssg["error"]);
+                        ChatClientForm.ShowError((string)mssg["error"]);
                         clientModel.ErrorFlag = true;
                     }
                     break;
@@ -242,12 +249,15 @@ namespace FinalProjectChatClient
         /// </summary>
         /// <param name="name">The conversation name.</param>
         /// <param name="participant">The participant to add.</param>
-        private void AddConvParticipant(string name, Contact participant)
+        private void AddConvParticipant(string name, string participant)
         {
-            ws.Send(String.Format("<addPa username=\"{0}\" to=\"{1}\" />", participant.Username, name));
+            ws.Send(String.Format("<udCont dispName=\"{0}\"><addPa username=\"{1}\" /></udCont>", name, participant));
             // Wait for a response from the server
             clientModel.WaitFlag = true;
-            while (clientModel.WaitFlag) { }
+            while (clientModel.WaitFlag)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
             // If there was no error, add participant to client side
             if (!clientModel.ErrorFlag)
             {
@@ -264,53 +274,40 @@ namespace FinalProjectChatClient
         /// </summary>
         /// <param name="name">The name of the conversation group.</param>
         /// <param name="party">The participants in the conversation.</param>
-        private void CreateConversation(string name, List<Contact> party)
+        private void CreateConversation(string name, List<string> party)
         {
-            while (true)
+            StringBuilder send = new StringBuilder("<udConv dispName=\"" + name + "\">");
+            
+            // Make sure there are actually people in the conversation
+            if (party.Count > 0)
             {
-                // Make sure there are actually people in the conversation
-                if (party.Count > 0)
+                // Build message to send
+                for (int i = 0; i < party.Count; i++)
                 {
-                    // Send initial request to server
-                    ws.Send(String.Format("<crConv from=\"{0}\" to=\"{1}\"><content>{2}</content></crConv>", clientModel.Username, party[0].Username, name));
-                    // Wait for a response from the server
-                    clientModel.WaitFlag = true;
-                    while (clientModel.WaitFlag) { }
-                    // Make sure there were no errors
-                    if (!clientModel.ErrorFlag)
-                    {
-                        // Add other member if there are some
-                        for (int i = 1; i < party.Count; i++)
-                        {
-                            ws.Send(String.Format("<addPa username=\"{0}\" to=\"{1}\" />", party[i].Username, name));
-                            // Wait for a response from the server
-                            clientModel.WaitFlag = true;
-                            while (clientModel.WaitFlag) { }
-                            // If there was an error, remove that participant from the list and move on
-                            if (clientModel.ErrorFlag)
-                            {
-                                party.RemoveAt(i);
-                                clientModel.ErrorFlag = false;
-                            }
-                        }
-                        // Update Client Side and leave loop
-                        clientModel.ConversationList.Add(name, party);
-                        if (Output != null) Output("CreateConv", name);
-                        break;
-                    }
-                    // If there was an error, then remove the first contact and try to initialize the conversation with the next person
-                    else
-                    {
-                        party.RemoveAt(0);
-                        clientModel.ErrorFlag = false;
-                    }
+                    send.Append("<addPa username=\"" + party[i] + "\" />");
                 }
-                // If the party is empty, then show an error and leave the loop
-                else
+                send.Append("</udConv>");
+
+                // Send initial request to server
+                ws.Send(send.ToString());
+                // Wait for a response from the server
+                clientModel.WaitFlag = true;
+                while (clientModel.WaitFlag)
                 {
-                    ChatClientForm.ShowError("There was no one else in the conversation!");
-                    break;
+                    System.Threading.Thread.Sleep(1000);
                 }
+                // Make sure there were no errors
+                if (!clientModel.ErrorFlag)
+                {
+                    // Update Client Side and leave loop
+                    clientModel.ConversationList.Add(name, party);
+                    if (Output != null) Output("CreateConv", name);
+                }
+            }
+            // If the party is empty, then show an error and leave the loop
+            else
+            {
+                ChatClientForm.ShowError("There was no one else in the conversation!");
             }
         }
 
@@ -328,17 +325,17 @@ namespace FinalProjectChatClient
         /// Handles messages from the server containing information about signing up or logging in.
         /// </summary>
         /// <param name="mssg">The dictionary of keywords and their values.</param>
-        private void HandleAccessMessage(Dictionary<string, string> mssg)
+        private void HandleAccessMessage(Dictionary<string, object> mssg)
         {
             if (mssg.ContainsKey("error"))
             {
-                ChatClientForm.ShowError(mssg["error"]);
+                ChatClientForm.ShowError((string)mssg["error"]);
             }
             else
             {
                 DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
-                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
-                clientModel.DisplayName = mssg["dispName"];
+                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes((string)mssg["content"])));
+                clientModel.DisplayName = (string)mssg["dispName"];
                 clientModel.State = FlowState.Main;
                 clientModel.Status = "Online";
                 if (Output != null)
@@ -353,16 +350,16 @@ namespace FinalProjectChatClient
         /// Adds the provided contact to the contact list, or diplays an error.
         /// </summary>
         /// <param name="mssg">The content of this message.</param>
-        private void HandleAddContactMessage(Dictionary<string, string> mssg)
+        private void HandleAddContactMessage(Dictionary<string, object> mssg)
         {
             if (mssg.ContainsKey("error"))
             {
-                ChatClientForm.ShowError(mssg["error"]);
+                ChatClientForm.ShowError((string)mssg["error"]);
             }
             else
             {
                 DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(Contact));
-                Contact cont = (Contact)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
+                Contact cont = (Contact)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes((string)mssg["content"])));
                 if (cont != null)
                 {
                     clientModel.ContactList.Add(cont);
@@ -375,55 +372,34 @@ namespace FinalProjectChatClient
         /// Handles messages from the server containing chatlogs.
         /// </summary>
         /// <param name="mssg">The dictionary of keywords and their values.</param>
-        private void HandleChatMessage(Dictionary<string, string> mssg)
+        private void HandleChatMessage(Dictionary<string, object> mssg)
         {
             Output("Message", mssg["from"], mssg["content"]);
-        }
-
-        /// <summary>
-        /// Either tells the client that another user is starting a conversation with them, or informs the client of an error in their creation attempt.
-        /// </summary>
-        /// <param name="mssg">The contents of the message.</param>
-        private void HandleConvCreateMessage(Dictionary<string, string> mssg)
-        {
-            if (mssg.ContainsKey("error"))
-            {
-                ChatClientForm.ShowError(mssg["error"]);
-                clientModel.ErrorFlag = true;
-            }
-            else
-            {
-                Contact initiator = clientModel.ContactList.Find(x => x.Username.Equals(mssg["from"]));
-                string name = mssg["to"];
-
-                clientModel.ConversationList.Add(name, new List<Contact> { initiator });
-                if (Output != null) Output("CreateConv", name);
-            }
         }
 
         /// <summary>
         /// Handles when someone leaves the conversation.
         /// </summary>
         /// <param name="mssg">Who left what conversation.</param>
-        private void HandleLeaveConvMessage(Dictionary<string, string> mssg)
+        private void HandleLeaveConvMessage(Dictionary<string, object> mssg)
         {
-            List<Contact> conv = clientModel.ConversationList[mssg["from"]];
-            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+            List<string> conv = clientModel.ConversationList[(string)mssg["dispName"]];
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(((Dictionary<string, List<string>>)mssg["leave"])["username"][0]));
 
-            conv.Remove(cont);
-            Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
+            conv.Remove(cont.Username);
+            Output("Message", mssg["dispName"], String.Format("{0} has left the conversation.", cont.DisplayName));
         }
 
         /// <summary>
         /// Updates the display name of a user in the conacts.
         /// </summary>
         /// <param name="mssg">The new name of the other user.</param>
-        private void HandleNameChangeMessage(Dictionary<string, string> mssg)
+        private void HandleNameChangeMessage(Dictionary<string, object> mssg)
         {
-            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["username"]));
             if (cont != null)
             {
-                cont.DisplayName = mssg["dispName"];
+                cont.DisplayName = (string)mssg["dispName"];
             }
         }
 
@@ -431,25 +407,27 @@ namespace FinalProjectChatClient
         /// Either adds a particpant to a conversation or informs the user of an error in adding a paricipant.
         /// </summary>
         /// <param name="mssg">The contents of this message.</param>
-        private void HandleParticipantMessage(Dictionary<string, string> mssg)
+        private void HandleParticipantMessage(Dictionary<string, object> mssg)
         {
-            if (mssg.ContainsKey("error"))
+            Dictionary<string, List<string>> content = (Dictionary<string, List<string>>)mssg["addPa"];
+
+            if (content.ContainsKey("error"))
             {
-                ChatClientForm.ShowError(mssg["error"]);
+                ChatClientForm.ShowError(content["error"][0]);
                 clientModel.ErrorFlag = true;
             }
             else
             {
-                Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(mssg["from"]));
-                string name = mssg["to"];
+                List<string> participants = content["username"];
+                string name = (string)mssg["dispName"];
 
                 if (clientModel.ConversationList.ContainsKey(name))
                 {
-                    clientModel.ConversationList[name].Add(participant);
+                    clientModel.ConversationList[name].AddRange(participants);
                 }
                 else
                 {
-                    clientModel.ConversationList.Add(name, new List<Contact> { participant });
+                    clientModel.ConversationList.Add(name, participants);
                     if (Output != null) Output("CreateConv", name);
                 }
             }
@@ -459,7 +437,7 @@ namespace FinalProjectChatClient
         /// Removes the contact provided by the server.
         /// </summary>
         /// <param name="mssg">The contact to remove.</param>
-        private void HandleRemContactMessage(Dictionary<string, string> mssg)
+        private void HandleRemContactMessage(Dictionary<string, object> mssg)
         {
             Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
 
@@ -474,20 +452,21 @@ namespace FinalProjectChatClient
         /// Updates the status of a user in the conacts.
         /// </summary>
         /// <param name="mssg">The status of the other user.</param>
-        private void HandleStatusChangeMessage(Dictionary<string, string> mssg)
+        private void HandleStatusChangeMessage(Dictionary<string, object> mssg)
         {
-            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["username"]));
+
             if (cont != null)
             {
-                cont.Status = mssg["state"];
+                cont.Status = (string)mssg["state"];
 
                 if (mssg["state"].Equals("Offline"))
                 {
-                    foreach (KeyValuePair<string, List<Contact>> conv in clientModel.ConversationList)
+                    foreach (KeyValuePair<string, List<string>> conv in clientModel.ConversationList)
                     {
-                        if (conv.Value.Contains(cont))
+                        if (conv.Value.Contains(cont.Username))
                         {
-                            conv.Value.Remove(cont);
+                            conv.Value.Remove(cont.Username);
                             Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
                         }
                     }
@@ -543,9 +522,9 @@ namespace FinalProjectChatClient
         /// </summary>
         /// <param name="xml">The xml string to parse.</param>
         /// <returns>A dictionary containing keywords and their corresponding values.</returns>
-        private Dictionary<string, string> ReadXML(string xml)
+        private Dictionary<string, object> ReadXML(string xml)
         {
-            Dictionary<string, string> rtrn = new Dictionary<string, string>();
+            Dictionary<string, object> rtrn = new Dictionary<string, object>();
             XmlDocument message = new XmlDocument();
             string key = "";
 
@@ -555,33 +534,61 @@ namespace FinalProjectChatClient
                 switch (node.NodeType)
                 {
                     case XmlNodeType.Element: // The node is an element.
-                        if (node.Attributes.Count > 0)
+                        if (key.Equals("udConv"))
                         {
-                            rtrn.Add("action", node.Name);
-
-                            foreach (XmlAttribute attr in node.Attributes)
+                            // Get update action
+                            if (node.Attributes.Count > 0)
                             {
-                                rtrn.Add(attr.Name, attr.Value);
+                                // Make a new list if it doesn't already exist
+                                if (!rtrn.ContainsKey(node.Name))
+                                    rtrn.Add(node.Name, new Dictionary<string, List<string>>());
+
+                                // Add value to list
+                                foreach (XmlAttribute attr in node.Attributes)
+                                {
+                                    if (!((Dictionary<string, List<string>>)rtrn[node.Name]).ContainsKey(attr.Name))
+                                    {
+                                        ((Dictionary<string, List<string>>)rtrn[node.Name]).Add(attr.Name, new List<string>() { attr.Value });
+                                    }
+                                    else
+                                    {
+                                        ((Dictionary<string, List<string>>)rtrn[node.Name])[attr.Name].Add(attr.Value);
+                                    }
+                                }
+                            }
+                            // or some kind of content region
+                            else
+                            {
+                                key = node.Name;
                             }
                         }
                         else
                         {
-                            key = node.Name;
+                            // If it isn't inside a udConv element then it's a regular action
+                            if (node.Attributes.Count > 0)
+                            {
+                                // Determine action from element name
+                                rtrn.Add("action", node.Name);
+                                // Fill out other info from attributes
+                                foreach (XmlAttribute attr in node.Attributes)
+                                {
+                                    rtrn.Add(attr.Name, attr.Value);
+                                }
+                                // If the action is to update a conversation
+                                if (node.Name.Equals("udConv"))
+                                {
+                                    key = "udConv";
+                                }
+                            }
+                            // or some kind of content region
+                            else
+                            {
+                                key = node.Name;
+                            }
                         }
                         break;
                     case XmlNodeType.Text:
                         rtrn.Add(key, node.Value);
-                        break;
-                    case XmlNodeType.EndElement: //Display the end of the element.
-                        if (node.Attributes.Count > 0)
-                        {
-                            rtrn.Add("action", node.Name);
-
-                            foreach (XmlAttribute attr in node.Attributes)
-                            {
-                                rtrn.Add(attr.Name, attr.Value);
-                            }
-                        }
                         break;
                 }
             }
