@@ -12,6 +12,19 @@ namespace serverChat
         private string currentMessage;
         private List<string> messageHistory;
 
+        // Constructor
+        public ServerConversation()
+        {
+        }
+
+        // Constructor
+        //
+        // @param convName The conversation name
+        public ServerConversation(string convName)
+        {
+            name = convName;
+        }
+
         // Add Message To History
         //
         // Add message to the message history
