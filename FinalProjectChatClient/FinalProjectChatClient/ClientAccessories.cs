@@ -10,7 +10,7 @@ namespace FinalProjectChatClient
 
     public delegate void ClientOutputHandler(string action, params object[] vars);
     
-    public enum DispState { Offline, Online };
+    public enum DispState { Offline, Invisible, Online };
 
     public enum FlowState { Entry, Access, Main, Exit };
 }

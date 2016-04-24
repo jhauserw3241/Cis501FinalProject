@@ -19,7 +19,7 @@ namespace FinalProjectChatClient
         }
         public override string ToString()
         {
-            return DisplayName;
+            return String.Format("{0} : {1} : {2}", DisplayName, Username, (Status == "Online" ? "Online" : "Offline"));
         }
     }
 }

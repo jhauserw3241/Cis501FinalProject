@@ -51,6 +51,37 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
+        /// Creates a new tab to contain a conversation.
+        /// </summary>
+        /// <param name="convName">The name of the conversation and tab.</param>
+        public void CreateConversationTab(string convName)
+        {
+            TabPage newPage = new TabPage();
+            Label newLabel = new Label();
+
+            // Configuring new conversation tab
+            newPage.Controls.Add(newLabel);
+            newPage.Location = new Point(4, 29);
+            newPage.Name = convName;
+            newPage.Padding = new Padding(3);
+            newPage.Size = new Size(447, 271);
+            newPage.TabIndex = tabCount;
+            newPage.Text = convName;
+            newPage.UseVisualStyleBackColor = true;
+
+            // Configuring new text space
+            newLabel.Location = new Point(0, 0);
+            newLabel.Name = convName + "Text";
+            newLabel.Size = new Size(447, 271);
+            newLabel.TabIndex = tabCount;
+            tabCount++;
+
+            // Adding tab and text box to form
+            conversationTabs.Add(new Tuple<TabPage, Label>(newPage, newLabel));
+            conversationTabController.Controls.Add(newPage);
+        }
+
+        /// <summary>
         /// Updates the appropriate portions.
         /// </summary>
         /// <param name="action">What of the form to update.</param>
@@ -82,40 +113,14 @@ namespace FinalProjectChatClient
         /// </summary>
         private void contactsList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            Conversation conv = new Conversation(contactsList.Text, (Contact)contactsList.SelectedItem);
-            CreateConversationTab(contactsList.Text);
-            if (MainInput != null) MainInput("CreateConv", conv);
-        }
+            Contact cont = ((Contact)contactsList.SelectedItem);
+            string name = cont.DisplayName;
 
-        /// <summary>
-        /// Creates a new tab to contain a conversation.
-        /// </summary>
-        /// <param name="convName">The name of the conversation and tab.</param>
-        private void CreateConversationTab(string convName)
-        {
-            TabPage newPage = new TabPage();
-            Label newLabel = new Label();
-
-            // Configuring new conversation tab
-            newPage.Controls.Add(newLabel);
-            newPage.Location = new Point(4, 29);
-            newPage.Name = convName;
-            newPage.Padding = new Padding(3);
-            newPage.Size = new Size(447, 271);
-            newPage.TabIndex = tabCount;
-            newPage.Text = convName;
-            newPage.UseVisualStyleBackColor = true;
-
-            // Configuring new text space
-            newLabel.Location = new Point(0, 0);
-            newLabel.Name = convName + "Text";
-            newLabel.Size = new Size(447, 271);
-            newLabel.TabIndex = tabCount;
-            tabCount++;
-
-            // Adding tab and text box to form
-            conversationTabs.Add(new Tuple<TabPage, Label>(newPage, newLabel));
-            conversationTabController.Controls.Add(newPage);
+            if (!clientModel.ConversationList.ContainsKey(name) && !cont.Status.Equals("Offline"))
+            {
+                if (MainInput != null) MainInput("CreateConv", name, new List<Contact> { (Contact)contactsList.SelectedItem });
+            }
+            else ShowError("Could not create a conversation:\nEither one has already been started, or they are offline.");
         }
 
         /// <summary>
@@ -129,7 +134,7 @@ namespace FinalProjectChatClient
                 {
                     if (conversationTabController.Controls.Count > 0)
                     {
-                        if (MainInput != null) MainInput("Message", conversationTabController.SelectedIndex, messageBox.Text);
+                        if (MainInput != null) MainInput("Message", conversationTabController.SelectedTab.Text, messageBox.Text);
                     }
                     messageBox.Text = String.Empty;
                     e.SuppressKeyPress = true;
@@ -144,8 +149,13 @@ namespace FinalProjectChatClient
         {
             if (createForm.ShowDialog() == DialogResult.OK)
             {
-                    CreateConversationTab(createForm.Name);
-                    if (MainInput != null) MainInput("CreateConv", new Conversation(createForm.Name, createForm.ParticipantListBox.Cast<Contact>().ToArray()));
+                string name = createForm.Name;
+
+                if (!clientModel.ConversationList.ContainsKey(name))
+                {
+                    if (MainInput != null) MainInput("CreateConv", name, createForm.ParticipantListBox.Cast<Contact>().ToList());
+                }
+                else ShowError("This conversation name already exists.");
             }
             createForm.Reset();
         }
