@@ -71,6 +71,24 @@ namespace serverChat
             return messageHistory;
         }
 
+        // Get Participant List
+        //
+        // Get the participant list of the conversation
+        // @return a string list containing the usernames of the paricipants
+        public List<string> GetParicipantList()
+        {
+            return participants;
+        }
+
+        // Remove Participant
+        //
+        // Remove a participant to the conversation
+        // @param username The username of the user to remove
+        public void RemoveParicipant(string username)
+        {
+            participants.Remove(username);
+        }
+
         // Set Conversation Name
         //
         // Set the conversation name
@@ -88,32 +106,5 @@ namespace serverChat
         {
             currentMessage = message;
         }
-
-        public void addParticipant(ServerUser participant)
-        {
-            participants.Add(participant);
-        }
-
-        public void clearHistory()
-        {
-            messageHistory.Clear();
-        }
-
-        public void deleteConversation()
-        {
-            
-        }
-
-        public void leave(ServerUser user)
-        {
-            participants.Remove(user);
-        }
-
-        public void sendMessage(string message)
-        {
-            messageHistory.Add(message);
-            currentMessage = message;
-        }
-
     }
 }
