@@ -26,6 +26,10 @@ namespace FinalProjectChatClient
         private ToolStripMenuItem profileMenu;
         private ToolStripMenuItem profileStatusMenu;
         private ToolStripMenuItem removeContactOption;
+        private ToolStripTextBox addContactTextBox;
+        private ToolStripTextBox removeContactTextBox;
+        private ToolStripMenuItem addParticipantOption;
+        private ToolStripTextBox addParticipantTextBox;
 
         public ToolStripStatusLabel ConnectionStatus
         {
@@ -93,13 +97,17 @@ namespace FinalProjectChatClient
             this.logoutProfileOption = new System.Windows.Forms.ToolStripMenuItem();
             this.contactsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.addContactOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.addContactTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.removeContactOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeContactTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.conversationMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.createConversationOption = new System.Windows.Forms.ToolStripMenuItem();
             this.leaveConversationOption = new System.Windows.Forms.ToolStripMenuItem();
             this.contactsList = new System.Windows.Forms.ListBox();
             this.conversationTabController = new System.Windows.Forms.TabControl();
             this.messageBox = new System.Windows.Forms.TextBox();
+            this.addParticipantOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.addParticipantTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.infoStrip.SuspendLayout();
             this.mainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -188,20 +196,35 @@ namespace FinalProjectChatClient
             // 
             // addContactOption
             // 
+            this.addContactOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addContactTextBox});
             this.addContactOption.Name = "addContactOption";
-            this.addContactOption.Size = new System.Drawing.Size(173, 30);
+            this.addContactOption.Size = new System.Drawing.Size(211, 30);
             this.addContactOption.Text = "Add...";
+            // 
+            // addContactTextBox
+            // 
+            this.addContactTextBox.Name = "addContactTextBox";
+            this.addContactTextBox.Size = new System.Drawing.Size(100, 31);
             // 
             // removeContactOption
             // 
+            this.removeContactOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeContactTextBox});
             this.removeContactOption.Name = "removeContactOption";
-            this.removeContactOption.Size = new System.Drawing.Size(173, 30);
+            this.removeContactOption.Size = new System.Drawing.Size(211, 30);
             this.removeContactOption.Text = "Remove...";
+            // 
+            // removeContactTextBox
+            // 
+            this.removeContactTextBox.Name = "removeContactTextBox";
+            this.removeContactTextBox.Size = new System.Drawing.Size(100, 31);
             // 
             // conversationMenu
             // 
             this.conversationMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createConversationOption,
+            this.addParticipantOption,
             this.leaveConversationOption});
             this.conversationMenu.Name = "conversationMenu";
             this.conversationMenu.Size = new System.Drawing.Size(128, 29);
@@ -210,13 +233,14 @@ namespace FinalProjectChatClient
             // createConversationOption
             // 
             this.createConversationOption.Name = "createConversationOption";
-            this.createConversationOption.Size = new System.Drawing.Size(159, 30);
+            this.createConversationOption.Size = new System.Drawing.Size(211, 30);
             this.createConversationOption.Text = "Create...";
+            this.createConversationOption.Click += new System.EventHandler(this.createConversationOption_Click);
             // 
             // leaveConversationOption
             // 
             this.leaveConversationOption.Name = "leaveConversationOption";
-            this.leaveConversationOption.Size = new System.Drawing.Size(159, 30);
+            this.leaveConversationOption.Size = new System.Drawing.Size(211, 30);
             this.leaveConversationOption.Text = "Leave...";
             // 
             // contactsList
@@ -245,6 +269,19 @@ namespace FinalProjectChatClient
             this.messageBox.Size = new System.Drawing.Size(455, 104);
             this.messageBox.TabIndex = 4;
             this.messageBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.messageBox_KeyDown);
+            // 
+            // addParticipantOption
+            // 
+            this.addParticipantOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addParticipantTextBox});
+            this.addParticipantOption.Name = "addParticipantOption";
+            this.addParticipantOption.Size = new System.Drawing.Size(211, 30);
+            this.addParticipantOption.Text = "Add";
+            // 
+            // addParticipantTextBox
+            // 
+            this.addParticipantTextBox.Name = "addParticipantTextBox";
+            this.addParticipantTextBox.Size = new System.Drawing.Size(100, 31);
             // 
             // ChatClientForm
             // 

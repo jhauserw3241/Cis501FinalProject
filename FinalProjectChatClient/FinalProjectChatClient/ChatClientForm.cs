@@ -12,25 +12,79 @@ namespace FinalProjectChatClient
 {
     public partial class ChatClientForm : Form
     {
-        private ChatClientModel clientModel;
-        private int tabCount = 5;
-        
-        public event ClientInputHandler Input;
+        #region Fields
 
-        public ChatClientForm(ChatClientModel model)
+        private ChatClientModel clientModel;
+        private ConvCreatePopUp createForm;
+        private int tabCount = 5;
+
+        #endregion
+
+        #region Properties
+
+        public ConvCreatePopUp CreateForm
+        {
+            set { createForm = value; }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event ClientInputHandler MainInput;
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Creates a new instance of a chat client form.
+        /// </summary>
+        /// <param name="model">The model from which most client side information is pulled.</param>
+        public ChatClientForm(ChatClientModel model, ConvCreatePopUp create)
         {
             InitializeComponent();
             clientModel = model;
+            createForm = create;
             conversationTabs = new List<Tuple<TabPage, Label>>();
-            contactsList.Items.Add("admin");
+            contactsList.Items.Add(new Contact("admin", "Admin"));
         }
-        
+
+        /// <summary>
+        /// Updates the appropriate portions.
+        /// </summary>
+        /// <param name="action">What of the form to update.</param>
+        public void HandleFormOutput(string action, params object[] vars)
+        {
+            switch (action)
+            {
+                case "Message":
+                    ((Label)conversationTabController.TabPages[(int)vars[0]].Controls[0]).Text += (string)vars[1];
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Displays the provided error message.
+        /// </summary>
+        /// <param name="text">Detail of what error occured.</param>
+        public static void ShowError(string text)
+        {
+            System.Windows.Forms.MessageBox.Show(text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        #endregion
+
+        #region Private Methods
+
         /// <summary>
         /// Creates a new conversation with the contact selected.
         /// </summary>
         private void contactsList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            Conversation conv = new Conversation(contactsList.Text, (Contact)contactsList.SelectedItem);
             CreateConversationTab(contactsList.Text);
+            if (MainInput != null) MainInput("CreateConv", conv);
         }
 
         /// <summary>
@@ -65,20 +119,6 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
-        /// Updates the appropriate portions.
-        /// </summary>
-        /// <param name="action">What of the form to update.</param>
-        public void HandleFormOutput(FormOutput action, params object[] vars)
-        {
-            switch (action)
-            {
-                case FormOutput.Message:
-                    ((Label)conversationTabController.TabPages[(int)vars[0]].Controls[0]).Text += (string)vars[1];
-                    break;
-            }
-        }
-
-        /// <summary>
         /// Checks to see if the user is attempting to submit a message.
         /// </summary>
         private void messageBox_KeyDown(object sender, KeyEventArgs e)
@@ -89,8 +129,7 @@ namespace FinalProjectChatClient
                 {
                     if (conversationTabController.Controls.Count > 0)
                     {
-                        // ((Label)conversationTabController.SelectedTab.Controls[0]).Text += messageBox.Text + Environment.NewLine;
-                        Input(FormInput.Message, conversationTabController.SelectedIndex, messageBox.Text);
+                        if (MainInput != null) MainInput("Message", conversationTabController.SelectedIndex, messageBox.Text);
                     }
                     messageBox.Text = String.Empty;
                     e.SuppressKeyPress = true;
@@ -99,12 +138,18 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
-        /// Displays the provided error message.
+        /// Creates a conversation with the possibilty of initializing multiple participants.
         /// </summary>
-        /// <param name="text">Detail of what error occured.</param>
-        public void ShowError(string text)
+        private void createConversationOption_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show(text, "Signup Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (createForm.ShowDialog() == DialogResult.OK)
+            {
+                    CreateConversationTab(createForm.Name);
+                    if (MainInput != null) MainInput("CreateConv", new Conversation(createForm.Name, createForm.ParticipantListBox.Cast<Contact>().ToArray()));
+            }
+            createForm.Reset();
         }
+
+        #endregion
     }
 }

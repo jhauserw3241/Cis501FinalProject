@@ -8,6 +8,8 @@ namespace FinalProjectChatClient
 {
     public class ChatClientModel
     {
+        #region Fields
+
         private List<Contact> contactList;
         private List<string> conversationList;
         private string displayName;
@@ -15,6 +17,10 @@ namespace FinalProjectChatClient
         private FlowState state;
         private DispState status;
         private bool waitingMsg;
+
+        #endregion
+
+        #region Properties
 
         public List<Contact> ContactList
         {
@@ -52,6 +58,10 @@ namespace FinalProjectChatClient
             set { waitingMsg = value; }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public ChatClientModel()
         {
             contactList = new List<Contact>();
@@ -62,5 +72,7 @@ namespace FinalProjectChatClient
             status = DispState.Offline;
             waitingMsg = false;
         }
+
+        #endregion
     }
 }

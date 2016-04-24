@@ -14,6 +14,8 @@ namespace FinalProjectChatClient
 {
     class ChatClientController
     {
+        #region Fields
+
         private ChatClientForm clientForm;
         private ChatClientModel clientModel;
         private EntryPopUp entryForm;
@@ -21,8 +23,13 @@ namespace FinalProjectChatClient
         private SignupPopUp signupForm;
         private WebSocket ws;
 
+        #endregion
+
+        #region Properties
+
         public ChatClientForm ClientForm
         {
+            get { return clientForm; }
             set { clientForm = value; }
         }
         public EntryPopUp EntryForm
@@ -33,11 +40,20 @@ namespace FinalProjectChatClient
         {
             set { loginForm = value; }
         }
-        public event ClientOutputHandler Output;
         public SignupPopUp SignupForm
         {
             set { signupForm = value; }
         }
+
+        #endregion
+
+        #region Events
+
+        public event ClientOutputHandler Output;
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Constructor for the ChatClientController.
@@ -50,66 +66,26 @@ namespace FinalProjectChatClient
             ws.OnMessage += HandleMessage;
             ws.Connect();
         }
-        
-        /// <summary>
-        /// Returns the message in proper chat formating.
-        /// </summary>
-        /// <param name="msg">The content of the message.</param>
-        /// <returns></returns>
-        private string FormatForChat(string msg)
-        {
-            return String.Format("[{0:MM/dd/yyyy hh:mm:sstt}] {1}: {2}{3}", DateTime.Now, clientModel.DisplayName, msg, Environment.NewLine);
-        }
-
-        /// <summary>
-        /// Handles messages from the server containing information about signing up or logging in.
-        /// </summary>
-        /// <param name="mssg">The dictionary of keywords and their values.</param>
-        private void HandleAccessMessage(Dictionary<string, string> mssg)
-        {
-            if (mssg.ContainsKey("error"))
-            {
-                clientForm.ShowError(mssg["error"]);
-            }
-            else
-            {
-                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
-                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
-                clientModel.DisplayName = mssg["dispName"];
-                clientModel.IPAddress = mssg["ip"];
-                clientModel.State = FlowState.Main;
-                clientModel.Status = DispState.Online;
-            }
-        }
-
-        /// <summary>
-        /// Handles messages from the server containing chatlogs.
-        /// </summary>
-        /// <param name="mssg">The dictionary of keywords and their values.</param>
-        private void HandleChatMessage(Dictionary<string, string> mssg)
-        {
-            Output(FormOutput.Message, clientModel.ConversationList.IndexOf(mssg["from"]), mssg["content"]);
-        }
 
         /// <summary>
         /// Delegates input from the form to various methods.
         /// </summary>
         /// <param name="action">The action the form is trying to perform.</param>
-        public void HandleFormInput(FormInput action, params object[] vars)
+        public void HandleFormInput(string action, params object[] vars)
         {
             switch (action)
             {
-                case FormInput.AddCont:
+                case "AddCont":
                     break;
-                case FormInput.RemoveCont:
+                case "RemoveCont":
                     break;
-                case FormInput.CreateConv:
+                case "CreateConv":
                     break;
-                case FormInput.LeaveCont:
+                case "LeaveCont":
                     break;
-                case FormInput.AddPart:
+                case "AddPart":
                     break;
-                case FormInput.Message:
+                case "Message":
                     ws.Send(String.Format("<msg from=\"{0}\" to=\"{1}\"><content>{2}</content></msg>", clientModel.IPAddress, clientModel.ConversationList[(int)vars[0]], FormatForChat((string)vars[1])));
                     break;
             }
@@ -183,6 +159,50 @@ namespace FinalProjectChatClient
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Returns the message in proper chat formating.
+        /// </summary>
+        /// <param name="msg">The content of the message.</param>
+        /// <returns></returns>
+        private string FormatForChat(string msg)
+        {
+            return String.Format("[{0:MM/dd/yyyy hh:mm:sstt}] {1}: {2}{3}", DateTime.Now, clientModel.DisplayName, msg, Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Handles messages from the server containing information about signing up or logging in.
+        /// </summary>
+        /// <param name="mssg">The dictionary of keywords and their values.</param>
+        private void HandleAccessMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+                ChatClientForm.ShowError(mssg["error"]);
+            }
+            else
+            {
+                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
+                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
+                clientModel.DisplayName = mssg["dispName"];
+                clientModel.IPAddress = mssg["ip"];
+                clientModel.State = FlowState.Main;
+                clientModel.Status = DispState.Online;
+            }
+        }
+
+        /// <summary>
+        /// Handles messages from the server containing chatlogs.
+        /// </summary>
+        /// <param name="mssg">The dictionary of keywords and their values.</param>
+        private void HandleChatMessage(Dictionary<string, string> mssg)
+        {
+            Output("Message", clientModel.ConversationList.IndexOf(mssg["from"]), mssg["content"]);
+        }
+
         /// <summary>
         /// Displays and interprets info from a login popup.
         /// </summary>
@@ -201,12 +221,12 @@ namespace FinalProjectChatClient
                         }
                         else
                         {
-                            clientForm.ShowError("The password cannot be empty.");
+                            ChatClientForm.ShowError("The password cannot be empty.");
                         }
                     }
                     else
                     {
-                        clientForm.ShowError("The username cannot be empty.");
+                        ChatClientForm.ShowError("The username cannot be empty.");
                     }
                     break;
                 case DialogResult.Cancel:
@@ -288,17 +308,17 @@ namespace FinalProjectChatClient
                             }
                             else
                             {
-                                clientForm.ShowError("The passwords do not match.");
+                                ChatClientForm.ShowError("The passwords do not match.");
                             }
                         }
                         else
                         {
-                            clientForm.ShowError("The password cannot be empty.");
+                            ChatClientForm.ShowError("The password cannot be empty.");
                         }
                     }
                     else
                     {
-                        clientForm.ShowError("The username cannot be empty.");
+                        ChatClientForm.ShowError("The username cannot be empty.");
                     }
                     break;
                 case DialogResult.Cancel:
@@ -314,5 +334,7 @@ namespace FinalProjectChatClient
         {
             ws.Close();
         }
+
+        #endregion
     }
 }

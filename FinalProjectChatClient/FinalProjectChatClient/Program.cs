@@ -18,18 +18,32 @@ namespace FinalProjectChatClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // Create model shared by major components
             ChatClientModel clientModel = new ChatClientModel();
+
+            // Create controller for conversation creation form
+            ConvCreateController convCreate = new ConvCreateController(clientModel);
+            // Create and add form to controllers
+            convCreate.PopUp = new ConvCreatePopUp();
+
+            // Create central controller
             ChatClientController clientController = new ChatClientController(clientModel);
-            ChatClientForm clientForm = new ChatClientForm(clientModel);
-            clientForm.Load += clientController.HandleLoadIn;
-            clientForm.Input += clientController.HandleFormInput;
-            clientController.ClientForm = clientForm;
-            clientController.Output += clientForm.HandleFormOutput;
+            // Create and add forms to controller
+            clientController.ClientForm = new ChatClientForm(clientModel, convCreate.PopUp);
             clientController.EntryForm = new EntryPopUp();
             clientController.LoginForm = new LoginPopUp();
             clientController.SignupForm = new SignupPopUp();
 
-            Application.Run(clientForm);
+            // Add output handler from main form to central controller
+            clientController.Output += clientController.ClientForm.HandleFormOutput;
+            // Add start-up handler from central controller to main form
+            clientController.ClientForm.Load += clientController.HandleLoadIn;
+            // Add input handler from central controller to main form
+            clientController.ClientForm.MainInput += clientController.HandleFormInput;
+            // Add input handler from conversation creation controller to conversation creation form
+            convCreate.PopUp.CreationInput += convCreate.HandleFormInput;
+
+            Application.Run(clientController.ClientForm);
         }
     }
 }
