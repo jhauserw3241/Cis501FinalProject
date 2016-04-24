@@ -167,11 +167,13 @@ namespace serverChat
             status = online;
         }
 
-        public void setPassword(string password)
+        // Set Password
+        //
+        // Set the password for the current user
+        // @param pass A string containing the password for the current user
+        public void SetPassword(string pass)
         {
-            this.password = password;
+            password = pass;
         }
-
-
     }
 }
