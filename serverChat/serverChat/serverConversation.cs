@@ -88,5 +88,32 @@ namespace serverChat
         {
             currentMessage = message;
         }
+
+        public void addParticipant(ServerUser participant)
+        {
+            participants.Add(participant);
+        }
+
+        public void clearHistory()
+        {
+            messageHistory.Clear();
+        }
+
+        public void deleteConversation()
+        {
+            
+        }
+
+        public void leave(ServerUser user)
+        {
+            participants.Remove(user);
+        }
+
+        public void sendMessage(string message)
+        {
+            messageHistory.Add(message);
+            currentMessage = message;
+        }
+
     }
 }

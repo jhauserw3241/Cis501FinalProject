@@ -166,5 +166,12 @@ namespace serverChat
         {
             status = online;
         }
+
+        public void setPassword(string password)
+        {
+            this.password = password;
+        }
+
+
     }
 }
