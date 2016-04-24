@@ -253,6 +253,7 @@ namespace FinalProjectChatClient
             // 
             this.addParticipantTextBox.Name = "addParticipantTextBox";
             this.addParticipantTextBox.Size = new System.Drawing.Size(100, 31);
+            this.addParticipantTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.addParticipantTextBox_KeyDown);
             // 
             // leaveConversationOption
             // 

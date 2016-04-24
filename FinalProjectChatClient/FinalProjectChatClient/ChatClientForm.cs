@@ -131,6 +131,22 @@ namespace FinalProjectChatClient
         #region Private Methods
 
         /// <summary>
+        /// Attempts to add the username provided to the current conversation.
+        /// </summary>
+        private void addParticipantTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (conversationTabController.Controls.Count > 0 && !addContactTextBox.Text.Equals(String.Empty))
+                {
+                    if (MainInput != null) MainInput("AddPart", conversationTabController.SelectedTab.Text, addContactTextBox.Text);
+                }
+                addContactTextBox.Text = String.Empty;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        /// <summary>
         /// Creates a new conversation with the contact selected.
         /// </summary>
         private void contactsList_MouseDoubleClick(object sender, MouseEventArgs e)

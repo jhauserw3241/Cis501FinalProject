@@ -73,6 +73,11 @@ namespace FinalProjectChatClient
         /// <param name="action">The action the form is trying to perform.</param>
         public void HandleFormInput(string action, params object[] vars)
         {
+            List<Contact> party;
+            Contact participant;
+            TabPage page;
+            string name;
+
             switch (action)
             {
                 case "AddCont":
@@ -80,20 +85,28 @@ namespace FinalProjectChatClient
                 case "RemoveCont":
                     break;
                 case "CreateConv":
-                    string name = (string)vars[0];
+                    name = (string)vars[0];
                     // Only get those members who are explicity not online
-                    List<Contact> party = ((List<Contact>)vars[1]).Where(x => !x.Status.Equals("Offline")).ToList();
+                    party = ((List<Contact>)vars[1]).Where(x => !x.Status.Equals("Offline")).ToList();
 
                     CreateConversation(name, party);
                     break;
                 case "LeaveConv":
-                    TabPage page = (TabPage)vars[0];
+                    page = (TabPage)vars[0];
 
                     ws.Send(String.Format("<leave username=\"{0}\" from=\"{1}\" />", clientModel.Username, page.Text));
                     clientModel.ConversationList.Remove(page.Text);
                     clientForm.RemoveConversationTab(page);
                     break;
                 case "AddPart":
+                    name = (string)vars[0];
+                    participant = clientModel.ContactList.Find(x => x.Username.Equals((string)vars[1]));
+
+                    if (participant != null) AddConvParticipant(name, participant);
+                    else
+                    {
+                        ChatClientForm.ShowError("Username does not exist.");
+                    }
                     break;
                 case "ChangeStatus":
                     clientModel.Status = (string)vars[0];
@@ -194,6 +207,24 @@ namespace FinalProjectChatClient
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Attempts to add a participant to a conversation.
+        /// </summary>
+        /// <param name="name">The conversation name.</param>
+        /// <param name="participant">The participant to add.</param>
+        private void AddConvParticipant(string name, Contact participant)
+        {
+            ws.Send(String.Format("<addPa username=\"{0}\" to=\"{1}\" />", participant.Username, name));
+            // Wait for a response from the server
+            clientModel.WaitFlag = true;
+            while (clientModel.WaitFlag) { }
+            // If there was no error, add participant to client side
+            if (!clientModel.ErrorFlag)
+            {
+                clientModel.ConversationList[name].Add(participant);
+            }
+        }
 
         /// <summary>
         /// Attempts to create a conversation with as many of the contacts provided as possible.
