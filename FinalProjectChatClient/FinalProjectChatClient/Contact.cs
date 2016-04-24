@@ -16,6 +16,7 @@ namespace FinalProjectChatClient
         {
             Username = username;
             DisplayName = dispName;
+            Status = "Online";
         }
         public override string ToString()
         {

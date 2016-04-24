@@ -22,9 +22,7 @@ namespace FinalProjectChatClient
             ChatClientModel clientModel = new ChatClientModel();
 
             // Create controller for conversation creation form
-            ConvCreateController convCreate = new ConvCreateController(clientModel);
-            // Create and add form to controllers
-            convCreate.PopUp = new ConvCreatePopUp();
+            ConvCreateController convCreate = new ConvCreateController(clientModel, new ConvCreatePopUp());
 
             // Create central controller
             ChatClientController clientController = new ChatClientController(clientModel);

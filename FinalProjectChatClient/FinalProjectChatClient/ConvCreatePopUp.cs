@@ -39,7 +39,8 @@ namespace FinalProjectChatClient
         /// </summary>
         private void addPartButton_Click(object sender, EventArgs e)
         {
-            if (CreationInput != null) CreationInput("Add", contactListBox.SelectedItem);
+            if (CreationInput != null && contactListBox.SelectedItem != null)
+                CreationInput("Add", contactListBox.SelectedItem);
         }
         /// <summary>
         /// Cancel creating this conversation.
@@ -47,6 +48,15 @@ namespace FinalProjectChatClient
         private void cancelButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+        /// <summary>
+        /// Resets the form every time it is shown.
+        /// </summary>
+        private void ConvCreatePopUp_Shown(object sender, EventArgs e)
+        {
+            convNameTextBox.Text = "";
+            participantListBox.Items.Clear();
+            if (CreationInput != null) CreationInput("Reset");
         }
         /// <summary>
         /// Accept the current state of the form.
@@ -62,17 +72,8 @@ namespace FinalProjectChatClient
         /// </summary>
         private void removePartButton_Click(object sender, EventArgs e)
         {
-            if (CreationInput != null) CreationInput("Remove", participantListBox.SelectedItem);
-        }
-        /// <summary>
-        /// Clears the contents of this form.
-        /// </summary>
-        public void Reset()
-        {
-            convNameTextBox.Text = "";
-            contactListBox.Items.Clear();
-            participantListBox.Items.Clear();
-            if (CreationInput != null) CreationInput("Reset"); 
+            if (CreationInput != null && participantListBox.SelectedItem != null)
+                CreationInput("Remove", participantListBox.SelectedItem);
         }
     }
 }

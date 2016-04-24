@@ -27,6 +27,12 @@ namespace FinalProjectChatClient
             set { createForm = value; }
         }
 
+        public string Status
+        {
+            get { return connectionStatus.Text.Substring(8); }
+            set { connectionStatus.Text = "Status: " + value; }
+        }
+
         #endregion
 
         #region Events
@@ -47,6 +53,7 @@ namespace FinalProjectChatClient
             clientModel = model;
             createForm = create;
             conversationTabs = new List<Tuple<TabPage, Label>>();
+
             contactsList.Items.Add(new Contact("admin", "Admin"));
         }
 
@@ -79,6 +86,10 @@ namespace FinalProjectChatClient
             // Adding tab and text box to form
             conversationTabs.Add(new Tuple<TabPage, Label>(newPage, newLabel));
             conversationTabController.Controls.Add(newPage);
+
+            // Enable the leave tab if this is the first conversation
+            if (conversationTabController.TabCount == 1)
+                leaveConversationOption.Enabled = true;
         }
 
         /// <summary>
@@ -90,9 +101,20 @@ namespace FinalProjectChatClient
             switch (action)
             {
                 case "Message":
-                    ((Label)conversationTabController.TabPages[(int)vars[0]].Controls[0]).Text += (string)vars[1];
+                    conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += (string)vars[1];
                     break;
             }
+        }
+
+        /// <summary>
+        /// Removes the provided tab page from the conversation tab controller.
+        /// </summary>
+        /// <param name="tab">The tab to remove.</param>
+        public void RemoveConversationTab(TabPage tab)
+        {
+            tab.Controls.RemoveAt(0);
+            conversationTabController.TabPages.Remove(tab);
+            conversationTabs.Remove(conversationTabs.Find(x => x.Item1.Equals(tab)));
         }
 
         /// <summary>
@@ -121,6 +143,14 @@ namespace FinalProjectChatClient
                 if (MainInput != null) MainInput("CreateConv", name, new List<Contact> { (Contact)contactsList.SelectedItem });
             }
             else ShowError("Could not create a conversation:\nEither one has already been started, or they are offline.");
+        }
+
+        /// <summary>
+        /// Change user's status to "invisible".
+        /// </summary>
+        private void invisibleStatusOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("ChangeStatus", "Invisible");
         }
 
         /// <summary>
@@ -157,7 +187,30 @@ namespace FinalProjectChatClient
                 }
                 else ShowError("This conversation name already exists.");
             }
-            createForm.Reset();
+        }
+
+        /// <summary>
+        /// Leaves the conversation of the current tab.
+        /// </summary>
+        private void leaveConversationOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("LeaveConv", conversationTabController.SelectedTab);
+        }
+
+        /// <summary>
+        /// Change user's status to "offline".
+        /// </summary>
+        private void offlineStatusOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("ChangeStatus", "Offline");
+        }
+
+        /// <summary>
+        /// Change user's status to "online".
+        /// </summary>
+        private void onlineStatusOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("ChangeStatus", "Online");
         }
 
         #endregion

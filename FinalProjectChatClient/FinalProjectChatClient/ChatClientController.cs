@@ -86,9 +86,19 @@ namespace FinalProjectChatClient
 
                     CreateConversation(name, party);
                     break;
-                case "LeaveCont":
+                case "LeaveConv":
+                    TabPage page = (TabPage)vars[0];
+
+                    ws.Send(String.Format("<leave username=\"{0}\" from=\"{1}\" />", clientModel.Username, page.Text));
+                    clientModel.ConversationList.Remove(page.Text);
+                    clientForm.RemoveConversationTab(page);
                     break;
                 case "AddPart":
+                    break;
+                case "ChangeStatus":
+                    clientModel.Status = (string)vars[0];
+                    clientForm.Status = (string)vars[0];
+                    ws.Send(String.Format("<status username=\"{0}\" state=\"{1}\" />", clientModel.Username, (string)vars[0]));
                     break;
                 case "Message":
                     ws.Send(String.Format("<msg from=\"{0}\" to=\"{1}\"><content>{2}</content></msg>", clientModel.Username, clientModel.ConversationList[(string)vars[0]], FormatForChat((string)vars[1])));
@@ -113,13 +123,21 @@ namespace FinalProjectChatClient
                         clientModel.State = FlowState.Access;
                         LoginAction();
                         while (clientModel.WaitFlag) { }
-                        if (clientModel.State == FlowState.Main) exit = true;
+                        if (clientModel.State == FlowState.Main)
+                        {
+                            clientModel.Username = loginForm.Username;
+                            exit = true;
+                        }
                         break;
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
                         SignupAction();
                         while (clientModel.WaitFlag) { }
-                        if (clientModel.State == FlowState.Main) exit = true;
+                        if (clientModel.State == FlowState.Main)
+                        {
+                            clientModel.Username = signupForm.Username;
+                            exit = true;
+                        }
                         break;
                     case DialogResult.Cancel:
                         Application.Exit();
@@ -151,15 +169,14 @@ namespace FinalProjectChatClient
                 case "rmCont":
                     break;
                 case "leave":
+                    HandleLeaveConvMessage(mssg);
                     break;
                 case "crConv":
-                    Contact initiator = clientModel.ContactList.Where(x => x.Username.Equals(mssg["from"])).First();
-                    string name = mssg["to"];
-
-                    clientModel.ConversationList.Add(name, new List<Contact> { initiator });
-                    clientForm.CreateConversationTab(name);
+                    HandleConvCreateMessage(mssg);
                     break;
                 case "addPa":
+                    break;
+                case "status":
                     break;
                 case "msg":
                     HandleChatMessage(mssg);
@@ -258,9 +275,9 @@ namespace FinalProjectChatClient
                 DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
                 clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
                 clientModel.DisplayName = mssg["dispName"];
-                clientModel.Username = mssg["ip"];
                 clientModel.State = FlowState.Main;
-                clientModel.Status = DispState.Online;
+                clientModel.Status = "Online";
+                clientForm.Status = "Online";
             }
         }
 
@@ -270,7 +287,41 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleChatMessage(Dictionary<string, string> mssg)
         {
-            Output("Message", clientModel.ConversationList[mssg["from"]], mssg["content"]);
+            Output("Message", mssg["from"], mssg["content"]);
+        }
+
+        /// <summary>
+        /// Either tells the client that another user is starting a conversation with them, or informs the client of an error in their creation attempt.
+        /// </summary>
+        /// <param name="mssg">The contents of the message.</param>
+        private void HandleConvCreateMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+                ChatClientForm.ShowError(mssg["error"]);
+                clientModel.ErrorFlag = true;
+            }
+            else
+            {
+                Contact initiator = clientModel.ContactList.Where(x => x.Username.Equals(mssg["from"])).First();
+                string name = mssg["to"];
+
+                clientModel.ConversationList.Add(name, new List<Contact> { initiator });
+                clientForm.CreateConversationTab(name);
+            }
+        }
+
+        /// <summary>
+        /// Handles when someone leaves the conversation.
+        /// </summary>
+        /// <param name="mssg">Who left what conversation.</param>
+        private void HandleLeaveConvMessage(Dictionary<string, string> mssg)
+        {
+            List<Contact> conv = clientModel.ConversationList[mssg["from"]];
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+
+            conv.Remove(cont);
+            Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
         }
 
         /// <summary>

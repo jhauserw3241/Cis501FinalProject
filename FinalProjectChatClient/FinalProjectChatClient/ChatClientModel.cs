@@ -16,7 +16,7 @@ namespace FinalProjectChatClient
         private bool errorFlag;
         private string userName;
         private FlowState state;
-        private DispState status;
+        private string status;
         private bool waitFlag;
 
         #endregion
@@ -53,7 +53,7 @@ namespace FinalProjectChatClient
             get { return state; }
             set { state = value; }
         }
-        public DispState Status
+        public string Status
         {
             get { return status; }
             set { status = value; }
@@ -70,12 +70,12 @@ namespace FinalProjectChatClient
 
         public ChatClientModel()
         {
-            contactList = new List<Contact>();
+            contactList = new List<Contact>() { new Contact("admin", "Admin") };
             conversationList = new Dictionary<string, List<Contact>>();
             displayName = "";
             userName = "";
             state = FlowState.Entry;
-            status = DispState.Offline;
+            status = "Offline";
             waitFlag = false;
         }
 

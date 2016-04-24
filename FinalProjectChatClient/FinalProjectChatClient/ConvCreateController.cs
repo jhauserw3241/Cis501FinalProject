@@ -21,13 +21,10 @@ namespace FinalProjectChatClient
         /// Creates a new instance of a conversation creation controller.
         /// </summary>
         /// <param name="model">The model to work from to populate the list of contacts.</param>
-        public ConvCreateController(ChatClientModel model)
+        public ConvCreateController(ChatClientModel model, ConvCreatePopUp popup)
         {
             clientModel = model;
-            foreach (Contact cont in model.ContactList)
-            {
-                csPopUp.ContactListBox.Add(cont);
-            }
+            csPopUp = popup;
         }
         /// <summary>
         /// Handles the inner-form actions such as add, remove, and reset.

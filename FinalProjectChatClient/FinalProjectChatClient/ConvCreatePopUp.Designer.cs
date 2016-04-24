@@ -138,7 +138,9 @@
             this.Controls.Add(this.convNameTextBox);
             this.Controls.Add(this.convNameLabel);
             this.Name = "ConvCreatePopUp";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Create Conversation";
+            this.Shown += new System.EventHandler(this.ConvCreatePopUp_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

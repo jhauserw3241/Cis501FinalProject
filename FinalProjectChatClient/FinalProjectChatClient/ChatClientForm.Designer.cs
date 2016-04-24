@@ -102,12 +102,13 @@ namespace FinalProjectChatClient
             this.removeContactTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.conversationMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.createConversationOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.addParticipantOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.addParticipantTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.leaveConversationOption = new System.Windows.Forms.ToolStripMenuItem();
             this.contactsList = new System.Windows.Forms.ListBox();
             this.conversationTabController = new System.Windows.Forms.TabControl();
             this.messageBox = new System.Windows.Forms.TextBox();
-            this.addParticipantOption = new System.Windows.Forms.ToolStripMenuItem();
-            this.addParticipantTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.invisibleStatusOption = new System.Windows.Forms.ToolStripMenuItem();
             this.infoStrip.SuspendLayout();
             this.mainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -117,17 +118,17 @@ namespace FinalProjectChatClient
             this.infoStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.infoStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectionStatus});
-            this.infoStrip.Location = new System.Drawing.Point(0, 449);
+            this.infoStrip.Location = new System.Drawing.Point(0, 571);
             this.infoStrip.Name = "infoStrip";
-            this.infoStrip.Size = new System.Drawing.Size(605, 30);
+            this.infoStrip.Size = new System.Drawing.Size(818, 30);
             this.infoStrip.TabIndex = 0;
             this.infoStrip.Text = "statusStrip1";
             // 
             // connectionStatus
             // 
             this.connectionStatus.Name = "connectionStatus";
-            this.connectionStatus.Size = new System.Drawing.Size(271, 25);
-            this.connectionStatus.Text = "Connection Status: Disconnected";
+            this.connectionStatus.Size = new System.Drawing.Size(122, 25);
+            this.connectionStatus.Text = "Status: Offline";
             // 
             // mainMenu
             // 
@@ -138,7 +139,7 @@ namespace FinalProjectChatClient
             this.conversationMenu});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
-            this.mainMenu.Size = new System.Drawing.Size(605, 33);
+            this.mainMenu.Size = new System.Drawing.Size(818, 33);
             this.mainMenu.TabIndex = 1;
             this.mainMenu.Text = "menuStrip1";
             // 
@@ -155,34 +156,37 @@ namespace FinalProjectChatClient
             // displayNameProfileOption
             // 
             this.displayNameProfileOption.Name = "displayNameProfileOption";
-            this.displayNameProfileOption.Size = new System.Drawing.Size(207, 30);
+            this.displayNameProfileOption.Size = new System.Drawing.Size(211, 30);
             this.displayNameProfileOption.Text = "Display Name";
             // 
             // profileStatusMenu
             // 
             this.profileStatusMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.onlineStatusOption,
+            this.invisibleStatusOption,
             this.offlineStatusOption});
             this.profileStatusMenu.Name = "profileStatusMenu";
-            this.profileStatusMenu.Size = new System.Drawing.Size(207, 30);
+            this.profileStatusMenu.Size = new System.Drawing.Size(211, 30);
             this.profileStatusMenu.Text = "Status";
             // 
             // onlineStatusOption
             // 
             this.onlineStatusOption.Name = "onlineStatusOption";
-            this.onlineStatusOption.Size = new System.Drawing.Size(150, 30);
+            this.onlineStatusOption.Size = new System.Drawing.Size(211, 30);
             this.onlineStatusOption.Text = "Online";
+            this.onlineStatusOption.Click += new System.EventHandler(this.onlineStatusOption_Click);
             // 
             // offlineStatusOption
             // 
             this.offlineStatusOption.Name = "offlineStatusOption";
-            this.offlineStatusOption.Size = new System.Drawing.Size(150, 30);
+            this.offlineStatusOption.Size = new System.Drawing.Size(211, 30);
             this.offlineStatusOption.Text = "Offline";
+            this.offlineStatusOption.Click += new System.EventHandler(this.offlineStatusOption_Click);
             // 
             // logoutProfileOption
             // 
             this.logoutProfileOption.Name = "logoutProfileOption";
-            this.logoutProfileOption.Size = new System.Drawing.Size(207, 30);
+            this.logoutProfileOption.Size = new System.Drawing.Size(211, 30);
             this.logoutProfileOption.Text = "Logout";
             // 
             // contactsMenu
@@ -237,39 +241,6 @@ namespace FinalProjectChatClient
             this.createConversationOption.Text = "Create...";
             this.createConversationOption.Click += new System.EventHandler(this.createConversationOption_Click);
             // 
-            // leaveConversationOption
-            // 
-            this.leaveConversationOption.Name = "leaveConversationOption";
-            this.leaveConversationOption.Size = new System.Drawing.Size(211, 30);
-            this.leaveConversationOption.Text = "Leave...";
-            // 
-            // contactsList
-            // 
-            this.contactsList.FormattingEnabled = true;
-            this.contactsList.ItemHeight = 20;
-            this.contactsList.Location = new System.Drawing.Point(12, 40);
-            this.contactsList.Name = "contactsList";
-            this.contactsList.Size = new System.Drawing.Size(120, 404);
-            this.contactsList.TabIndex = 2;
-            this.contactsList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.contactsList_MouseDoubleClick);
-            // 
-            // conversationTabController
-            // 
-            this.conversationTabController.Location = new System.Drawing.Point(138, 36);
-            this.conversationTabController.Name = "conversationTabController";
-            this.conversationTabController.SelectedIndex = 0;
-            this.conversationTabController.Size = new System.Drawing.Size(455, 304);
-            this.conversationTabController.TabIndex = 3;
-            // 
-            // messageBox
-            // 
-            this.messageBox.Location = new System.Drawing.Point(138, 342);
-            this.messageBox.Multiline = true;
-            this.messageBox.Name = "messageBox";
-            this.messageBox.Size = new System.Drawing.Size(455, 104);
-            this.messageBox.TabIndex = 4;
-            this.messageBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.messageBox_KeyDown);
-            // 
             // addParticipantOption
             // 
             this.addParticipantOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -283,11 +254,53 @@ namespace FinalProjectChatClient
             this.addParticipantTextBox.Name = "addParticipantTextBox";
             this.addParticipantTextBox.Size = new System.Drawing.Size(100, 31);
             // 
+            // leaveConversationOption
+            // 
+            this.leaveConversationOption.Enabled = false;
+            this.leaveConversationOption.Name = "leaveConversationOption";
+            this.leaveConversationOption.Size = new System.Drawing.Size(211, 30);
+            this.leaveConversationOption.Text = "Leave...";
+            this.leaveConversationOption.Click += new System.EventHandler(this.leaveConversationOption_Click);
+            // 
+            // contactsList
+            // 
+            this.contactsList.FormattingEnabled = true;
+            this.contactsList.ItemHeight = 20;
+            this.contactsList.Location = new System.Drawing.Point(12, 40);
+            this.contactsList.Name = "contactsList";
+            this.contactsList.Size = new System.Drawing.Size(188, 524);
+            this.contactsList.TabIndex = 2;
+            this.contactsList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.contactsList_MouseDoubleClick);
+            // 
+            // conversationTabController
+            // 
+            this.conversationTabController.Location = new System.Drawing.Point(206, 36);
+            this.conversationTabController.Name = "conversationTabController";
+            this.conversationTabController.SelectedIndex = 0;
+            this.conversationTabController.Size = new System.Drawing.Size(600, 418);
+            this.conversationTabController.TabIndex = 3;
+            // 
+            // messageBox
+            // 
+            this.messageBox.Location = new System.Drawing.Point(206, 460);
+            this.messageBox.Multiline = true;
+            this.messageBox.Name = "messageBox";
+            this.messageBox.Size = new System.Drawing.Size(600, 104);
+            this.messageBox.TabIndex = 4;
+            this.messageBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.messageBox_KeyDown);
+            // 
+            // invisibleStatusOption
+            // 
+            this.invisibleStatusOption.Name = "invisibleStatusOption";
+            this.invisibleStatusOption.Size = new System.Drawing.Size(211, 30);
+            this.invisibleStatusOption.Text = "Invisible";
+            this.invisibleStatusOption.Click += new System.EventHandler(this.invisibleStatusOption_Click);
+            // 
             // ChatClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(605, 479);
+            this.ClientSize = new System.Drawing.Size(818, 601);
             this.Controls.Add(this.messageBox);
             this.Controls.Add(this.conversationTabController);
             this.Controls.Add(this.contactsList);
@@ -306,6 +319,8 @@ namespace FinalProjectChatClient
         }
 
         #endregion
+
+        private ToolStripMenuItem invisibleStatusOption;
     }
 }
 
