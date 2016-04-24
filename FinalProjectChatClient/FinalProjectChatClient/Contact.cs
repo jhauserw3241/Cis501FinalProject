@@ -8,7 +8,7 @@ namespace FinalProjectChatClient
 {
     public class Contact
     {
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; set; }
         public string Status { get; set; }
         public string Username { get; private set; }
 
