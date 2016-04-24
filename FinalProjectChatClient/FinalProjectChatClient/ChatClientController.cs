@@ -81,6 +81,7 @@ namespace FinalProjectChatClient
             switch (action)
             {
                 case "AddCont":
+                    ws.Send(String.Format("<addCont username=\"{0}\" to=\"{1}\" />", (string)vars[0], clientModel.Username));
                     break;
                 case "RemoveCont":
                     break;
@@ -178,6 +179,7 @@ namespace FinalProjectChatClient
                 case "logout":
                     break;
                 case "addCont":
+                    HandleAddContactMessage(mssg);
                     break;
                 case "rmCont":
                     break;
@@ -188,8 +190,10 @@ namespace FinalProjectChatClient
                     HandleConvCreateMessage(mssg);
                     break;
                 case "addPa":
+                    HandleParticipantMessage(mssg);
                     break;
                 case "status":
+                    HandleStatusChangeMessage(mssg);
                     break;
                 case "msg":
                     HandleChatMessage(mssg);
@@ -223,6 +227,10 @@ namespace FinalProjectChatClient
             if (!clientModel.ErrorFlag)
             {
                 clientModel.ConversationList[name].Add(participant);
+            }
+            else
+            {
+                clientModel.ErrorFlag = false;
             }
         }
 
@@ -262,7 +270,7 @@ namespace FinalProjectChatClient
                         }
                         // Update Client Side and leave loop
                         clientModel.ConversationList.Add(name, party);
-                        clientForm.CreateConversationTab(name);
+                        if (Output != null) Output("CreateConv", name);
                         break;
                     }
                     // If there was an error, then remove the first contact and try to initialize the conversation with the next person
@@ -313,6 +321,28 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
+        /// Adds the provided contact to the contact list, or diplays an error.
+        /// </summary>
+        /// <param name="mssg">The content of this message.</param>
+        private void HandleAddContactMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+                ChatClientForm.ShowError(mssg["error"]);
+            }
+            else
+            {
+                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(Contact));
+                Contact cont = (Contact)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes(mssg["content"])));
+                if (cont != null)
+                {
+                    clientModel.ContactList.Add(cont);
+                    if (Output != null) Output("AddCont", cont);
+                }
+            }
+        }
+
+        /// <summary>
         /// Handles messages from the server containing chatlogs.
         /// </summary>
         /// <param name="mssg">The dictionary of keywords and their values.</param>
@@ -334,11 +364,11 @@ namespace FinalProjectChatClient
             }
             else
             {
-                Contact initiator = clientModel.ContactList.Where(x => x.Username.Equals(mssg["from"])).First();
+                Contact initiator = clientModel.ContactList.Find(x => x.Username.Equals(mssg["from"]));
                 string name = mssg["to"];
 
                 clientModel.ConversationList.Add(name, new List<Contact> { initiator });
-                clientForm.CreateConversationTab(name);
+                if (Output != null) Output("CreateConv", name);
             }
         }
 
@@ -353,6 +383,59 @@ namespace FinalProjectChatClient
 
             conv.Remove(cont);
             Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
+        }
+
+        /// <summary>
+        /// Either adds a particpant to a conversation or informs the user of an error in adding a paricipant.
+        /// </summary>
+        /// <param name="mssg">The contents of this message.</param>
+        private void HandleParticipantMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+                ChatClientForm.ShowError(mssg["error"]);
+                clientModel.ErrorFlag = true;
+            }
+            else
+            {
+                Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(mssg["from"]));
+                string name = mssg["to"];
+
+                if (clientModel.ConversationList.ContainsKey(name))
+                {
+                    clientModel.ConversationList[name].Add(participant);
+                }
+                else
+                {
+                    clientModel.ConversationList.Add(name, new List<Contact> { participant });
+                    if (Output != null) Output("CreateConv", name);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the status of a user in the conacts.
+        /// </summary>
+        /// <param name="mssg">The status of the other user.</param>
+        private void HandleStatusChangeMessage(Dictionary<string, string> mssg)
+        {
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+            if (cont != null)
+            {
+                cont.Status = mssg["state"];
+
+                if (mssg["state"].Equals("Offline"))
+                {
+                    foreach (KeyValuePair<string, List<Contact>> conv in clientModel.ConversationList)
+                    {
+                        if (conv.Value.Contains(cont))
+                        {
+                            conv.Value.Remove(cont);
+                            Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

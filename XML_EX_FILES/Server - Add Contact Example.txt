@@ -1,3 +1,11 @@
-<!-- Here is where the server tells a client that someone has added them -->
-<addCont username="newUser420" />
-<!-- Who it is going to has already been determined, so it is not required in the string -->
+<addCont>
+<content>
+<!-- JSON string goes in here so the client can build it's copy -->
+[DataContract]
+public class Contact
+{
+    [DataMember]
+    <!-- Rest of the JSON goes here... -->
+}
+</content>
+</addCont>

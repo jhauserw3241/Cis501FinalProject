@@ -210,6 +210,7 @@ namespace FinalProjectChatClient
             // 
             this.addContactTextBox.Name = "addContactTextBox";
             this.addContactTextBox.Size = new System.Drawing.Size(100, 31);
+            this.addContactTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.addContactTextBox_KeyDown);
             // 
             // removeContactOption
             // 

@@ -100,6 +100,12 @@ namespace FinalProjectChatClient
         {
             switch (action)
             {
+                case "AddCont":
+                    contactsList.Items.Add((Contact)vars[0]);
+                    break;
+                case "CreateConv":
+                    CreateConversationTab((string)vars[0]);
+                    break;
                 case "Message":
                     conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += (string)vars[1];
                     break;
@@ -115,6 +121,7 @@ namespace FinalProjectChatClient
             tab.Controls.RemoveAt(0);
             conversationTabController.TabPages.Remove(tab);
             conversationTabs.Remove(conversationTabs.Find(x => x.Item1.Equals(tab)));
+            if (conversationTabs.Count == 0) leaveConversationOption.Enabled = false;
         }
 
         /// <summary>
@@ -131,17 +138,33 @@ namespace FinalProjectChatClient
         #region Private Methods
 
         /// <summary>
+        /// Attempts to add the username provided to the list of contacts.
+        /// </summary>
+        private void addContactTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!addContactTextBox.Text.Equals(String.Empty))
+                {
+                    if (MainInput != null) MainInput("AddCont", addContactTextBox.Text);
+                }
+                addContactTextBox.Text = String.Empty;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        /// <summary>
         /// Attempts to add the username provided to the current conversation.
         /// </summary>
         private void addParticipantTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (conversationTabController.Controls.Count > 0 && !addContactTextBox.Text.Equals(String.Empty))
+                if (conversationTabController.Controls.Count > 0 && !addParticipantTextBox.Text.Equals(String.Empty))
                 {
-                    if (MainInput != null) MainInput("AddPart", conversationTabController.SelectedTab.Text, addContactTextBox.Text);
+                    if (MainInput != null) MainInput("AddPart", conversationTabController.SelectedTab.Text, addParticipantTextBox.Text);
                 }
-                addContactTextBox.Text = String.Empty;
+                addParticipantTextBox.Text = String.Empty;
                 e.SuppressKeyPress = true;
             }
         }
