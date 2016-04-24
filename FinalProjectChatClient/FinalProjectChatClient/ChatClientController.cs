@@ -81,6 +81,9 @@ namespace FinalProjectChatClient
             switch (action)
             {
                 case "Logout":
+                    LogoutAction();
+                    clientModel.State = FlowState.Entry;
+                    HandleLoadIn(clientForm, new EventArgs());
                     break;
                 case "AddCont":
                     ws.Send(String.Format("<addCont username=\"{0}\" to=\"{1}\" />", (string)vars[0], clientModel.Username));
@@ -495,6 +498,17 @@ namespace FinalProjectChatClient
         }
         
         /// <summary>
+        /// Logs out of the current user session.
+        /// </summary>
+        private void LogoutAction()
+        {
+            DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
+            MemoryStream contList = new MemoryStream(); 
+            srlzr.WriteObject(contList, clientForm.ContactsList);
+            ws.Send(String.Format("<logout username=\"{0}\"><content>{1}</content></logout>", clientModel.Username, contList.ToString()));
+        }
+
+        /// <summary>
         /// Reads the provided string and returns a dictionary containing the data it was able to parse.
         /// </summary>
         /// <param name="xml">The xml string to parse.</param>
@@ -591,6 +605,7 @@ namespace FinalProjectChatClient
         /// </summary>
         ~ChatClientController()
         {
+            if (clientModel.State == FlowState.Main) LogoutAction();
             ws.Close();
         }
 

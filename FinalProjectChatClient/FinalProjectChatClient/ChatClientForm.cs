@@ -275,5 +275,10 @@ namespace FinalProjectChatClient
         }
 
         #endregion
+
+        private void logoutProfileOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("Logout");
+        }
     }
 }

@@ -109,6 +109,7 @@ namespace FinalProjectChatClient
             this.conversationTabController = new System.Windows.Forms.TabControl();
             this.messageBox = new System.Windows.Forms.TextBox();
             this.invisibleStatusOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.infoStrip.SuspendLayout();
             this.mainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -155,6 +156,8 @@ namespace FinalProjectChatClient
             // 
             // displayNameProfileOption
             // 
+            this.displayNameProfileOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripTextBox1});
             this.displayNameProfileOption.Name = "displayNameProfileOption";
             this.displayNameProfileOption.Size = new System.Drawing.Size(211, 30);
             this.displayNameProfileOption.Text = "Display Name";
@@ -188,6 +191,7 @@ namespace FinalProjectChatClient
             this.logoutProfileOption.Name = "logoutProfileOption";
             this.logoutProfileOption.Size = new System.Drawing.Size(211, 30);
             this.logoutProfileOption.Text = "Logout";
+            this.logoutProfileOption.Click += new System.EventHandler(this.logoutProfileOption_Click);
             // 
             // contactsMenu
             // 
@@ -299,6 +303,11 @@ namespace FinalProjectChatClient
             this.invisibleStatusOption.Text = "Invisible";
             this.invisibleStatusOption.Click += new System.EventHandler(this.invisibleStatusOption_Click);
             // 
+            // toolStripTextBox1
+            // 
+            this.toolStripTextBox1.Name = "toolStripTextBox1";
+            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 31);
+            // 
             // ChatClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -324,6 +333,7 @@ namespace FinalProjectChatClient
         #endregion
 
         private ToolStripMenuItem invisibleStatusOption;
+        private ToolStripTextBox toolStripTextBox1;
     }
 }
 
