@@ -15,6 +15,20 @@ namespace serverChat
         private bool status;
         private string username;
 
+        // Constructor
+        public ServerUser()
+        {
+        }
+
+        // Constructor
+        //
+        // @param uName The username for the user
+        public ServerUser(string uName)
+        {
+            username = uName;
+            name = uName;
+        }
+
         // Add Contact
         //
         // Add a contact to the list of contacts
