@@ -103,8 +103,14 @@ namespace FinalProjectChatClient
                 case "AddCont":
                     contactsList.Items.Add((Contact)vars[0]);
                     break;
+                case "RemoveCont":
+                    contactsList.Items.Remove((Contact)vars[0]);
+                    break;
                 case "CreateConv":
                     CreateConversationTab((string)vars[0]);
+                    break;
+                case "LeaveConv":
+                    RemoveConversationTab((TabPage)vars[0]);
                     break;
                 case "Message":
                     conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += (string)vars[1];
@@ -250,6 +256,22 @@ namespace FinalProjectChatClient
         private void onlineStatusOption_Click(object sender, EventArgs e)
         {
             if (MainInput != null) MainInput("ChangeStatus", "Online");
+        }
+
+        /// <summary>
+        /// Attempts to remove the provided username from the contact list.
+        /// </summary>
+        private void removeContactTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!removeContactTextBox.Text.Equals(String.Empty))
+                {
+                    if (MainInput != null) MainInput("RemoveCont", removeContactTextBox.Text);
+                }
+                removeContactTextBox.Text = String.Empty;
+                e.SuppressKeyPress = true;
+            }
         }
 
         #endregion

@@ -80,10 +80,20 @@ namespace FinalProjectChatClient
 
             switch (action)
             {
+                case "Logout":
+                    break;
                 case "AddCont":
                     ws.Send(String.Format("<addCont username=\"{0}\" to=\"{1}\" />", (string)vars[0], clientModel.Username));
                     break;
                 case "RemoveCont":
+                    participant = clientModel.ContactList.Find(x => x.Username.Equals((string)vars[0]));
+
+                    if (participant != null)
+                    {
+                        ws.Send(String.Format("<rmCont username=\"{0}\" from=\"{1}\" />", (string)vars[0], clientModel.Username));
+                        clientModel.ContactList.Remove(participant);
+                        if (Output != null) Output("RemoveCont", participant);
+                    }
                     break;
                 case "CreateConv":
                     name = (string)vars[0];
@@ -97,7 +107,7 @@ namespace FinalProjectChatClient
 
                     ws.Send(String.Format("<leave username=\"{0}\" from=\"{1}\" />", clientModel.Username, page.Text));
                     clientModel.ConversationList.Remove(page.Text);
-                    clientForm.RemoveConversationTab(page);
+                    if (Output != null) Output("LeaveConv", page);
                     break;
                 case "AddPart":
                     name = (string)vars[0];
@@ -176,12 +186,11 @@ namespace FinalProjectChatClient
                 case "login":
                     HandleAccessMessage(mssg);
                     break;
-                case "logout":
-                    break;
                 case "addCont":
                     HandleAddContactMessage(mssg);
                     break;
                 case "rmCont":
+                    HandleRemContactMessage(mssg);
                     break;
                 case "leave":
                     HandleLeaveConvMessage(mssg);
@@ -410,6 +419,21 @@ namespace FinalProjectChatClient
                     clientModel.ConversationList.Add(name, new List<Contact> { participant });
                     if (Output != null) Output("CreateConv", name);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Removes the contact provided by the server.
+        /// </summary>
+        /// <param name="mssg">The contact to remove.</param>
+        private void HandleRemContactMessage(Dictionary<string, string> mssg)
+        {
+            Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+
+            if (participant != null)
+            {
+                clientModel.ContactList.Remove(participant);
+                if (Output != null) Output("RemoveCont", participant);
             }
         }
 

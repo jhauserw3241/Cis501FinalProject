@@ -224,6 +224,7 @@ namespace FinalProjectChatClient
             // 
             this.removeContactTextBox.Name = "removeContactTextBox";
             this.removeContactTextBox.Size = new System.Drawing.Size(100, 31);
+            this.removeContactTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.removeContactTextBox_KeyDown);
             // 
             // conversationMenu
             // 
