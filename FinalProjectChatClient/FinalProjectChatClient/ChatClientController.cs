@@ -124,8 +124,13 @@ namespace FinalProjectChatClient
                     break;
                 case "ChangeStatus":
                     clientModel.Status = (string)vars[0];
-                    clientForm.Status = (string)vars[0];
-                    ws.Send(String.Format("<status username=\"{0}\" state=\"{1}\" />", clientModel.Username, (string)vars[0]));
+                    if (Output != null) Output("UpdateStatus", (string)vars[0]);
+                    ws.Send(String.Format("<udCont username=\"{0}\" state=\"{1}\" />", clientModel.Username, (string)vars[0]));
+                    break;
+                case "ChangeDispName":
+                    clientModel.DisplayName = (string)vars[0];
+                    if (Output != null) Output("UpdateName", (string)vars[0]);
+                    ws.Send(String.Format("<udCont username=\"{0}\" dispName=\"{1}\" />", clientModel.Username, (string)vars[0]));
                     break;
                 case "Message":
                     ws.Send(String.Format("<msg from=\"{0}\" to=\"{1}\"><content>{2}</content></msg>", clientModel.Username, clientModel.ConversationList[(string)vars[0]], FormatForChat((string)vars[1])));
@@ -155,6 +160,7 @@ namespace FinalProjectChatClient
                             clientModel.Username = loginForm.Username;
                             exit = true;
                         }
+                        exit = true;
                         break;
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
@@ -204,8 +210,15 @@ namespace FinalProjectChatClient
                 case "addPa":
                     HandleParticipantMessage(mssg);
                     break;
-                case "status":
-                    HandleStatusChangeMessage(mssg);
+                case "udCont":
+                    if (mssg.ContainsKey("state"))
+                    {
+                        HandleStatusChangeMessage(mssg);
+                    }
+                    else if (mssg.ContainsKey("dispName"))
+                    {
+                        HandleNameChangeMessage(mssg);
+                    }
                     break;
                 case "msg":
                     HandleChatMessage(mssg);
@@ -328,7 +341,11 @@ namespace FinalProjectChatClient
                 clientModel.DisplayName = mssg["dispName"];
                 clientModel.State = FlowState.Main;
                 clientModel.Status = "Online";
-                clientForm.Status = "Online";
+                if (Output != null)
+                {
+                    Output("UpdateStatus", "Online");
+                    Output("UpdateName", clientModel.DisplayName);
+                }
             }
         }
 
@@ -395,6 +412,19 @@ namespace FinalProjectChatClient
 
             conv.Remove(cont);
             Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
+        }
+
+        /// <summary>
+        /// Updates the display name of a user in the conacts.
+        /// </summary>
+        /// <param name="mssg">The new name of the other user.</param>
+        private void HandleNameChangeMessage(Dictionary<string, string> mssg)
+        {
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+            if (cont != null)
+            {
+                cont.DisplayName = mssg["dispName"];
+            }
         }
 
         /// <summary>

@@ -5,11 +5,11 @@ sign - request new account
 logout - when requesting log out
 addCont - add a contact
 rmCont - remove contact
+udCont - update the contact information
 leave - user leaving chat
 crConv - user creates new conversation
 addPa - add participant to conversation
 msg - sending a message
-status - changing the display status for the user
 
 tags: <a="">
 

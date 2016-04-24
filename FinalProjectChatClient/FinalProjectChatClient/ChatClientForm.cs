@@ -29,8 +29,7 @@ namespace FinalProjectChatClient
 
         public string Status
         {
-            get { return connectionStatus.Text.Substring(8); }
-            set { connectionStatus.Text = "Status: " + value; }
+            get { return userStatusLabel.Text.Substring(8); }
         }
 
         #endregion
@@ -111,6 +110,12 @@ namespace FinalProjectChatClient
                     break;
                 case "LeaveConv":
                     RemoveConversationTab((TabPage)vars[0]);
+                    break;
+                case "UpdateStatus":
+                    userStatusLabel.Text = "Status: " + (string)vars[0];
+                    break;
+                case "UpdateName":
+                    dispNameLabel.Text = "Name: " + (string)vars[0];
                     break;
                 case "Message":
                     conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += (string)vars[1];
@@ -218,6 +223,22 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
+        /// Changes the users display name.
+        /// </summary>
+        private void changeDispNameTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!changeDispNameTextBox.Text.Equals(String.Empty))
+                {
+                    if (MainInput != null) MainInput("ChangeDispName", changeDispNameTextBox.Text);
+                }
+                changeDispNameTextBox.Text = String.Empty;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        /// <summary>
         /// Creates a conversation with the possibilty of initializing multiple participants.
         /// </summary>
         private void createConversationOption_Click(object sender, EventArgs e)
@@ -240,6 +261,14 @@ namespace FinalProjectChatClient
         private void leaveConversationOption_Click(object sender, EventArgs e)
         {
             if (MainInput != null) MainInput("LeaveConv", conversationTabController.SelectedTab);
+        }
+
+        /// <summary>
+        /// Logs the user out.
+        /// </summary>
+        private void logoutProfileOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("Logout");
         }
 
         /// <summary>
@@ -275,10 +304,5 @@ namespace FinalProjectChatClient
         }
 
         #endregion
-
-        private void logoutProfileOption_Click(object sender, EventArgs e)
-        {
-            if (MainInput != null) MainInput("Logout");
-        }
     }
 }
