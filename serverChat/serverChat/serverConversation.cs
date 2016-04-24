@@ -11,6 +11,7 @@ namespace serverChat
         private string name;
         private string currentMessage;
         private List<string> messageHistory;
+        private List<string> participants;
 
         // Constructor
         public ServerConversation()
@@ -32,6 +33,15 @@ namespace serverChat
         public void AddMessageToHistory(string message)
         {
             messageHistory.Add(message);
+        }
+
+        // Add Participant
+        //
+        // Add a participant to the conversation
+        // @param username The username of the user to add
+        public void AddParicipant(string username)
+        {
+            participants.Add(username);
         }
 
         // Get Conversation Name
