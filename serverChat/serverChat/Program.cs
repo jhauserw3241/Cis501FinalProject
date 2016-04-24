@@ -14,9 +14,11 @@ namespace serverChat
         [STAThread]
         static void Main()
         {
+            ServerModel data = new ServerModel();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ServerView());
+            Application.Run(new ServerView(data));
         }
     }
 }
