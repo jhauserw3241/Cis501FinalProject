@@ -59,7 +59,6 @@
     <Compile Include="ConvCreatePopUp.Designer.cs">
       <DependentUpon>ConvCreatePopUp.cs</DependentUpon>
     </Compile>
-    <Compile Include="Conversation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SignupPopUp.cs">
       <SubType>Form</SubType>

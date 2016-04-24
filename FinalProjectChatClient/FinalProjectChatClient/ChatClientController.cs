@@ -81,54 +81,10 @@ namespace FinalProjectChatClient
                     break;
                 case "CreateConv":
                     string name = (string)vars[0];
-                    List<Contact> party = ((List<Contact>)vars[1]).Where(x => x.Status.Equals("Online")).ToList();
-                    
-                    while (true)
-                    {
-                        // Make sure there are actually people in the conversation
-                        if (party.Count > 0)
-                        {
-                            // Send initial request to server
-                            ws.Send(String.Format("<crConv from=\"{0}\" to=\"{1}\"><content>{2}</content></crConv>", clientModel.Username, party[0].Username, name));
-                            // Wait for a response from the server
-                            clientModel.WaitFlag = true;
-                            while (clientModel.WaitFlag) { }
-                            // Make sure there were no errors
-                            if (!clientModel.ErrorFlag)
-                            {
-                                // Add other member if there are some
-                                for (int i = 1; i < party.Count; i++)
-                                {
-                                    ws.Send(String.Format("<addPa username=\"{0}\" to=\"{1}\" />", party[i].Username, name));
-                                    // Wait for a response from the server
-                                    clientModel.WaitFlag = true;
-                                    while (clientModel.WaitFlag) { }
-                                    // If there was an error, remove that participant from the list and move on
-                                    if (clientModel.ErrorFlag)
-                                    {
-                                        party.RemoveAt(i);
-                                        clientModel.ErrorFlag = false;
-                                    }
-                                }
-                                // Update Client Side and leave loop
-                                clientModel.ConversationList.Add(name, party);
-                                clientForm.CreateConversationTab(name);
-                                break;
-                            }
-                            // If there was an error, then remove the first contact and try to initialize the conversation with the next person
-                            else
-                            {
-                                party.RemoveAt(0);
-                                clientModel.ErrorFlag = false;
-                            }
-                        }
-                        // If the party is empty, then show an error and leave the loop
-                        else
-                        {
-                            ChatClientForm.ShowError("There was no one else in the conversation!");
-                            break;
-                        }
-                    }
+                    // Only get those members who are explicity not online
+                    List<Contact> party = ((List<Contact>)vars[1]).Where(x => !x.Status.Equals("Offline")).ToList();
+
+                    CreateConversation(name, party);
                     break;
                 case "LeaveCont":
                     break;
@@ -209,6 +165,11 @@ namespace FinalProjectChatClient
                     HandleChatMessage(mssg);
                     break;
                 default:
+                    if (mssg.ContainsKey("error"))
+                    {
+                        ChatClientForm.ShowError(mssg["error"]);
+                        clientModel.ErrorFlag = true;
+                    }
                     break;
             }
         }
@@ -216,6 +177,61 @@ namespace FinalProjectChatClient
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Attempts to create a conversation with as many of the contacts provided as possible.
+        /// </summary>
+        /// <param name="name">The name of the conversation group.</param>
+        /// <param name="party">The participants in the conversation.</param>
+        private void CreateConversation(string name, List<Contact> party)
+        {
+            while (true)
+            {
+                // Make sure there are actually people in the conversation
+                if (party.Count > 0)
+                {
+                    // Send initial request to server
+                    ws.Send(String.Format("<crConv from=\"{0}\" to=\"{1}\"><content>{2}</content></crConv>", clientModel.Username, party[0].Username, name));
+                    // Wait for a response from the server
+                    clientModel.WaitFlag = true;
+                    while (clientModel.WaitFlag) { }
+                    // Make sure there were no errors
+                    if (!clientModel.ErrorFlag)
+                    {
+                        // Add other member if there are some
+                        for (int i = 1; i < party.Count; i++)
+                        {
+                            ws.Send(String.Format("<addPa username=\"{0}\" to=\"{1}\" />", party[i].Username, name));
+                            // Wait for a response from the server
+                            clientModel.WaitFlag = true;
+                            while (clientModel.WaitFlag) { }
+                            // If there was an error, remove that participant from the list and move on
+                            if (clientModel.ErrorFlag)
+                            {
+                                party.RemoveAt(i);
+                                clientModel.ErrorFlag = false;
+                            }
+                        }
+                        // Update Client Side and leave loop
+                        clientModel.ConversationList.Add(name, party);
+                        clientForm.CreateConversationTab(name);
+                        break;
+                    }
+                    // If there was an error, then remove the first contact and try to initialize the conversation with the next person
+                    else
+                    {
+                        party.RemoveAt(0);
+                        clientModel.ErrorFlag = false;
+                    }
+                }
+                // If the party is empty, then show an error and leave the loop
+                else
+                {
+                    ChatClientForm.ShowError("There was no one else in the conversation!");
+                    break;
+                }
+            }
+        }
 
         /// <summary>
         /// Returns the message in proper chat formating.
