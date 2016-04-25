@@ -1,0 +1,3 @@
+<!-- Sent when the client might need a non-specific response -->
+<!-- 'success' could be anything other than the agreed upon keywords -->
+<success />
