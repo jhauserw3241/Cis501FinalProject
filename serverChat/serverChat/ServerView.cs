@@ -14,6 +14,7 @@ namespace serverChat
     {
         // Declare objects
         private ServerModel data;
+        private ServerController cont;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
 
@@ -24,6 +25,7 @@ namespace serverChat
         {
             // Update the server objects
             data = d;
+            cont = new ServerController(d);
 
             // Initialize the form
             InitializeComponent();
