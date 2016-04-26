@@ -212,7 +212,5 @@ namespace serverChat
             // Set the user list to the updated list
             data.SetUserList(userList);
         }
-
-
     }
 }
