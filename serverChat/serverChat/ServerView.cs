@@ -44,7 +44,7 @@ namespace serverChat
         // Add User to User ComboBox
         //
         // Add a username to the list of usernames in the User ComboBox
-        // @arg username The username of the user that was added
+        // @param username The username of the user that was added
         private void AddUserOption(string username)
         {
             usersComboBox.Items.Add(username);
