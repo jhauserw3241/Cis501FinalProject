@@ -1,5 +1,0 @@
-<msg from="admin" to="Conv_Name">
-<content>
-[04/22/2016 02:35pm] admin: Listen here 'newUser420', I don't like your name or your attitude.
-</content>
-</msg>

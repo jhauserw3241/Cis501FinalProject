@@ -1,0 +1,5 @@
+<!-- Create new conversation with these participants or add them to a pre-existing conversation -->
+<udConv dispName="Conv_Name">
+<addPa username="newUser420" />
+<addPa username="admin">
+</udConv>

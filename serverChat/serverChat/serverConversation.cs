@@ -10,8 +10,8 @@ namespace serverChat
     {
         private string name;
         private string currentMessage;
-        private List<string> messageHistory;
-        private List<string> participants;
+        private List<string> messageHistory = new List<string> { };
+        private List<string> participants = new List<string> { };
 
         // Constructor
         public ServerConversation()

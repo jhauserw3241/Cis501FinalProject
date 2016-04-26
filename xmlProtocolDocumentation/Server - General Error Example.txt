@@ -1,0 +1,2 @@
+<!-- Sent when the server needs to send a general error to the client -->
+<error error="Ya done fudged up, kid.">

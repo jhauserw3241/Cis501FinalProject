@@ -1,0 +1,8 @@
+<!-- The message that the new participant receives contains everyone else in the conversation  -->
+<udConv dispName="Conv_Name">
+<addPa username="newUser420" />
+<addPa username="admin" />
+<content>
+<!-- The previous transcript -->
+</content>
+</udConv>

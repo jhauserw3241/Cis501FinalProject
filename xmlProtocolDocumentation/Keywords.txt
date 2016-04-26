@@ -1,0 +1,24 @@
+"Single Line" Elements: <a />
+
+login - when requesting log in
+sign - request new account
+cont - a contact that the user knows (only used in login and logout)
+addCont - add a contact
+rmCont - remove contact
+udCont - update the contact information
+
+tags: <a="">
+
+dispName
+username
+password
+to
+from
+error
+state
+
+Region Elements: <a></a>
+
+logout - When requesting log out
+udConv - Update the conversation information
+msg - sending a message
