@@ -44,6 +44,16 @@ namespace serverChat
             participants.Add(username);
         }
 
+        // Contains Participant
+        //
+        // Check whether the specified participant is in the conversation
+        // @param par The username of the participant
+        // @return whether or not the participant is in the conversation
+        public bool ContainsParticipant(string par)
+        {
+            return participants.Contains(par);
+        }
+
         // Get Conversation Name
         //
         // Get the conversation name
