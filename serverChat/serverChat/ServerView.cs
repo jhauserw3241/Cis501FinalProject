@@ -36,7 +36,7 @@ namespace serverChat
         // Add a conversation to the list of conversations in the
         // Conversations ComboBox
         // @arg name The name of the conversation to be added
-        private void addConvOption(string name)
+        private void AddConvOption(string name)
         {
             convComboBox.Items.Add(name);
         }
@@ -45,7 +45,7 @@ namespace serverChat
         //
         // Add a username to the list of usernames in the User ComboBox
         // @arg username The username of the user that was added
-        private void addUserOption(string username)
+        private void AddUserOption(string username)
         {
             usersComboBox.Items.Add(username);
         }
@@ -96,7 +96,7 @@ namespace serverChat
         // Remove a conversation from the list of conversations in
         // the Conversations ComboBox
         // @arg name The name of the conversation to be removed
-        private void removeConvOption(string name)
+        private void RemoveConvOption(string name)
         {
             convComboBox.Items.Remove(name);
         }
@@ -105,7 +105,7 @@ namespace serverChat
         //
         // Remove a username from the list of usernames in the User ComboBox
         // @arg username The username of the user that has been removed
-        private void removeUserOption(string username)
+        private void RemoveUserOption(string username)
         {
             usersComboBox.Items.Remove(username);
         }
