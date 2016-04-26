@@ -2,7 +2,7 @@
 <udConv dispName="Conv_Name">
 <addPa username="newUser420" />
 <addPa username="admin" />
-<content>
+<msg>
 <!-- The previous transcript -->
-</content>
+</msg>
 </udConv>

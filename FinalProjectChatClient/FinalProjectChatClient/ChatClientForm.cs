@@ -118,7 +118,7 @@ namespace FinalProjectChatClient
                     dispNameLabel.Text = "Name: " + (string)vars[0];
                     break;
                 case "Message":
-                    conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += (string)vars[1];
+                    conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += String.Join(Environment.NewLine, (List<string>)vars[1]);
                     break;
             }
         }
