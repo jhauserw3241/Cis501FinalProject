@@ -8,7 +8,7 @@ namespace serverChat
 {
     public class ServerUser
     {
-        private List<ServerUser> contacts;
+        private List<ServerUser> contacts = new List<ServerUser> { };
         private string ipAddress;
         private string name;
         private string password;

@@ -12,11 +12,11 @@ namespace FinalProjectChatClient
         public string Status { get; set; }
         public string Username { get; private set; }
 
-        public Contact(string username, string dispName)
+        public Contact(string username, string dispName, string status)
         {
             Username = username;
             DisplayName = dispName;
-            Status = "Online";
+            Status = status;
         }
         public override string ToString()
         {

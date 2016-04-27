@@ -333,8 +333,11 @@ namespace FinalProjectChatClient
             }
             else
             {
-                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
-                clientModel.ContactList = (List<Contact>)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes((string)mssg["content"])));
+                clientModel.ContactList = new List<Contact>();
+                foreach (Tuple<string, string, string> cont in (List<Tuple<string, string, string>>)mssg["cont"])
+                {
+                    clientModel.ContactList.Add(new Contact(cont.Item1, cont.Item2, cont.Item3));
+                }
                 clientModel.DisplayName = (string)mssg["dispName"];
                 clientModel.State = FlowState.Main;
                 clientModel.Status = "Online";
@@ -358,13 +361,9 @@ namespace FinalProjectChatClient
             }
             else
             {
-                DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(Contact));
-                Contact cont = (Contact)srlzr.ReadObject(new MemoryStream(Encoding.Default.GetBytes((string)mssg["content"])));
-                if (cont != null)
-                {
-                    clientModel.ContactList.Add(cont);
-                    if (Output != null) Output("AddCont", cont);
-                }
+                Contact cont = new Contact((string)mssg["username"], (string)mssg["dispName"], (string)mssg["state"]);
+                clientModel.ContactList.Add(cont);
+                if (Output != null) Output("AddCont", cont);
             }
         }
 
@@ -374,7 +373,7 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleChatMessage(Dictionary<string, object> mssg)
         {
-            Output("Message", mssg["from"], mssg["content"]);
+            Output("Message", mssg["from"], mssg["msg"]);
         }
 
         /// <summary>
@@ -384,7 +383,7 @@ namespace FinalProjectChatClient
         private void HandleLeaveConvMessage(Dictionary<string, object> mssg)
         {
             List<string> conv = clientModel.ConversationList[(string)mssg["dispName"]];
-            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(((Dictionary<string, List<string>>)mssg["leave"])["username"][0]));
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["leave"]));
 
             conv.Remove(cont.Username);
             Output("Message", mssg["dispName"], String.Format("{0} has left the conversation.", cont.DisplayName));
@@ -518,77 +517,104 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
-        /// Reads the provided string and returns a dictionary containing the data it was able to parse.
+        /// Parses a xml string and returns the information in a more accessable form
         /// </summary>
         /// <param name="xml">The xml string to parse.</param>
-        /// <returns>A dictionary containing keywords and their corresponding values.</returns>
+        /// <returns>A dictionary containing keywords as keys and appropriately matched values.</returns>
         private Dictionary<string, object> ReadXML(string xml)
         {
             Dictionary<string, object> rtrn = new Dictionary<string, object>();
             XmlDocument message = new XmlDocument();
-            string key = "";
+            Stack<string> layers = new Stack<string>();
+            Dictionary<string, List<string>> dict;
+            Tuple<string, string, string> tups;
+            string top;
 
             message.LoadXml(xml);
-            foreach (XmlNode node in message)
+
+            foreach(XmlElement node in message)
             {
+                // Get the top layer
+                top = layers.Peek() == null ? "default" : layers.Peek();
+
                 switch (node.NodeType)
                 {
-                    case XmlNodeType.Element: // The node is an element.
-                        if (key.Equals("udConv"))
+                    case XmlNodeType.Element:
+                        // Differentiate action based on what group we are in
+                        switch(top)
                         {
-                            // Get update action
-                            if (node.Attributes.Count > 0)
-                            {
-                                // Make a new list if it doesn't already exist
-                                if (!rtrn.ContainsKey(node.Name))
-                                    rtrn.Add(node.Name, new Dictionary<string, List<string>>());
-
-                                // Add value to list
-                                foreach (XmlAttribute attr in node.Attributes)
+                            case "udConv":
+                                switch(node.Name)
                                 {
-                                    if (!((Dictionary<string, List<string>>)rtrn[node.Name]).ContainsKey(attr.Name))
-                                    {
-                                        ((Dictionary<string, List<string>>)rtrn[node.Name]).Add(attr.Name, new List<string>() { attr.Value });
-                                    }
-                                    else
-                                    {
-                                        ((Dictionary<string, List<string>>)rtrn[node.Name])[attr.Name].Add(attr.Value);
-                                    }
+                                    case "addPa":
+                                        // If there is not already an entry for addPa
+                                        if (!rtrn.ContainsKey("addPa"))
+                                        {
+                                            // Create a dictionary where the key is the attribute name, and the value is a list of all the values associated with that attribute
+                                            rtrn.Add("addPa", new Dictionary<string, List<string>>());
+                                        }
+
+                                        dict = rtrn["addPa"] as Dictionary<string, List<string>>;
+
+                                        foreach (XmlAttribute attr in node.Attributes)
+                                        {
+                                            // If the dictionary does not contain an instance of this key create a new list
+                                            if (!dict.ContainsKey(attr.Name))
+                                            {
+                                                dict.Add(attr.Name, new List<string>());
+                                            }
+                                            // Add the value to the list
+                                            dict[attr.Name].Add(attr.Value);
+                                        }
+                                        break;
+                                    case "leave":
+                                        // Add or update the leave key (leave should only be used once per message so it's unlikely to update a value)
+                                        rtrn["leave"] = node.Attributes[0].Value;
+                                        break;
+                                    case "msg":
+                                        // Create a new list of strings for the transcript of the conversation
+                                        rtrn["msg"] = new List<string>();
+                                        break;
                                 }
-                            }
-                            // or some kind of content region
-                            else
-                            {
-                                key = node.Name;
-                            }
-                        }
-                        else
-                        {
-                            // If it isn't inside a udConv element then it's a regular action
-                            if (node.Attributes.Count > 0)
-                            {
-                                // Determine action from element name
+                                break;
+                            case "login":
+                                // If this is the first contact
+                                if (!rtrn.ContainsKey("cont"))
+                                {
+                                    // Create a list of tuples, where the tuple represents a contact
+                                    rtrn.Add("cont", new List<Tuple<string, string, string>>());
+                                }
+                                // Construct a tuple from the attributes and add it to the list
+                                tups = new Tuple<string, string, string>(node.Attributes[0].Value, node.Attributes[1].Value, node.Attributes[2].Value);
+                                ((List<Tuple<string, string, string>>)rtrn["cont"]).Add(tups);
+                                break;
+                            default: // Presumably this is the top of the message
+                                // Meaning the element name is the desired action
                                 rtrn.Add("action", node.Name);
-                                // Fill out other info from attributes
+                                // Gather info from attributes
                                 foreach (XmlAttribute attr in node.Attributes)
                                 {
                                     rtrn.Add(attr.Name, attr.Value);
                                 }
-                                // If the action is to update a conversation
-                                if (node.Name.Equals("udConv"))
-                                {
-                                    key = "udConv";
-                                }
-                            }
-                            // or some kind of content region
-                            else
-                            {
-                                key = node.Name;
-                            }
+                                break;
                         }
+
+                        // If entering a group, then add to the stack
+                        if (!node.IsEmpty) layers.Push(node.Name);
                         break;
                     case XmlNodeType.Text:
-                        rtrn.Add(key, node.Value);
+                        // If the dictionary does not contain a key with the group name
+                        if (!rtrn.ContainsKey(top))
+                        {
+                            // Create a list to add multiple items to
+                            rtrn.Add(top, new List<string>());
+                        }
+                        // Add the text
+                        ((List<string>)rtrn[top]).Add(node.Value);
+                        break;
+                    case XmlNodeType.EndElement:
+                        // Leave the current group
+                        if (layers.Count > 0) layers.Pop();
                         break;
                 }
             }

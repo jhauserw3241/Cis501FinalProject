@@ -1,1 +1,3 @@
-<leave username="admin" from="Conv_Name" />
+<udConv dispName="Conv_Name">
+<leave username="admin" />
+</udConv>
