@@ -18,6 +18,7 @@ namespace serverChat
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
 
+        #region Class Modification
         // Constructor
         //
         // @arg d The model object instance
@@ -30,7 +31,69 @@ namespace serverChat
             // Initialize the form
             InitializeComponent();
         }
+        #endregion
 
+        #region GUI Elements Handling
+        // Handle Conversation Button Clicked
+        //
+        // Handle actions taken when the conversation button is clicked
+        private void convButton_Click(object sender, EventArgs e)
+        {
+            // TODO: Set user flag to false
+
+            // TODO: Set conversation flag to true
+
+            // TODO: Update conversation list from model
+
+            // TODO: Put all of the elements from the conversation list into the list box
+        }
+
+        // Handle Item Selected from List Box
+        //
+        // Handle actions taken when the user selects an item from the list box
+        private void eleListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: Clear text box
+
+            // TODO: Determine whether it is user or conversation info
+
+            // USER
+            //// TODO: Get user object for selected user
+
+            //// TODO: Display username
+
+            //// TODO: Display display name
+
+            //// TODO: Display status
+
+            //// TODO: Display ip address
+
+            // CONVERSATION
+            //// TODO: Get conversation object for selected user
+
+            //// TODO: Display name
+
+            //// TODO: Display list of usernames for participants
+
+            //// TODO: Display most recent message
+        }
+
+        // Handle User Button Clicked
+        //
+        // Handle actions taken when the user button has been clicked
+        private void usersButton_Click(object sender, EventArgs e)
+        {
+            // TODO: Set user flag to true
+
+            // TODO: Set conversation flag to false
+
+            // TODO: Update user list from model
+
+            // TODO: Put all of the elements from the user list into the list box
+        }
+        #endregion
+
+        #region Helper Methods
         // Add Conversation to Conversation ComboBox
         //
         // Add a conversation to the list of conversations in the
@@ -38,7 +101,7 @@ namespace serverChat
         // @arg name The name of the conversation to be added
         private void AddConvOption(string name)
         {
-            convComboBox.Items.Add(name);
+            eleListBox.Items.Add(name);
         }
 
         // Add User to User ComboBox
@@ -47,48 +110,7 @@ namespace serverChat
         // @param username The username of the user that was added
         private void AddUserOption(string username)
         {
-            usersComboBox.Items.Add(username);
-        }
-
-        // Conversation Combobox Selected Index Changed
-        //
-        // Handle the when the user chooses a value from the conversation drop down
-        // list that isn't the base value
-        private void convComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Disable the conversation drop down box
-            usersComboBox.AllowDrop = false;
-            usersComboBox.Enabled = false;
-
-            // TODO: Get the conversation object from the list of all users
-        }
-
-        // Enter Button Clicked
-        //
-        // Handle the when the enter button is clicked
-        private void enterButton_Click(object sender, EventArgs e)
-        {
-            // Create any text currently in the textbox
-            currentInfo.Clear();
-
-            // Determine if the user object is present
-            if (user != new ServerUser())
-            {
-                currentInfo.AppendText("User display name: ra");
-                currentInfo.AppendText("Username: random");
-                currentInfo.AppendText("Password: pass");
-                return;
-            }
-
-            // Determine if the conversation object is present
-            if (conv != new ServerConversation())
-            {
-                currentInfo.AppendText("Conversation name: current name");
-                return;
-            }
-
-            // Send error to user
-            MessageBox.Show("You need to select either a user or a conversation!");
+            eleListBox.Items.Add(username);
         }
 
         // Remove Conversation from Conversation ComboBox
@@ -98,7 +120,7 @@ namespace serverChat
         // @arg name The name of the conversation to be removed
         private void RemoveConvOption(string name)
         {
-            convComboBox.Items.Remove(name);
+            eleListBox.Items.Remove(name);
         }
 
         // Remove User from User ComboBox
@@ -107,7 +129,7 @@ namespace serverChat
         // @arg username The username of the user that has been removed
         private void RemoveUserOption(string username)
         {
-            usersComboBox.Items.Remove(username);
+            eleListBox.Items.Remove(username);
         }
 
         // Update User ComboBox List
@@ -135,18 +157,6 @@ namespace serverChat
                 AddConvOption(list.ElementAt(i));
             }
         }
-
-        // Users Combobox Selected Index Changed
-        //
-        // Handle the when the user chooses a value from the user drop down list
-        // that isn't the base value
-        private void usersComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Disable the conversation drop down box
-            convComboBox.AllowDrop = false;
-            convComboBox.Enabled = false;
-
-            // TODO: Get the user object from the list of all users
-        }
+        #endregion
     }
 }
