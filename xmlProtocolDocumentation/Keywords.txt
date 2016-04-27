@@ -1,24 +1,39 @@
 "Single Line" Elements: <a />
 
-sign - request new account
-cont - a contact that the user knows (only used in login and logout)
-addCont - add a contact
-rmCont - remove contact
-udCont - update the contact information
+    Access messages:
+	sign - request new account
+	cont - a contact that the user knows (only used in login and logout)
 
-tags: <a="">
+    Conversation messages:
+	addPa - add a participant to a conversation (only used in updating a conversation)
+	leave - remove a participant from a conversation (only used in updating a conversation)
 
-dispName
-username
-password
-to
-from
-error
-state ("Offline", "Away", "Online")
+    Contact messages:
+	addCont - add a contact
+	rmCont - remove contact
+	udCont - update the contact information
 
 Region Elements: <a></a>
 
-login - when requesting log in
-logout - When requesting log out
-udConv - Update the conversation information
-msg - sending a message
+	logout - When requesting log out
+	udConv - Update the conversation information
+	msg - sending a message
+
+"Single Line" or Region Elements:
+
+	login - when requesting log in
+
+tags: <a="">
+    
+    User and Contact:
+	dispName (a user's display name)
+	username (a user's username)
+	password (a user's password)
+	state ("Offline", "Away", "Online")
+    
+    Contact and Converstion:
+	source (the source of a contact or conversation message, always a username)
+	conv (a conversation name)
+    
+    Other:
+	error (for sending error messages)

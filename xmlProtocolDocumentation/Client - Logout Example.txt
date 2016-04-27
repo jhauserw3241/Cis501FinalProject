@@ -1,4 +1,4 @@
 <logout username="admin">
-<!-- The contact that the client sends the server is reduced -->
+<!-- The list of contacts that the client sends the server is reduced (only username necessary) -->
 <cont username="newUser69">
 </logout>

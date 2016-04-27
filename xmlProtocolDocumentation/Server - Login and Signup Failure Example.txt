@@ -1,2 +1,2 @@
 <!-- action = login or sign (Depending on appropriate action) -->
-<action error="username or password does not exist" />
+<action error="Username or password does not exist." />

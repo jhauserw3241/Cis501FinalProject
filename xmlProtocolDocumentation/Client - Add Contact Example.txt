@@ -1,2 +1,1 @@
-<!-- Add contact "admin" TO "newUser420"s contact list -->
-<addCont username="admin" to="newUser420" />
+<addCont source="newUser420" username="admin" />
