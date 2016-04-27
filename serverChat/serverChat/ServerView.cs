@@ -110,6 +110,32 @@ namespace serverChat
             usersComboBox.Items.Remove(username);
         }
 
+        // Update User ComboBox List
+        //
+        // Update the user combobox list with the specified list
+        // @param list The list of users
+        private void UpdateUserComboBoxList(List<string> list)
+        {
+            int size = list.Count;
+            for (int i = 0; i < size; i++)
+            {
+                AddUserOption(list.ElementAt(i));
+            }
+        }
+
+        // Update Conversation ComboBox List
+        //
+        // Update the conversation combobox list with the specified list
+        // @param list The list of conversations
+        private void UpdateConvComboBoxList(List<string> list)
+        {
+            int size = list.Count;
+            for (int i = 0; i < size; i++)
+            {
+                AddConvOption(list.ElementAt(i));
+            }
+        }
+
         // Users Combobox Selected Index Changed
         //
         // Handle the when the user chooses a value from the user drop down list
