@@ -9,6 +9,7 @@ namespace serverChat
     public class ServerController
     {
         private ServerModel data = new ServerModel();
+        private WebSocket ws;
 
         // Constructor
         //
@@ -17,6 +18,17 @@ namespace serverChat
         {
             // Update the server objects
             data = d;
+
+            // Create the websocket
+            ws = new WebSocket("ws://127.0.0.1:8001/chat");
+            ws.OnMessage += HandleRecievingMessage;
+            ws.Connect();
+        }
+
+        // Destructor
+        ~ServerController()
+        {
+            ws.Close();
         }
 
         // Add Contact To List
