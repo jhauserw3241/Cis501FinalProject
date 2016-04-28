@@ -51,6 +51,23 @@ namespace serverChat
             data.SetUserList(userList);
         }
 
+        // Add Conversation
+        //
+        // Add conversation to the list of conversations
+        // @param name The conversation name of the new conversation
+        public void AddConversation(string name)
+        {
+            // Create conversation object from conversation info
+            ServerConversation conv = new ServerConversation(name);
+
+            // Add conversation to list
+            List<ServerConversation> convList = data.GetConversationList();
+            convList.Add(conv);
+
+            // Update the view
+            output("UpdateConversationList", convList);
+        }
+
         // Add Participant To Conversation
         //
         // Add the specified participant to the specified conversation
