@@ -81,7 +81,7 @@ namespace ServerChatTests
         public void SetGetPassword()
         {
             string password = "mypassword";
-            user.setPassword(password);
+            user.SetPassword(password);
             Assert.AreEqual(password, user.GetPassword());
         }
 
