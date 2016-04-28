@@ -39,9 +39,7 @@ namespace FinalProjectChatClient
         public event ClientInputHandler MainInput;
 
         #endregion
-
-        #region Public Methods
-
+        
         /// <summary>
         /// Creates a new instance of a chat client form.
         /// </summary>
@@ -56,40 +54,7 @@ namespace FinalProjectChatClient
             contactsList.Items.Add(new Contact("admin", "Admin", "Online"));
         }
 
-        /// <summary>
-        /// Creates a new tab to contain a conversation.
-        /// </summary>
-        /// <param name="convName">The name of the conversation and tab.</param>
-        public void CreateConversationTab(string convName)
-        {
-            TabPage newPage = new TabPage();
-            Label newLabel = new Label();
-
-            // Configuring new conversation tab
-            newPage.Controls.Add(newLabel);
-            newPage.Location = new Point(4, 29);
-            newPage.Name = convName;
-            newPage.Padding = new Padding(3);
-            newPage.Size = new Size(447, 271);
-            newPage.TabIndex = tabCount;
-            newPage.Text = convName;
-            newPage.UseVisualStyleBackColor = true;
-
-            // Configuring new text space
-            newLabel.Location = new Point(0, 0);
-            newLabel.Name = convName + "Text";
-            newLabel.Size = new Size(447, 271);
-            newLabel.TabIndex = tabCount;
-            tabCount++;
-
-            // Adding tab and text box to form
-            conversationTabs.Add(new Tuple<TabPage, Label>(newPage, newLabel));
-            conversationTabController.Controls.Add(newPage);
-
-            // Enable the leave tab if this is the first conversation
-            if (conversationTabController.TabCount == 1)
-                leaveConversationOption.Enabled = true;
-        }
+        #region FormOutput
 
         /// <summary>
         /// Updates the appropriate portions.
@@ -124,10 +89,45 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
+        /// Creates a new tab to contain a conversation.
+        /// </summary>
+        /// <param name="convName">The name of the conversation and tab.</param>
+        private void CreateConversationTab(string convName)
+        {
+            TabPage newPage = new TabPage();
+            Label newLabel = new Label();
+
+            // Configuring new conversation tab
+            newPage.Controls.Add(newLabel);
+            newPage.Location = new Point(4, 29);
+            newPage.Name = convName;
+            newPage.Padding = new Padding(3);
+            newPage.Size = new Size(447, 271);
+            newPage.TabIndex = tabCount;
+            newPage.Text = convName;
+            newPage.UseVisualStyleBackColor = true;
+
+            // Configuring new text space
+            newLabel.Location = new Point(0, 0);
+            newLabel.Name = convName + "Text";
+            newLabel.Size = new Size(447, 271);
+            newLabel.TabIndex = tabCount;
+            tabCount++;
+
+            // Adding tab and text box to form
+            conversationTabs.Add(new Tuple<TabPage, Label>(newPage, newLabel));
+            conversationTabController.Controls.Add(newPage);
+
+            // Enable the leave tab if this is the first conversation
+            if (conversationTabController.TabCount == 1)
+                leaveConversationOption.Enabled = true;
+        }
+
+        /// <summary>
         /// Removes the provided tab page from the conversation tab controller.
         /// </summary>
         /// <param name="tab">The tab to remove.</param>
-        public void RemoveConversationTab(TabPage tab)
+        private void RemoveConversationTab(TabPage tab)
         {
             tab.Controls.RemoveAt(0);
             conversationTabController.TabPages.Remove(tab);
@@ -146,7 +146,7 @@ namespace FinalProjectChatClient
 
         #endregion
 
-        #region Private Methods
+        #region Contacts
 
         /// <summary>
         /// Attempts to add the username provided to the list of contacts.
@@ -164,6 +164,26 @@ namespace FinalProjectChatClient
             }
         }
 
+        /// <summary>
+        /// Attempts to remove the provided username from the contact list.
+        /// </summary>
+        private void removeContactTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!removeContactTextBox.Text.Equals(String.Empty))
+                {
+                    if (MainInput != null) MainInput("RemoveCont", removeContactTextBox.Text);
+                }
+                removeContactTextBox.Text = String.Empty;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        #endregion
+
+        #region Conversations
+        
         /// <summary>
         /// Attempts to add the username provided to the current conversation.
         /// </summary>
@@ -196,49 +216,6 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
-        /// Change user's status to "invisible".
-        /// </summary>
-        private void awayStatusOption_Click(object sender, EventArgs e)
-        {
-            if (MainInput != null) MainInput("ChangeStatus", "Away");
-        }
-
-        /// <summary>
-        /// Checks to see if the user is attempting to submit a message.
-        /// </summary>
-        private void messageBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (e.Modifiers != Keys.Shift)
-                {
-                    if (conversationTabController.Controls.Count > 0)
-                    {
-                        if (MainInput != null) MainInput("Message", conversationTabController.SelectedTab.Text, messageBox.Text);
-                    }
-                    messageBox.Text = String.Empty;
-                    e.SuppressKeyPress = true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Changes the users display name.
-        /// </summary>
-        private void changeDispNameTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (!changeDispNameTextBox.Text.Equals(String.Empty))
-                {
-                    if (MainInput != null) MainInput("ChangeDispName", changeDispNameTextBox.Text);
-                }
-                changeDispNameTextBox.Text = String.Empty;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        /// <summary>
         /// Creates a conversation with the possibilty of initializing multiple participants.
         /// </summary>
         private void createConversationOption_Click(object sender, EventArgs e)
@@ -264,11 +241,34 @@ namespace FinalProjectChatClient
         }
 
         /// <summary>
-        /// Logs the user out.
+        /// Checks to see if the user is attempting to submit a message.
         /// </summary>
-        private void logoutProfileOption_Click(object sender, EventArgs e)
+        private void messageBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (MainInput != null) MainInput("Logout");
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (e.Modifiers != Keys.Shift)
+                {
+                    if (conversationTabController.Controls.Count > 0)
+                    {
+                        if (MainInput != null) MainInput("Message", conversationTabController.SelectedTab.Text, messageBox.Text);
+                    }
+                    messageBox.Text = String.Empty;
+                    e.SuppressKeyPress = true;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Statusi
+
+        /// <summary>
+        /// Change user's status to "invisible".
+        /// </summary>
+        private void awayStatusOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("ChangeStatus", "Away");
         }
 
         /// <summary>
@@ -287,20 +287,32 @@ namespace FinalProjectChatClient
             if (MainInput != null) MainInput("ChangeStatus", "Online");
         }
 
+        #endregion
+
+        #region Profile
+
         /// <summary>
-        /// Attempts to remove the provided username from the contact list.
+        /// Changes the users display name.
         /// </summary>
-        private void removeContactTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void changeDispNameTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (!removeContactTextBox.Text.Equals(String.Empty))
+                if (!changeDispNameTextBox.Text.Equals(String.Empty))
                 {
-                    if (MainInput != null) MainInput("RemoveCont", removeContactTextBox.Text);
+                    if (MainInput != null) MainInput("ChangeDispName", changeDispNameTextBox.Text);
                 }
-                removeContactTextBox.Text = String.Empty;
+                changeDispNameTextBox.Text = String.Empty;
                 e.SuppressKeyPress = true;
             }
+        }
+
+        /// <summary>
+        /// Logs the user out.
+        /// </summary>
+        private void logoutProfileOption_Click(object sender, EventArgs e)
+        {
+            if (MainInput != null) MainInput("Logout");
         }
 
         #endregion
