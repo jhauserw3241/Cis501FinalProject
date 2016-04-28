@@ -55,8 +55,8 @@ namespace serverChat
         // Handle actions taken when the user selects an item from the list box
         private void eleListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // TODO: Clear text box
-
+            // Clear text box
+            currentInfo.Clear();
             // TODO: Determine whether it is user or conversation info
 
             // USER
