@@ -154,23 +154,18 @@ namespace serverChat
                     MessageBox.Show("ERROR: Invalid action provided to form.");
                     break;
             }
-        // Remove Conversation from Conversation ComboBox
-        //
-        // Remove a conversation from the list of conversations in
-        // the Conversations ComboBox
-        // @arg name The name of the conversation to be removed
-        private void RemoveConvOption(string name)
-        {
-            eleListBox.Items.Remove(name);
         }
 
-        // Remove User from User ComboBox
+        // Remove All List Box Elements
         //
-        // Remove a username from the list of usernames in the User ComboBox
-        // @arg username The username of the user that has been removed
-        private void RemoveUserOption(string username)
+        // Remove all of the elements from the eleListBox on the form
+        private void RemoveAllListBoxEles()
         {
-            eleListBox.Items.Remove(username);
+            int size = eleListBox.Items.Count;
+            for (int i = 0; i < size; i++)
+            {
+                eleListBox.Items.RemoveAt(i);
+            }
         }
 
         // Update User ComboBox List
