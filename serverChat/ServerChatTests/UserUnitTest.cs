@@ -57,7 +57,7 @@ namespace ServerChatTests
         [TestMethod]
         public void SetGetStatus()
         {
-            bool status = false;
+            STATUS status = STATUS.offline;
             user.SetStatus(status);
             Assert.AreEqual(status, user.GetStatus());
         }
