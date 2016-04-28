@@ -204,6 +204,25 @@ namespace serverChat
             return new ServerUser();
         }
 
+        // Is Username Used
+        //
+        // Check if hte username is currently being used by another user
+        // @param name The username being requested
+        public bool IsUsernameUsed(string name)
+        {
+            List<ServerUser> userList = data.GetUserList();
+            int size = userList.Count;
+            for (int i = 0; i < size; i++)
+            {
+                if (name == userList.ElementAt(i).GetUsername())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // Remove Conversation From List
         //
         // Remove the conversation from the list in the model
