@@ -19,13 +19,13 @@ namespace serverChat
             ServerController cont = new ServerController(data);
             ServerView form = new ServerView(data);
 
+            // Create connection from view to controller
+            cont.output += form.HandleFormOutput;
+
             // Create/display form
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(form);
-
-            // Create connection from view to controller
-            cont.output += form.HandleFormOutput;
         }
     }
 }
