@@ -176,8 +176,13 @@ namespace serverChat
             status = s;
         }
 
+        // Set Username
         //
+        // Set the username for the current user
+        // @param name A string containing the username for the current user
+        public void SetUsername(string name)
         {
+            username = name;
         }
     }
 }
