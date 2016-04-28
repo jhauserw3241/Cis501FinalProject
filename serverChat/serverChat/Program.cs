@@ -17,7 +17,7 @@ namespace serverChat
             // Create objects
             ServerModel data = new ServerModel();
             ServerController cont = new ServerController(data);
-            ServerView form = new ServerView(data);
+            ServerView form = new ServerView();
 
             // Create connection from view to controller
             cont.output += form.HandleFormOutput;

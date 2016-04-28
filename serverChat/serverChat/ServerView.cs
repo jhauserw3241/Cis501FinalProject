@@ -13,7 +13,6 @@ namespace serverChat
     public partial class ServerView : Form
     {
         // Declare objects
-        private ServerModel data;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
         private List<ServerUser> usersList = new List<ServerUser>();
@@ -23,13 +22,8 @@ namespace serverChat
 
         #region Class Modification
         // Constructor
-        //
-        // @arg d The model object instance
-        public ServerView(ServerModel d)
+        public ServerView()
         {
-            // Update the model
-            data = d;
-
             // Initialize the form
             InitializeComponent();
         }
