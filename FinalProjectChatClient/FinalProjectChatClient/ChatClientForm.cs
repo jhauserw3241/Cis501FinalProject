@@ -53,7 +53,7 @@ namespace FinalProjectChatClient
             createForm = create;
             conversationTabs = new List<Tuple<TabPage, Label>>();
 
-            contactsList.Items.Add(new Contact("admin", "Admin"));
+            contactsList.Items.Add(new Contact("admin", "Admin", "Online"));
         }
 
         /// <summary>
@@ -198,9 +198,9 @@ namespace FinalProjectChatClient
         /// <summary>
         /// Change user's status to "invisible".
         /// </summary>
-        private void invisibleStatusOption_Click(object sender, EventArgs e)
+        private void awayStatusOption_Click(object sender, EventArgs e)
         {
-            if (MainInput != null) MainInput("ChangeStatus", "Invisible");
+            if (MainInput != null) MainInput("ChangeStatus", "Away");
         }
 
         /// <summary>
