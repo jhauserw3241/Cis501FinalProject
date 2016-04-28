@@ -123,18 +123,12 @@ namespace serverChat
         }
 
         // Handle Form Output
-        // Add User to User ComboBox
         //
         // Handle any actions that need to be taken for the view
         // @param action What form needs to update
         public void HandleFormOutput(string action, params object[] vars)
-        // Add a username to the list of usernames in the User ComboBox
-        // @param username The username of the user that was added
-        private void AddUserOption(string username)
         {
             int size = vars.Count();
-            eleListBox.Items.Add(username);
-        }
 
             switch (action)
             {
@@ -168,29 +162,29 @@ namespace serverChat
             }
         }
 
-        // Update User ComboBox List
+        // Update User List Box
         //
-        // Update the user combobox list with the specified list
-        // @param list The list of users
-        private void UpdateUserComboBoxList(List<string> list)
+        // Update the user list box with the list of ServerUser objects
+        private void UpdateUserListBox()
         {
-            int size = list.Count;
+            int size = usersList.Count;
             for (int i = 0; i < size; i++)
             {
-                AddUserOption(list.ElementAt(i));
+                string username = usersList.ElementAt(i).GetUsername();
+                eleListBox.Items.Add(username);
             }
         }
 
-        // Update Conversation ComboBox List
+        // Update Conversation List Box
         //
-        // Update the conversation combobox list with the specified list
-        // @param list The list of conversations
-        private void UpdateConvComboBoxList(List<string> list)
+        // Update the conversation list box with the list of ServerConversation object
+        private void UpdateConvListBox()
         {
-            int size = list.Count;
+            int size = convsList.Count;
             for (int i = 0; i < size; i++)
             {
-                AddConvOption(list.ElementAt(i));
+                string name = convsList.ElementAt(i).GetConversationName();
+                eleListBox.Items.Add(name);
             }
         }
         #endregion
