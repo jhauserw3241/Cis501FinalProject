@@ -17,6 +17,8 @@ namespace serverChat
         private ServerController cont;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
+        private bool userFlag = false;
+        private bool convFlag = false;
 
         #region Class Modification
         // Constructor
@@ -39,9 +41,9 @@ namespace serverChat
         // Handle actions taken when the conversation button is clicked
         private void convButton_Click(object sender, EventArgs e)
         {
-            // TODO: Set user flag to false
-
-            // TODO: Set conversation flag to true
+            // Set flags for category selected
+            userFlag = false;
+            convFlag = true;
 
             // TODO: Update conversation list from model
 
@@ -83,9 +85,9 @@ namespace serverChat
         // Handle actions taken when the user button has been clicked
         private void usersButton_Click(object sender, EventArgs e)
         {
-            // TODO: Set user flag to true
-
-            // TODO: Set conversation flag to false
+            // Set flags for category selected
+            userFlag = true;
+            convFlag = false;
 
             // TODO: Update user list from model
 
