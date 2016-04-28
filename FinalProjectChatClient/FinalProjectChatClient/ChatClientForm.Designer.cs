@@ -7,37 +7,33 @@ namespace FinalProjectChatClient
 {
     partial class ChatClientForm
     {
-        private ToolStripMenuItem addContactOption;
-        private ToolStripStatusLabel userStatusLabel;
         private ListBox contactsList;
-        private ToolStripMenuItem contactsMenu;
-        private ToolStripMenuItem conversationMenu;
         private TabControl conversationTabController;
         private List<Tuple<TabPage, Label>> conversationTabs;
-        private ToolStripMenuItem createConversationOption;
-        private ToolStripMenuItem displayNameProfileOption;
-        private StatusStrip infoStrip;
-        private ToolStripMenuItem leaveConversationOption;
-        private ToolStripMenuItem logoutProfileOption;
-        private MenuStrip mainMenu;
         private TextBox messageBox;
-        private ToolStripMenuItem offlineStatusOption;
-        private ToolStripMenuItem onlineStatusOption;
+        private MenuStrip mainMenu;
         private ToolStripMenuItem profileMenu;
-        private ToolStripMenuItem profileStatusMenu;
-        private ToolStripMenuItem removeContactOption;
+        private ToolStripMenuItem displayNameProfileOption;
+        private ToolStripTextBox changeDispNameTextBox;
+        private ToolStripMenuItem statusProfileOption;
+        private ToolStripMenuItem offlineStatusOption;
+        private ToolStripMenuItem awayStatusOption;
+        private ToolStripMenuItem onlineStatusOption;
+        private ToolStripMenuItem logoutProfileOption;
+        private ToolStripMenuItem contactsMenu;
+        private ToolStripMenuItem addContactOption;
         private ToolStripTextBox addContactTextBox;
+        private ToolStripMenuItem removeContactOption;
         private ToolStripTextBox removeContactTextBox;
+        private ToolStripMenuItem conversationMenu;
+        private ToolStripMenuItem createConversationOption;
+        private ToolStripMenuItem leaveConversationOption;
         private ToolStripMenuItem addParticipantOption;
         private ToolStripTextBox addParticipantTextBox;
-        private ToolStripMenuItem invisibleStatusOption;
-        private ToolStripTextBox changeDispNameTextBox;
+        private StatusStrip infoStrip;
         private ToolStripStatusLabel dispNameLabel;
+        private ToolStripStatusLabel userStatusLabel;
 
-        public ToolStripStatusLabel ConnectionStatus
-        {
-            get { return userStatusLabel; }
-        }
         public ListBox ContactsList
         {
             get { return contactsList; }
@@ -50,19 +46,99 @@ namespace FinalProjectChatClient
         {
             get { return conversationTabs; }
         }
-        public StatusStrip InfoStrip
+        public TextBox MessageBox
         {
-            get { return infoStrip; }
+            get { return messageBox; }
         }
         public MenuStrip MainMenu
         {
             get { return mainMenu; }
         }
-        public TextBox MessageBox
+        public ToolStripMenuItem ProfileMenu
         {
-            get { return messageBox; }
+            get { return profileMenu; }
         }
-
+        public ToolStripMenuItem DisplayNameProfileOption
+        {
+            get { return displayNameProfileOption; }
+        }
+        public ToolStripTextBox ChangeDispNameTextBox
+        {
+            get { return changeDispNameTextBox; }
+        }
+        public ToolStripMenuItem StatusProfileOption
+        {
+            get { return statusProfileOption; }
+        }
+        public ToolStripMenuItem OfflineStatusOption
+        {
+            get { return offlineStatusOption; }
+        }
+        public ToolStripMenuItem AwayStatusOption
+        {
+            get { return awayStatusOption; }
+        }
+        public ToolStripMenuItem OnlineStatusOption
+        {
+            get { return onlineStatusOption; }
+        }
+        public ToolStripMenuItem LogoutProfileOption
+        {
+            get { return logoutProfileOption; }
+        }
+        private ToolStripMenuItem ContactsMenu
+        {
+            get { return contactsMenu; }
+        }
+        private ToolStripMenuItem AddContactOption
+        {
+            get { return addContactOption; }
+        }
+        private ToolStripTextBox AddContactTextBox
+        {
+            get { return addContactTextBox; }
+        }
+        private ToolStripMenuItem RemoveContactOption
+        {
+            get { return removeContactOption; }
+        }
+        private ToolStripTextBox RemoveContactTextBox
+        {
+            get { return removeContactTextBox; }
+        }
+        private ToolStripMenuItem ConversationMenu
+        {
+            get { return conversationMenu; }
+        }
+        private ToolStripMenuItem CreateConversationOption
+        {
+            get { return createConversationOption; }
+        }
+        private ToolStripMenuItem LeaveConversationOption
+        {
+            get { return leaveConversationOption; }
+        }
+        private ToolStripMenuItem AddParticipantOption
+        {
+            get { return addParticipantOption; }
+        }
+        private ToolStripTextBox AddParticipantTextBox
+        {
+            get { return addParticipantTextBox; }
+        }
+        private StatusStrip InfoStrip
+        {
+            get { return infoStrip; }
+        }
+        private ToolStripStatusLabel DispNameLabel
+        {
+            get { return dispNameLabel; }
+        }
+        private ToolStripStatusLabel UserStatusLabel
+        {
+            get { return userStatusLabel; }
+        }
+        
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -90,15 +166,15 @@ namespace FinalProjectChatClient
         private void InitializeComponent()
         {
             this.infoStrip = new System.Windows.Forms.StatusStrip();
-            this.userStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.dispNameLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.userStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.profileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.displayNameProfileOption = new System.Windows.Forms.ToolStripMenuItem();
             this.changeDispNameTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.profileStatusMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusProfileOption = new System.Windows.Forms.ToolStripMenuItem();
             this.onlineStatusOption = new System.Windows.Forms.ToolStripMenuItem();
-            this.invisibleStatusOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.awayStatusOption = new System.Windows.Forms.ToolStripMenuItem();
             this.offlineStatusOption = new System.Windows.Forms.ToolStripMenuItem();
             this.logoutProfileOption = new System.Windows.Forms.ToolStripMenuItem();
             this.contactsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -130,17 +206,17 @@ namespace FinalProjectChatClient
             this.infoStrip.TabIndex = 0;
             this.infoStrip.Text = "statusStrip1";
             // 
-            // userStatusLabel
-            // 
-            this.userStatusLabel.Name = "userStatusLabel";
-            this.userStatusLabel.Size = new System.Drawing.Size(122, 25);
-            this.userStatusLabel.Text = "Status: Offline";
-            // 
             // dispNameLabel
             // 
             this.dispNameLabel.Name = "dispNameLabel";
             this.dispNameLabel.Size = new System.Drawing.Size(68, 25);
             this.dispNameLabel.Text = "Name: ";
+            // 
+            // userStatusLabel
+            // 
+            this.userStatusLabel.Name = "userStatusLabel";
+            this.userStatusLabel.Size = new System.Drawing.Size(122, 25);
+            this.userStatusLabel.Text = "Status: Offline";
             // 
             // mainMenu
             // 
@@ -159,7 +235,7 @@ namespace FinalProjectChatClient
             // 
             this.profileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.displayNameProfileOption,
-            this.profileStatusMenu,
+            this.statusProfileOption,
             this.logoutProfileOption});
             this.profileMenu.Name = "profileMenu";
             this.profileMenu.Size = new System.Drawing.Size(74, 29);
@@ -170,7 +246,7 @@ namespace FinalProjectChatClient
             this.displayNameProfileOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeDispNameTextBox});
             this.displayNameProfileOption.Name = "displayNameProfileOption";
-            this.displayNameProfileOption.Size = new System.Drawing.Size(207, 30);
+            this.displayNameProfileOption.Size = new System.Drawing.Size(211, 30);
             this.displayNameProfileOption.Text = "Display Name";
             // 
             // changeDispNameTextBox
@@ -179,41 +255,41 @@ namespace FinalProjectChatClient
             this.changeDispNameTextBox.Size = new System.Drawing.Size(100, 31);
             this.changeDispNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.changeDispNameTextBox_KeyDown);
             // 
-            // profileStatusMenu
+            // statusProfileOption
             // 
-            this.profileStatusMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusProfileOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.onlineStatusOption,
-            this.invisibleStatusOption,
+            this.awayStatusOption,
             this.offlineStatusOption});
-            this.profileStatusMenu.Name = "profileStatusMenu";
-            this.profileStatusMenu.Size = new System.Drawing.Size(207, 30);
-            this.profileStatusMenu.Text = "Status";
+            this.statusProfileOption.Name = "statusProfileOption";
+            this.statusProfileOption.Size = new System.Drawing.Size(211, 30);
+            this.statusProfileOption.Text = "Status";
             // 
             // onlineStatusOption
             // 
             this.onlineStatusOption.Name = "onlineStatusOption";
-            this.onlineStatusOption.Size = new System.Drawing.Size(161, 30);
+            this.onlineStatusOption.Size = new System.Drawing.Size(211, 30);
             this.onlineStatusOption.Text = "Online";
             this.onlineStatusOption.Click += new System.EventHandler(this.onlineStatusOption_Click);
             // 
-            // invisibleStatusOption
+            // awayStatusOption
             // 
-            this.invisibleStatusOption.Name = "invisibleStatusOption";
-            this.invisibleStatusOption.Size = new System.Drawing.Size(161, 30);
-            this.invisibleStatusOption.Text = "Invisible";
-            this.invisibleStatusOption.Click += new System.EventHandler(this.invisibleStatusOption_Click);
+            this.awayStatusOption.Name = "awayStatusOption";
+            this.awayStatusOption.Size = new System.Drawing.Size(211, 30);
+            this.awayStatusOption.Text = "Away";
+            this.awayStatusOption.Click += new System.EventHandler(this.awayStatusOption_Click);
             // 
             // offlineStatusOption
             // 
             this.offlineStatusOption.Name = "offlineStatusOption";
-            this.offlineStatusOption.Size = new System.Drawing.Size(161, 30);
+            this.offlineStatusOption.Size = new System.Drawing.Size(211, 30);
             this.offlineStatusOption.Text = "Offline";
             this.offlineStatusOption.Click += new System.EventHandler(this.offlineStatusOption_Click);
             // 
             // logoutProfileOption
             // 
             this.logoutProfileOption.Name = "logoutProfileOption";
-            this.logoutProfileOption.Size = new System.Drawing.Size(207, 30);
+            this.logoutProfileOption.Size = new System.Drawing.Size(211, 30);
             this.logoutProfileOption.Text = "Logout";
             this.logoutProfileOption.Click += new System.EventHandler(this.logoutProfileOption_Click);
             // 

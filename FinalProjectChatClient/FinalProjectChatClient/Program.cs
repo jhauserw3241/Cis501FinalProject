@@ -27,21 +27,23 @@ namespace FinalProjectChatClient
             // Create central controller
             ChatClientController clientController = new ChatClientController(clientModel);
             // Create and add forms to controller
-            clientController.ClientForm = new ChatClientForm(clientModel, convCreate.PopUp);
             clientController.EntryForm = new EntryPopUp();
             clientController.LoginForm = new LoginPopUp();
             clientController.SignupForm = new SignupPopUp();
 
+            // Create the main view
+            ChatClientForm clientForm = new ChatClientForm(clientModel, convCreate.PopUp);
+
             // Add output handler from main form to central controller
-            clientController.Output += clientController.ClientForm.HandleFormOutput;
+            clientController.Output += clientForm.HandleFormOutput;
             // Add start-up handler from central controller to main form
-            clientController.ClientForm.Load += clientController.HandleLoadIn;
+            clientForm.Load += clientController.HandleLoadIn;
             // Add input handler from central controller to main form
-            clientController.ClientForm.MainInput += clientController.HandleFormInput;
+            clientForm.MainInput += clientController.HandleFormInput;
             // Add input handler from conversation creation controller to conversation creation form
             convCreate.PopUp.CreationInput += convCreate.HandleFormInput;
 
-            Application.Run(clientController.ClientForm);
+            Application.Run(clientForm);
         }
     }
 }
