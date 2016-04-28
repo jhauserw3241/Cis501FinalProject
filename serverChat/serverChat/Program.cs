@@ -14,6 +14,10 @@ namespace serverChat
         [STAThread]
         static void Main()
         {
+            // Application setup
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             // Create objects
             ServerModel data = new ServerModel();
             ServerController cont = new ServerController(data);
@@ -22,9 +26,7 @@ namespace serverChat
             // Create connection from view to controller
             cont.output += form.HandleFormOutput;
 
-            // Create/display form
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            // Execute form
             Application.Run(form);
         }
     }
