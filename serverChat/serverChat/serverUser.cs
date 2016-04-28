@@ -158,6 +158,15 @@ namespace serverChat
             name = dName;
         }
 
+        // Set Password
+        //
+        // Set the password for the current user
+        // @param pass A string containing the password for the current user
+        public void SetPassword(string pass)
+        {
+            password = pass;
+        }
+
         // Set Status
         //
         // Set the status of the current user
@@ -167,13 +176,8 @@ namespace serverChat
             status = s;
         }
 
-        // Set Password
         //
-        // Set the password for the current user
-        // @param pass A string containing the password for the current user
-        public void SetPassword(string pass)
         {
-            password = pass;
         }
     }
 }
