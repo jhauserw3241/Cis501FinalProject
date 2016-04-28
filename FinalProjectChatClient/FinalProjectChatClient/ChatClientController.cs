@@ -86,14 +86,14 @@ namespace FinalProjectChatClient
                     HandleLoadIn(clientForm, new EventArgs());
                     break;
                 case "AddCont":
-                    ws.Send(String.Format("<addCont username=\"{0}\" to=\"{1}\" />", (string)vars[0], clientModel.Username));
+                    ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, (string)vars[0]));
                     break;
                 case "RemoveCont":
                     participant = clientModel.ContactList.Find(x => x.Username.Equals((string)vars[0]));
 
                     if (participant != null)
                     {
-                        ws.Send(String.Format("<rmCont username=\"{0}\" from=\"{1}\" />", (string)vars[0], clientModel.Username));
+                        ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, (string)vars[0]));
                         clientModel.ContactList.Remove(participant);
                         if (Output != null) Output("RemoveCont", participant);
                     }
@@ -108,7 +108,7 @@ namespace FinalProjectChatClient
                 case "LeaveConv":
                     page = (TabPage)vars[0];
 
-                    ws.Send(String.Format("<leave username=\"{0}\" from=\"{1}\" />", clientModel.Username, page.Text));
+                    ws.Send(String.Format("<udConv conv=\"{0}\"><leave username=\"{1}\" />", page.Text, clientModel.Username));
                     clientModel.ConversationList.Remove(page.Text);
                     if (Output != null) Output("LeaveConv", page);
                     break;
@@ -125,15 +125,15 @@ namespace FinalProjectChatClient
                 case "ChangeStatus":
                     clientModel.Status = (string)vars[0];
                     if (Output != null) Output("UpdateStatus", (string)vars[0]);
-                    ws.Send(String.Format("<udCont username=\"{0}\" state=\"{1}\" />", clientModel.Username, (string)vars[0]));
+                    ws.Send(String.Format("<udCont source=\"{0}\" state=\"{1}\" />", clientModel.Username, (string)vars[0]));
                     break;
                 case "ChangeDispName":
                     clientModel.DisplayName = (string)vars[0];
                     if (Output != null) Output("UpdateName", (string)vars[0]);
-                    ws.Send(String.Format("<udCont username=\"{0}\" dispName=\"{1}\" />", clientModel.Username, (string)vars[0]));
+                    ws.Send(String.Format("<udCont source=\"{0}\" dispName=\"{1}\" />", clientModel.Username, (string)vars[0]));
                     break;
                 case "Message":
-                    ws.Send(String.Format("<msg from=\"{0}\" to=\"{1}\"><content>{2}</content></msg>", clientModel.Username, clientModel.ConversationList[(string)vars[0]], FormatForChat((string)vars[1])));
+                    ws.Send(String.Format("<msg source=\"{0}\" conv=\"{1}\">{2}</msg>", clientModel.Username, clientModel.ConversationList[(string)vars[0]], FormatForChat((string)vars[1])));
                     break;
             }
         }
@@ -251,7 +251,7 @@ namespace FinalProjectChatClient
         /// <param name="participant">The participant to add.</param>
         private void AddConvParticipant(string name, string participant)
         {
-            ws.Send(String.Format("<udCont dispName=\"{0}\"><addPa username=\"{1}\" /></udCont>", name, participant));
+            ws.Send(String.Format("<udCont conv=\"{0}\"><addPa username=\"{1}\" /></udCont>", name, participant));
             // Wait for a response from the server
             clientModel.WaitFlag = true;
             while (clientModel.WaitFlag)
@@ -276,7 +276,7 @@ namespace FinalProjectChatClient
         /// <param name="party">The participants in the conversation.</param>
         private void CreateConversation(string name, List<string> party)
         {
-            StringBuilder send = new StringBuilder("<udConv dispName=\"" + name + "\">");
+            StringBuilder send = new StringBuilder("<udConv conv=\"" + name + "\">");
             
             // Make sure there are actually people in the conversation
             if (party.Count > 0)
@@ -373,7 +373,7 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleChatMessage(Dictionary<string, object> mssg)
         {
-            Output("Message", mssg["from"], mssg["msg"]);
+            Output("Message", mssg["conv"], mssg["msg"]);
         }
 
         /// <summary>
@@ -382,11 +382,11 @@ namespace FinalProjectChatClient
         /// <param name="mssg">Who left what conversation.</param>
         private void HandleLeaveConvMessage(Dictionary<string, object> mssg)
         {
-            List<string> conv = clientModel.ConversationList[(string)mssg["dispName"]];
+            List<string> conv = clientModel.ConversationList[(string)mssg["conv"]];
             Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["leave"]));
 
             conv.Remove(cont.Username);
-            Output("Message", mssg["dispName"], String.Format("{0} has left the conversation.", cont.DisplayName));
+            Output("Message", (string)mssg["conv"], String.Format("{0} has left the conversation.", cont.DisplayName));
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The new name of the other user.</param>
         private void HandleNameChangeMessage(Dictionary<string, object> mssg)
         {
-            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["username"]));
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["source"]));
             if (cont != null)
             {
                 cont.DisplayName = (string)mssg["dispName"];
@@ -418,7 +418,7 @@ namespace FinalProjectChatClient
             else
             {
                 List<string> participants = content["username"];
-                string name = (string)mssg["dispName"];
+                string name = (string)mssg["conv"];
 
                 if (clientModel.ConversationList.ContainsKey(name))
                 {
@@ -427,7 +427,11 @@ namespace FinalProjectChatClient
                 else
                 {
                     clientModel.ConversationList.Add(name, participants);
-                    if (Output != null) Output("CreateConv", name);
+                    if (Output != null)
+                    {
+                        Output("CreateConv", name);
+                        Output("Message", name, mssg["msg"]);
+                    }
                 }
             }
         }
@@ -438,7 +442,7 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The contact to remove.</param>
         private void HandleRemContactMessage(Dictionary<string, object> mssg)
         {
-            Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(mssg["username"]));
+            Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(mssg["source"]));
 
             if (participant != null)
             {
@@ -453,7 +457,7 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The status of the other user.</param>
         private void HandleStatusChangeMessage(Dictionary<string, object> mssg)
         {
-            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["username"]));
+            Contact cont = clientModel.ContactList.Find(x => x.Username.Equals((string)mssg["source"]));
 
             if (cont != null)
             {
@@ -466,7 +470,7 @@ namespace FinalProjectChatClient
                         if (conv.Value.Contains(cont.Username))
                         {
                             conv.Value.Remove(cont.Username);
-                            Output("Message", mssg["from"], String.Format("{0} has left the conversation.", cont.DisplayName));
+                            Output("Message", conv.Key, String.Format("{0} has left the conversation.", cont.DisplayName));
                         }
                     }
                 }
