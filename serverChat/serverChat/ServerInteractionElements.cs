@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 namespace serverChat
 {
+    public delegate void ServerOutputHandler(string action, params object[] vars);
+
     public enum STATUS {online, away, offline};
 }

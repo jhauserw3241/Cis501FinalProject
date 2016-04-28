@@ -14,9 +14,10 @@ namespace serverChat
     {
         // Declare objects
         private ServerModel data;
-        private ServerController cont;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
+        private List<ServerUser> usersList = new List<ServerUser>();
+        private List<ServerConversation> convsList = new List<ServerConversation>();
         private bool userFlag = false;
         private bool convFlag = false;
 
@@ -26,9 +27,8 @@ namespace serverChat
         // @arg d The model object instance
         public ServerView(ServerModel d)
         {
-            // Update the server objects
+            // Update the model
             data = d;
-            cont = new ServerController(d);
 
             // Initialize the form
             InitializeComponent();
@@ -122,15 +122,38 @@ namespace serverChat
             eleListBox.Items.Add(name);
         }
 
+        // Handle Form Output
         // Add User to User ComboBox
         //
+        // Handle any actions that need to be taken for the view
+        // @param action What form needs to update
+        public void HandleFormOutput(string action, params object[] vars)
         // Add a username to the list of usernames in the User ComboBox
         // @param username The username of the user that was added
         private void AddUserOption(string username)
         {
+            int size = vars.Count();
             eleListBox.Items.Add(username);
         }
 
+            switch (action)
+            {
+                case "UpdateUserList":
+                    for (int i = 0; i < size; i++)
+                    {
+                        usersList.Add((ServerUser)vars[i]);
+                    }
+                    break;
+                case "UpdateConversationList":
+                    for (int i = 0; i < size; i++)
+                    {
+                        convsList.Add((ServerConversation)vars[i]);
+                    }
+                    break;
+                default:
+                    MessageBox.Show("ERROR: Invalid action provided to form.");
+                    break;
+            }
         // Remove Conversation from Conversation ComboBox
         //
         // Remove a conversation from the list of conversations in

@@ -10,6 +10,7 @@ namespace serverChat
     {
         private ServerModel data = new ServerModel();
         private WebSocket ws;
+        public event ServerOutputHandler output;
 
         #region Manipulate Class
         // Constructor
