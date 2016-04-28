@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Text;
+using System.Text.RegularExpressions;
 using WebSocketSharp;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -131,7 +132,7 @@ namespace FinalProjectChatClient
                     break;
             }
         }
-
+        
         /// <summary>
         /// Run entry loop until user manages to login or closes.
         /// </summary>
@@ -663,6 +664,97 @@ namespace FinalProjectChatClient
             }
         }
 
+        #endregion
+
+        #region Validation
+
+        /// <summary>
+        /// Check that the string has only valid characters.
+        /// </summary>
+        /// <param name="str">The string to check.</param>
+        /// <returns>Whether or not the string passes the inspection.</returns>
+        private bool CheckString(string str)
+        {
+            return Regex.IsMatch(str, "^[a-zA-Z0-9_!@#$%^&.<>]*$");
+        }
+
+        /// <summary>
+        /// Check that the string contains at least one capital.
+        /// </summary>
+        /// <param name="str">The string to check.</param>
+        /// <returns>Whether or not the string passes the inspection.</returns>
+        private bool CheckCapital(string str)
+        {
+            return Regex.IsMatch(str, "^[A-Z]$");
+        }
+
+        /// <summary>
+        /// Check that the string contains at least one numeric.
+        /// </summary>
+        /// <param name="str">The string to check.</param>
+        /// <returns>Whether or not the string passes the inspection.</returns>
+        private bool CheckNumber(string str)
+        {
+            return Regex.IsMatch(str, "^[0-9]$");
+        }
+
+        /// <summary>
+        /// Check that the string contains at least one special character.
+        /// </summary>
+        /// <param name="str">The string to check.</param>
+        /// <returns>Whether or not the string passes the inspection.</returns>
+        private bool CheckChar(string str)
+        {
+            return Regex.IsMatch(str, "^[_!@#$%^&.<>]$");
+        }
+
+        private string ValidateUsername(string username)
+        {
+            if (CheckString(username))
+            {
+                return "Success";
+            }
+            else
+            {
+                return "The username must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
+            }
+        }
+
+        private string ValidatePassword(string password)
+        {
+            if (CheckString(password))
+            {
+                if (CheckCapital(password))
+                {
+                    if (CheckNumber(password))
+                    {
+                        if (CheckChar(password))
+                        {
+                            return "Success";
+                        }
+                        else
+                        {
+                            return "The password must contain at least one of the following: _ ! @ # $ % ^ & . < >";
+                        }
+                    }
+                    else
+                    {
+                        return "The password must contain at least one numeric character.";
+                    }
+                }
+                else
+                {
+                    return "The password must contain at least one capital letter.";
+                }
+            }
+            else
+            {
+                return "The password must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Deconstructor for the ChatClientController.
         /// </summary>
@@ -671,7 +763,5 @@ namespace FinalProjectChatClient
             if (clientModel.State == FlowState.Main) LogoutAction();
             ws.Close();
         }
-
-        #endregion
     }
 }
