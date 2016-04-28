@@ -11,6 +11,7 @@ namespace serverChat
         private ServerModel data = new ServerModel();
         private WebSocket ws;
 
+        #region Manipulate Class
         // Constructor
         //
         // @arg d The model object instance
@@ -30,6 +31,7 @@ namespace serverChat
         {
             ws.Close();
         }
+        #endregion
 
         // Add Contact To List
         //
