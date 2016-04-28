@@ -4,16 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebSocketSharp;
+using WebSocketSharp.Server;
 
 namespace serverChat
 {
-    public class ServerController
+    public class ServerController : WebSocketBehavior
     {
         private ServerModel data = new ServerModel();
-        private WebSocket ws;
         public event ServerOutputHandler output;
 
         #region Manipulate Class
+        // Constructor
+        public ServerController() : this(null)
+        {
+        }
+
         // Constructor
         //
         // @arg d The model object instance
@@ -21,17 +26,28 @@ namespace serverChat
         {
             // Update the server objects
             data = d;
-
-            // Create the websocket
-            ws = new WebSocket("ws://127.0.0.1:8001/chat");
-            ws.OnMessage += HandleRecievingMessage;
-            ws.Connect();
         }
 
         // Destructor
         ~ServerController()
         {
-            ws.Close();
+        }
+        #endregion
+
+        #region Handle Client Input
+        // On Open
+        //
+        // Handle actions to take when the server is first started
+        protected override void OnOpen()
+        {
+        }
+
+        // On Message
+        //
+        // Handle actions when a message is received from one of the clients
+        // @param e The client message information
+        protected override void OnMessage(MessageEventArgs e)
+        {
         }
         #endregion
 
