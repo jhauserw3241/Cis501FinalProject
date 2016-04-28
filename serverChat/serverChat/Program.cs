@@ -10,9 +10,9 @@ namespace serverChat
 {
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
+        // Main
+        //
+        // Create server for chat and show view
         [STAThread]
         static void Main()
         {
