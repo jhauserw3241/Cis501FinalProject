@@ -15,8 +15,7 @@ namespace FinalProjectChatClient
     class ChatClientController
     {
         #region Fields
-
-        private ChatClientForm clientForm;
+        
         private ChatClientModel clientModel;
         private EntryPopUp entryForm;
         private LoginPopUp loginForm;
@@ -26,12 +25,7 @@ namespace FinalProjectChatClient
         #endregion
 
         #region Properties
-
-        public ChatClientForm ClientForm
-        {
-            get { return clientForm; }
-            set { clientForm = value; }
-        }
+        
         public EntryPopUp EntryForm
         {
             set { entryForm = value; }
@@ -83,7 +77,7 @@ namespace FinalProjectChatClient
                 case "Logout":
                     LogoutAction();
                     clientModel.State = FlowState.Entry;
-                    HandleLoadIn(clientForm, new EventArgs());
+                    HandleLoadIn(null, new EventArgs());
                     break;
                 case "AddCont":
                     ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, (string)vars[0]));
@@ -514,10 +508,12 @@ namespace FinalProjectChatClient
         /// </summary>
         private void LogoutAction()
         {
-            DataContractJsonSerializer srlzr = new DataContractJsonSerializer(typeof(List<Contact>));
-            MemoryStream contList = new MemoryStream(); 
-            srlzr.WriteObject(contList, clientForm.ContactsList);
-            ws.Send(String.Format("<logout username=\"{0}\"><content>{1}</content></logout>", clientModel.Username, contList.ToString()));
+            StringBuilder contList = new StringBuilder();
+            foreach(Contact cont in clientModel.ContactList)
+            {
+                contList.Append("<cont username=\"" + cont.Username + "\" />");
+            }
+            ws.Send(String.Format("<logout username=\"{0}\">{1}</logout>", clientModel.Username, contList.ToString()));
         }
 
         /// <summary>
