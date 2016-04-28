@@ -12,7 +12,7 @@ namespace serverChat
         private string ipAddress;
         private string name;
         private string password;
-        private bool status;
+        private STATUS status;
         private string username;
 
         // Constructor
@@ -95,7 +95,7 @@ namespace serverChat
         //
         // Get the status for the current user
         // @return a boolean that determines whether or not the user is online
-        public bool GetStatus()
+        public STATUS GetStatus()
         {
             return status;
         }
@@ -161,10 +161,10 @@ namespace serverChat
         // Set Status
         //
         // Set the status of the current user
-        // @param online Whether or not the user is online
-        public void SetStatus(bool online)
+        // @param status Whether the user is online, away, or offline
+        public void SetStatus(STATUS s)
         {
-            status = online;
+            status = s;
         }
 
         // Set Password
