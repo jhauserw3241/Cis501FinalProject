@@ -57,27 +57,43 @@ namespace serverChat
         {
             // Clear text box
             currentInfo.Clear();
-            // TODO: Determine whether it is user or conversation info
 
-            // USER
-            //// TODO: Get user object for selected user
+            // Handle user selected
+            if ((userFlag == true) || (convFlag == false))
+            {
+                // TODO: Get user object for selected user
 
-            //// TODO: Display username
+                // Display username
+                currentInfo.AppendText("Username: " + user.GetUsername());
 
-            //// TODO: Display display name
+                // Display display name
+                currentInfo.AppendText("Display Name: " + user.GetName());
 
-            //// TODO: Display status
+                // Display status
+                currentInfo.AppendText("Status: " + user.GetStatus());
 
-            //// TODO: Display ip address
+                // Display ip address
+                currentInfo.AppendText("IP Address: " + user.GetIpAddress());
+            }
+            // Handle conversation selected
+            else if ((userFlag == false) || (convFlag == true))
+            {
+                // TODO: Get conversation object for selected user
 
-            // CONVERSATION
-            //// TODO: Get conversation object for selected user
+                // Display name
+                currentInfo.AppendText("Name: " + conv.GetConversationName());
 
-            //// TODO: Display name
+                // Display list of usernames for participants
+                currentInfo.AppendText("List of Participants: " + conv.GetParicipantList().ToString());
 
-            //// TODO: Display list of usernames for participants
-
-            //// TODO: Display most recent message
+                // Display most recent message
+                currentInfo.AppendText("Most Recent Message: " + conv.GetCurrentMessage());
+            }
+            // Handle error case
+            else
+            {
+                MessageBox.Show("ERROR: You need to pick either the 'Users' or 'Conversations' button before you can choose an option.");
+            }
         }
 
         // Handle User Button Clicked
