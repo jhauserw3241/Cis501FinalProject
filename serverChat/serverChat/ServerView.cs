@@ -45,9 +45,9 @@ namespace serverChat
             userFlag = false;
             convFlag = true;
 
-            // TODO: Update conversation list from model
-
-            // TODO: Put all of the elements from the conversation list into the list box
+            // Put all of the elements from the conversation list into the list box
+            RemoveAllListBoxEles();
+            UpdateConvListBox();
         }
 
         // Handle Item Selected from List Box
@@ -89,9 +89,9 @@ namespace serverChat
             userFlag = true;
             convFlag = false;
 
-            // TODO: Update user list from model
-
-            // TODO: Put all of the elements from the user list into the list box
+            // Put all of the elements from the user list into the list box
+            RemoveAllListBoxEles();
+            UpdateUserListBox();
         }
         #endregion
 
