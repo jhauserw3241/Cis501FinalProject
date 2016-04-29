@@ -27,17 +27,33 @@ namespace FinalProjectChatClient
             // Create central controller
             ChatClientController clientController = new ChatClientController(clientModel);
             // Create and add forms to controller
-            clientController.ClientForm = new ChatClientForm(clientModel, convCreate.PopUp);
+            clientController.ClientForm = new ChatClientForm(clientModel);
+            clientController.CreateForm = convCreate.PopUp;
             clientController.EntryForm = new EntryPopUp();
             clientController.LoginForm = new LoginPopUp();
             clientController.SignupForm = new SignupPopUp();
-            
+
+            // Assign controller's generic handler to the appropriate form components
+            clientController.ClientForm.OfflineStatusOption.Click += clientController.HandleGenericInput;
+            clientController.ClientForm.AwayStatusOption.Click += clientController.HandleGenericInput;
+            clientController.ClientForm.OnlineStatusOption.Click += clientController.HandleGenericInput;
+            clientController.ClientForm.CreateConversationOption.Click += clientController.HandleGenericInput;
+            clientController.ClientForm.LogoutProfileOption.Click += clientController.HandleGenericInput;
+
+            // Assign controller's key handler to the appropriate form components
+            clientController.ClientForm.AddContactTextBox.KeyDown += clientController.HandleKeyInput;
+            clientController.ClientForm.RemoveContactTextBox.KeyDown += clientController.HandleKeyInput;
+            clientController.ClientForm.AddParticipantTextBox.KeyDown += clientController.HandleKeyInput;
+            clientController.ClientForm.MessageBox.KeyDown += clientController.HandleKeyInput;
+            clientController.ClientForm.ChangeDispNameTextBox.KeyDown += clientController.HandleKeyInput;
+
+            // Assign Controller's mouse handler to the appropriate form components
+            clientController.ClientForm.ContactsList.MouseDoubleClick += clientController.HandleMouseInput;
+
             // Add output handler from main form to central controller
             clientController.Output += clientController.ClientForm.HandleFormOutput;
             // Add start-up handler from central controller to main form
             clientController.ClientForm.Load += clientController.HandleLoadIn;
-            // Add input handler from central controller to main form
-            clientController.ClientForm.MainInput += clientController.HandleFormInput;
             // Add input handler from conversation creation controller to conversation creation form
             convCreate.PopUp.CreationInput += convCreate.HandleFormInput;
 

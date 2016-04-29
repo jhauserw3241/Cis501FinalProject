@@ -19,6 +19,7 @@ namespace FinalProjectChatClient
         
         private ChatClientModel clientModel;
         private ChatClientForm clientForm;
+        private ConvCreatePopUp createForm;
         private EntryPopUp entryForm;
         private LoginPopUp loginForm;
         private SignupPopUp signupForm;
@@ -32,6 +33,10 @@ namespace FinalProjectChatClient
         {
             get { return clientForm; }
             set { clientForm = value; }
+        }
+        public ConvCreatePopUp CreateForm
+        {
+            set { createForm = value; }
         }
         public EntryPopUp EntryForm
         {
@@ -67,78 +72,158 @@ namespace FinalProjectChatClient
         }
 
         #region Input Handlers
-
+        
         /// <summary>
-        /// Delegates input from the form to various methods.
+        /// Handles input that takes generic event arguments.
         /// </summary>
-        /// <param name="action">The action the form is trying to perform.</param>
-        public void HandleFormInput(string action, params object[] vars)
+        /// <param name="sender">The component that raised the event.</param>
+        /// <param name="e">The supplied arguments.</param>
+        public void HandleGenericInput(object sender, EventArgs e)
         {
-            List<string> party;
-            Contact participant;
-            TabPage page;
-            string name;
-
-            switch (action)
+            if (sender.Equals(clientForm.OfflineStatusOption))
             {
-                case "Logout":
-                    LogoutAction();
-                    clientModel.State = FlowState.Entry;
-                    HandleLoadIn(null, new EventArgs());
-                    break;
-                case "AddCont":
-                    ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, (string)vars[0]));
-                    break;
-                case "RemoveCont":
-                    participant = clientModel.ContactList.Find(x => x.Username.Equals((string)vars[0]));
+                ws.Send(String.Format("<udCont source=\"{0}\" state=\"Offline\" />", clientModel.Username));
+                if (Output != null) Output("UpdateStatus", "Offline");
+            }
+            else if (sender.Equals(clientForm.AwayStatusOption))
+            {
+                ws.Send(String.Format("<udCont source=\"{0}\" state=\"Away\" />", clientModel.Username));
+                if (Output != null) Output("UpdateStatus", "Away");
+            }
+            else if (sender.Equals(clientForm.OnlineStatusOption))
+            {
+                ws.Send(String.Format("<udCont source=\"{0}\" state=\"Online\" />", clientModel.Username));
+                if (Output != null) Output("UpdateStatus", "Online");
+            }
+            else if (sender.Equals(clientForm.CreateConversationOption))
+            {
+                if (createForm.ShowDialog() == DialogResult.OK)
+                {
+                    string name = createForm.Name;
 
-                    if (participant != null)
+                    if (!clientModel.ConversationList.ContainsKey(name))
                     {
-                        ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, (string)vars[0]));
-                        clientModel.ContactList.Remove(participant);
-                        if (Output != null) Output("RemoveCont", participant);
+                        // Only get those members who are explicity not online
+                        List<string> party = (createForm.ParticipantListBox.Cast<Contact>().ToList()).Where(x => !x.Status.Equals("Offline")).Select(x => x.Username).ToList();
+
+                        CreateConversation(name, party);
                     }
-                    break;
-                case "CreateConv":
-                    name = (string)vars[0];
-                    // Only get those members who are explicity not online
-                    party = ((List<Contact>)vars[1]).Where(x => !x.Status.Equals("Offline")).Select(x => x.Username).ToList();
+                    else ChatClientForm.ShowError("This conversation name already exists.");
+                }
+            }
+            else if (sender.Equals(clientForm.LeaveConversationOption))
+            {
+                TabPage page = clientForm.ConversationTabController.SelectedTab;
 
-                    CreateConversation(name, party);
-                    break;
-                case "LeaveConv":
-                    page = (TabPage)vars[0];
-
-                    ws.Send(String.Format("<udConv conv=\"{0}\"><leave username=\"{1}\" />", page.Text, clientModel.Username));
-                    clientModel.ConversationList.Remove(page.Text);
-                    if (Output != null) Output("LeaveConv", page);
-                    break;
-                case "AddPart":
-                    name = (string)vars[0];
-                    participant = clientModel.ContactList.Find(x => x.Username.Equals((string)vars[1]));
-
-                    if (participant != null) AddConvParticipant(name, participant.Username);
-                    else
-                    {
-                        ChatClientForm.ShowError("Username does not exist.");
-                    }
-                    break;
-                case "ChangeStatus":
-                    clientModel.Status = (string)vars[0];
-                    if (Output != null) Output("UpdateStatus", (string)vars[0]);
-                    ws.Send(String.Format("<udCont source=\"{0}\" state=\"{1}\" />", clientModel.Username, (string)vars[0]));
-                    break;
-                case "ChangeDispName":
-                    clientModel.DisplayName = (string)vars[0];
-                    if (Output != null) Output("UpdateName", (string)vars[0]);
-                    ws.Send(String.Format("<udCont source=\"{0}\" dispName=\"{1}\" />", clientModel.Username, (string)vars[0]));
-                    break;
-                case "Message":
-                    ws.Send(String.Format("<msg source=\"{0}\" conv=\"{1}\">{2}</msg>", clientModel.Username, clientModel.ConversationList[(string)vars[0]], FormatForChat((string)vars[1])));
-                    break;
+                ws.Send(String.Format("<udConv conv=\"{0}\"><leave username=\"{1}\" />", page.Text, clientModel.Username));
+                clientModel.ConversationList.Remove(page.Text);
+                if (Output != null) Output("LeaveConv", page);
+            }
+            else if (sender.Equals(clientForm.LogoutProfileOption))
+            {
+                LogoutAction();
+                clientModel.State = FlowState.Entry;
+                HandleLoadIn(null, new EventArgs());
             }
         }
-        
+
+        /// <summary>
+        /// Handles input that takes key event arguments.
+        /// </summary>
+        /// <param name="sender">The component that raised the event.</param>
+        /// <param name="e">The supplied arguments.</param>
+        public void HandleKeyInput(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (sender.Equals(clientForm.AddContactTextBox))
+                {
+                    if (!clientForm.AddContactTextBox.Text.Equals(String.Empty))
+                    {
+                        ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, clientForm.AddContactTextBox.Text));
+                    }
+                    if (Output != null) Output("ClrAddCont");
+                    e.SuppressKeyPress = true;
+                }
+                else if (sender.Equals(clientForm.RemoveContactTextBox))
+                {
+                    if (!clientForm.RemoveContactTextBox.Text.Equals(String.Empty))
+                    {
+                        Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(clientForm.RemoveContactTextBox.Text));
+
+                        if (participant != null)
+                        {
+                            ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, participant.Username));
+                            clientModel.ContactList.Remove(participant);
+                            if (Output != null) Output("RemoveCont", participant);
+                        }
+                    }
+                    e.SuppressKeyPress = true;
+                }
+                else if (sender.Equals(clientForm.AddParticipantTextBox))
+                {
+                    if (clientForm.ConversationTabController.Controls.Count > 0 && !clientForm.AddParticipantTextBox.Text.Equals(String.Empty))
+                    {
+                        string name = clientForm.ConversationTabController.SelectedTab.Text;
+                        Contact participant = clientModel.ContactList.Find(x => x.Username.Equals(clientForm.AddParticipantTextBox.Text));
+
+                        if (participant != null)
+                        {
+                            AddConvParticipant(name, participant.Username);
+                            if (Output != null) Output("AddPart");
+                        }
+                        else
+                        {
+                            ChatClientForm.ShowError("Username does not exist.");
+                        }
+                    }
+                    e.SuppressKeyPress = true;
+                }
+                else if (sender.Equals(clientForm.MessageBox))
+                {
+                    if (e.Modifiers != Keys.Shift)
+                    {
+                        if (clientForm.ConversationTabController.Controls.Count > 0)
+                        {
+                            ws.Send(String.Format("<msg source=\"{0}\" conv=\"{1}\">{2}</msg>", clientModel.Username, clientForm.ConversationTabController.SelectedTab.Text, FormatForChat(clientForm.MessageBox.Text)));
+                            if (Output != null) Output("ClrMsg");
+                        }
+                        e.SuppressKeyPress = true;
+                    }
+                }
+                else if (sender.Equals(clientForm.ChangeDispNameTextBox))
+                {
+                    if (!clientForm.ChangeDispNameTextBox.Text.Equals(String.Empty))
+                    {
+                        clientModel.DisplayName = clientForm.ChangeDispNameTextBox.Text;
+                        ws.Send(String.Format("<udCont source=\"{0}\" dispName=\"{1}\" />", clientModel.Username, clientModel.DisplayName));
+                        if (Output != null) Output("UpdateName", clientModel.DisplayName);
+                    }
+                    e.SuppressKeyPress = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles input that takes mouse event arguments.
+        /// </summary>
+        /// <param name="sender">The component that raised the event.</param>
+        /// <param name="e">The supplied arguments.</param>
+        public void HandleMouseInput(object sender, MouseEventArgs e)
+        {
+            if (sender.Equals(clientForm.ContactsList))
+            {
+                Contact cont = ((Contact)clientForm.ContactsList.SelectedItem);
+                string name = cont.DisplayName;
+
+                if (!clientModel.ConversationList.ContainsKey(name) && !cont.Status.Equals("Offline"))
+                {
+                    CreateConversation(name, new List<string>() { cont.Username });
+                }
+                else ChatClientForm.ShowError("Could not create a conversation:\nEither one has already been started, or they are offline.");
+            }
+        }
+
         /// <summary>
         /// Run entry loop until user manages to login or closes.
         /// </summary>
