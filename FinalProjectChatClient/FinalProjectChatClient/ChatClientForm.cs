@@ -54,7 +54,7 @@ namespace FinalProjectChatClient
             contactsList.Items.Add(new Contact("admin", "Admin", "Online"));
         }
 
-        #region FormOutput
+        #region Form Output
 
         /// <summary>
         /// Updates the appropriate portions.

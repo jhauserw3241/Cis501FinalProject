@@ -18,6 +18,7 @@ namespace FinalProjectChatClient
         #region Fields
         
         private ChatClientModel clientModel;
+        private ChatClientForm clientForm;
         private EntryPopUp entryForm;
         private LoginPopUp loginForm;
         private SignupPopUp signupForm;
@@ -27,6 +28,11 @@ namespace FinalProjectChatClient
 
         #region Properties
         
+        public ChatClientForm ClientForm
+        {
+            get { return clientForm; }
+            set { clientForm = value; }
+        }
         public EntryPopUp EntryForm
         {
             set { entryForm = value; }
@@ -47,9 +53,7 @@ namespace FinalProjectChatClient
         public event ClientOutputHandler Output;
 
         #endregion
-
-        #region Public Methods
-
+        
         /// <summary>
         /// Constructor for the ChatClientController.
         /// </summary>
@@ -61,6 +65,8 @@ namespace FinalProjectChatClient
             ws.OnMessage += HandleMessage;
             ws.Connect();
         }
+
+        #region Input Handlers
 
         /// <summary>
         /// Delegates input from the form to various methods.
@@ -235,9 +241,115 @@ namespace FinalProjectChatClient
             }
         }
 
+        /// <summary>
+        /// Parses a xml string and returns the information in a more accessable form
+        /// </summary>
+        /// <param name="xml">The xml string to parse.</param>
+        /// <returns>A dictionary containing keywords as keys and appropriately matched values.</returns>
+        private Dictionary<string, object> ReadXML(string xml)
+        {
+            Dictionary<string, object> rtrn = new Dictionary<string, object>();
+            XmlDocument message = new XmlDocument();
+            Stack<string> layers = new Stack<string>();
+            Dictionary<string, List<string>> dict;
+            Tuple<string, string, string> tups;
+            string top;
+
+            message.LoadXml(xml);
+
+            foreach (XmlElement node in message)
+            {
+                // Get the top layer
+                top = layers.Peek() == null ? "default" : layers.Peek();
+
+                switch (node.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        // Differentiate action based on what group we are in
+                        switch (top)
+                        {
+                            case "udConv":
+                                switch (node.Name)
+                                {
+                                    case "addPa":
+                                        // If there is not already an entry for addPa
+                                        if (!rtrn.ContainsKey("addPa"))
+                                        {
+                                            // Create a dictionary where the key is the attribute name, and the value is a list of all the values associated with that attribute
+                                            rtrn.Add("addPa", new Dictionary<string, List<string>>());
+                                        }
+
+                                        dict = rtrn["addPa"] as Dictionary<string, List<string>>;
+
+                                        foreach (XmlAttribute attr in node.Attributes)
+                                        {
+                                            // If the dictionary does not contain an instance of this key create a new list
+                                            if (!dict.ContainsKey(attr.Name))
+                                            {
+                                                dict.Add(attr.Name, new List<string>());
+                                            }
+                                            // Add the value to the list
+                                            dict[attr.Name].Add(attr.Value);
+                                        }
+                                        break;
+                                    case "leave":
+                                        // Add or update the leave key (leave should only be used once per message so it's unlikely to update a value)
+                                        rtrn["leave"] = node.Attributes[0].Value;
+                                        break;
+                                    case "msg":
+                                        // Create a new list of strings for the transcript of the conversation
+                                        rtrn["msg"] = new List<string>();
+                                        break;
+                                }
+                                break;
+                            case "login":
+                                // If this is the first contact
+                                if (!rtrn.ContainsKey("cont"))
+                                {
+                                    // Create a list of tuples, where the tuple represents a contact
+                                    rtrn.Add("cont", new List<Tuple<string, string, string>>());
+                                }
+                                // Construct a tuple from the attributes and add it to the list
+                                tups = new Tuple<string, string, string>(node.Attributes[0].Value, node.Attributes[1].Value, node.Attributes[2].Value);
+                                ((List<Tuple<string, string, string>>)rtrn["cont"]).Add(tups);
+                                break;
+                            default: // Presumably this is the top of the message
+                                // Meaning the element name is the desired action
+                                rtrn.Add("action", node.Name);
+                                // Gather info from attributes
+                                foreach (XmlAttribute attr in node.Attributes)
+                                {
+                                    rtrn.Add(attr.Name, attr.Value);
+                                }
+                                break;
+                        }
+
+                        // If entering a group, then add to the stack
+                        if (!node.IsEmpty) layers.Push(node.Name);
+                        break;
+                    case XmlNodeType.Text:
+                        // If the dictionary does not contain a key with the group name
+                        if (!rtrn.ContainsKey(top))
+                        {
+                            // Create a list to add multiple items to
+                            rtrn.Add(top, new List<string>());
+                        }
+                        // Add the text
+                        ((List<string>)rtrn[top]).Add(node.Value);
+                        break;
+                    case XmlNodeType.EndElement:
+                        // Leave the current group
+                        if (layers.Count > 0) layers.Pop();
+                        break;
+                }
+            }
+
+            return rtrn;
+        }
+
         #endregion
 
-        #region Private Methods
+        #region Conversation
 
         /// <summary>
         /// Attempts to add a participant to a conversation.
@@ -315,6 +427,10 @@ namespace FinalProjectChatClient
         {
             return String.Format("[{0:MM/dd/yyyy hh:mm:sstt}] {1}: {2}{3}", DateTime.Now, clientModel.DisplayName, msg, Environment.NewLine);
         }
+
+        #endregion
+
+        #region Message Handlers
 
         /// <summary>
         /// Handles messages from the server containing information about signing up or logging in.
@@ -472,30 +588,40 @@ namespace FinalProjectChatClient
             }
         }
 
+        #endregion
+
+        #region Access and Exit
+
         /// <summary>
         /// Displays and interprets info from a login popup.
         /// </summary>
         /// <returns>Whether or not to exit the loop.</returns>
         private void LoginAction()
         {
+            string result;
+
             switch (loginForm.ShowDialog())
             {
                 case DialogResult.OK:
-                    if (!loginForm.Username.Equals(String.Empty))
+                    result = ValidateUsername(loginForm.Username);
+
+                    if (result.Equals("Success"))
                     {
-                        if (!loginForm.Password.Equals(String.Empty))
+                        result = ValidatePassword(loginForm.Password);
+
+                        if (result.Equals("Success"))
                         {
                             ws.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
                             clientModel.WaitFlag = true;
                         }
                         else
                         {
-                            ChatClientForm.ShowError("The password cannot be empty.");
+                            ChatClientForm.ShowError(result);
                         }
                     }
                     else
                     {
-                        ChatClientForm.ShowError("The username cannot be empty.");
+                        ChatClientForm.ShowError(result);
                     }
                     break;
                 case DialogResult.Cancel:
@@ -503,124 +629,18 @@ namespace FinalProjectChatClient
                     break;
             }
         }
-        
+
         /// <summary>
         /// Logs out of the current user session.
         /// </summary>
         private void LogoutAction()
         {
             StringBuilder contList = new StringBuilder();
-            foreach(Contact cont in clientModel.ContactList)
+            foreach (Contact cont in clientModel.ContactList)
             {
                 contList.Append("<cont username=\"" + cont.Username + "\" />");
             }
             ws.Send(String.Format("<logout username=\"{0}\">{1}</logout>", clientModel.Username, contList.ToString()));
-        }
-
-        /// <summary>
-        /// Parses a xml string and returns the information in a more accessable form
-        /// </summary>
-        /// <param name="xml">The xml string to parse.</param>
-        /// <returns>A dictionary containing keywords as keys and appropriately matched values.</returns>
-        private Dictionary<string, object> ReadXML(string xml)
-        {
-            Dictionary<string, object> rtrn = new Dictionary<string, object>();
-            XmlDocument message = new XmlDocument();
-            Stack<string> layers = new Stack<string>();
-            Dictionary<string, List<string>> dict;
-            Tuple<string, string, string> tups;
-            string top;
-
-            message.LoadXml(xml);
-
-            foreach(XmlElement node in message)
-            {
-                // Get the top layer
-                top = layers.Peek() == null ? "default" : layers.Peek();
-
-                switch (node.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        // Differentiate action based on what group we are in
-                        switch(top)
-                        {
-                            case "udConv":
-                                switch(node.Name)
-                                {
-                                    case "addPa":
-                                        // If there is not already an entry for addPa
-                                        if (!rtrn.ContainsKey("addPa"))
-                                        {
-                                            // Create a dictionary where the key is the attribute name, and the value is a list of all the values associated with that attribute
-                                            rtrn.Add("addPa", new Dictionary<string, List<string>>());
-                                        }
-
-                                        dict = rtrn["addPa"] as Dictionary<string, List<string>>;
-
-                                        foreach (XmlAttribute attr in node.Attributes)
-                                        {
-                                            // If the dictionary does not contain an instance of this key create a new list
-                                            if (!dict.ContainsKey(attr.Name))
-                                            {
-                                                dict.Add(attr.Name, new List<string>());
-                                            }
-                                            // Add the value to the list
-                                            dict[attr.Name].Add(attr.Value);
-                                        }
-                                        break;
-                                    case "leave":
-                                        // Add or update the leave key (leave should only be used once per message so it's unlikely to update a value)
-                                        rtrn["leave"] = node.Attributes[0].Value;
-                                        break;
-                                    case "msg":
-                                        // Create a new list of strings for the transcript of the conversation
-                                        rtrn["msg"] = new List<string>();
-                                        break;
-                                }
-                                break;
-                            case "login":
-                                // If this is the first contact
-                                if (!rtrn.ContainsKey("cont"))
-                                {
-                                    // Create a list of tuples, where the tuple represents a contact
-                                    rtrn.Add("cont", new List<Tuple<string, string, string>>());
-                                }
-                                // Construct a tuple from the attributes and add it to the list
-                                tups = new Tuple<string, string, string>(node.Attributes[0].Value, node.Attributes[1].Value, node.Attributes[2].Value);
-                                ((List<Tuple<string, string, string>>)rtrn["cont"]).Add(tups);
-                                break;
-                            default: // Presumably this is the top of the message
-                                // Meaning the element name is the desired action
-                                rtrn.Add("action", node.Name);
-                                // Gather info from attributes
-                                foreach (XmlAttribute attr in node.Attributes)
-                                {
-                                    rtrn.Add(attr.Name, attr.Value);
-                                }
-                                break;
-                        }
-
-                        // If entering a group, then add to the stack
-                        if (!node.IsEmpty) layers.Push(node.Name);
-                        break;
-                    case XmlNodeType.Text:
-                        // If the dictionary does not contain a key with the group name
-                        if (!rtrn.ContainsKey(top))
-                        {
-                            // Create a list to add multiple items to
-                            rtrn.Add(top, new List<string>());
-                        }
-                        // Add the text
-                        ((List<string>)rtrn[top]).Add(node.Value);
-                        break;
-                    case XmlNodeType.EndElement:
-                        // Leave the current group
-                        if (layers.Count > 0) layers.Pop();
-                        break;
-                }
-            }
-
-            return rtrn;
         }
 
         /// <summary>
@@ -629,33 +649,30 @@ namespace FinalProjectChatClient
         /// <returns>Whether or not to exit the loop.</returns>
         private void SignupAction()
         {
+            string result;
+
             switch (signupForm.ShowDialog())
             {
                 case DialogResult.OK:
-                    if (!signupForm.Username.Equals(String.Empty))
+                    result = ValidateUsername(signupForm.Username);
+
+                    if (result.Equals("Success"))
                     {
+                        result = ValidatePasswords(signupForm.Password1, signupForm.Password2);
 
-                        if (!signupForm.Password1.Equals(String.Empty))
+                        if (result.Equals("Success"))
                         {
-
-                            if (signupForm.Password1.Equals(signupForm.Password2))
-                            {
-                                ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-                                clientModel.WaitFlag = true;
-                            }
-                            else
-                            {
-                                ChatClientForm.ShowError("The passwords do not match.");
-                            }
+                            ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                            clientModel.WaitFlag = true;
                         }
                         else
                         {
-                            ChatClientForm.ShowError("The password cannot be empty.");
+                            ChatClientForm.ShowError(result);
                         }
                     }
                     else
                     {
-                        ChatClientForm.ShowError("The username cannot be empty.");
+                        ChatClientForm.ShowError(result);
                     }
                     break;
                 case DialogResult.Cancel:
@@ -708,48 +725,125 @@ namespace FinalProjectChatClient
             return Regex.IsMatch(str, "^[_!@#$%^&.<>]$");
         }
 
+        /// <summary>
+        /// Validates that the username is in an acceptable form.
+        /// </summary>
+        /// <param name="username">The username to check.</param>
+        /// <returns>Either a success message or an error message.</returns>
         private string ValidateUsername(string username)
         {
-            if (CheckString(username))
+            if (!username.Equals(String.Empty))
             {
-                return "Success";
+                if (CheckString(username))
+                {
+                    return "Success";
+                }
+                else
+                {
+                    return "The username must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
+                }
             }
             else
             {
-                return "The username must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
+                return "The username cannot be emtpy.";
             }
         }
-
+        
+        /// <summary>
+        /// Validates that the password is in an acceptable form.
+        /// </summary>
+        /// <param name="password">The password to check.</param>
+        /// <returns>Either a success message or an error message.</returns>
         private string ValidatePassword(string password)
         {
-            if (CheckString(password))
+            if (password.Length > 8)
             {
-                if (CheckCapital(password))
+                if (CheckString(password))
                 {
-                    if (CheckNumber(password))
+                    if (CheckCapital(password))
                     {
-                        if (CheckChar(password))
+                        if (CheckNumber(password))
                         {
-                            return "Success";
+                            if (CheckChar(password))
+                            {
+                                return "Success";
+                            }
+                            else
+                            {
+                                return "The password must contain at least one of the following: _ ! @ # $ % ^ & . < >";
+                            }
                         }
                         else
                         {
-                            return "The password must contain at least one of the following: _ ! @ # $ % ^ & . < >";
+                            return "The password must contain at least one numeric character.";
                         }
                     }
                     else
                     {
-                        return "The password must contain at least one numeric character.";
+                        return "The password must contain at least one capital letter.";
                     }
                 }
                 else
                 {
-                    return "The password must contain at least one capital letter.";
+                    return "The password must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
                 }
             }
             else
             {
-                return "The password must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
+                return "The password must be 9 or more characters in length.";
+            }
+        }
+
+        /// <summary>
+        /// Validates that the passwords match, and they are in an acceptable form.
+        /// </summary>
+        /// <param name="pw1">The first password to check.</param>
+        /// <param name="pw1">The second password to check.</param>
+        /// <returns>Either a success message or an error message.</returns>
+        private string ValidatePasswords(string pw1, string pw2)
+        {
+            if (pw1.Equals(pw2))
+            {
+                if (pw1.Length > 8)
+                {
+                    if (CheckString(pw1))
+                    {
+                        if (CheckCapital(pw1))
+                        {
+                            if (CheckNumber(pw1))
+                            {
+                                if (CheckChar(pw1))
+                                {
+                                    return "Success";
+                                }
+                                else
+                                {
+                                    return "The password must contain at least one of the following: _ ! @ # $ % ^ & . < >";
+                                }
+                            }
+                            else
+                            {
+                                return "The password must contain at least one numeric character.";
+                            }
+                        }
+                        else
+                        {
+                            return "The password must contain at least one capital letter.";
+                        }
+                    }
+                    else
+                    {
+                        return "The password must contain uppercase, lowercase, or numeric characters or any of the following: _ ! @ # $ % ^ & . < >";
+                    }
+                }
+                else
+                {
+                    return "The password must be 9 or more characters in length.";
+                }
+            }
+            else
+            {
+                return "The passwords don't match.";
             }
         }
 
