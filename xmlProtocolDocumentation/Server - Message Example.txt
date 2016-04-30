@@ -1,4 +1,2 @@
 <!-- The server has already determined who the message is going to so it is no longer needed in the message -->
-<msg conv="Conv_Name">
-[04/22/2016 02:35pm] Admin: Listen here 'newUser420', I don't like your name or your attitude.
-</msg>
+<msg conv="Conv_Name" text="[04/22/2016 02:35pm] Admin: Listen here 'newUser420', I don't like your name or your attitude." />
