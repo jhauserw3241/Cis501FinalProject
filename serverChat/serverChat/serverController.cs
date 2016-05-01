@@ -177,6 +177,23 @@ namespace serverChat
             output("UpdateUserList", userList);
         }
 
+        // Get Conversation Message
+        //
+        // Get the output message that is for the new information for the conversation
+        // @param convObj The object for the conversation
+        // @return a string that creates a new conversation on the client side
+        public string GetConvMessage(ServerConversation convObj)
+        {
+            // Convert the participants list to a single string
+            string parUNames = string.Join(",", convObj.GetParticipantListUsernames());
+
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            output.Add("action", "udConv");
+            output.Add("conv", convObj.GetConversationName());
+            output.Add("par", parUNames);
+            return SerializeXml(output);
+        }
+
         // Get the Add Contact Message
         //
         // Get the output message that is for adding a new contact to the user's profile
