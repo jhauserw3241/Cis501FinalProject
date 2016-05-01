@@ -244,6 +244,11 @@ namespace FinalProjectChatClient
                             clientModel.Username = loginForm.Username;
                             exit = true;
                         }
+                        else if (clientModel.ErrorFlag)
+                        {
+                            ws.Send("<login username=\"" + loginForm.Username + "\" error=\"Invalid contact list.\">");
+                            clientModel.ErrorFlag = false;
+                        }
                         exit = true;
                         break;
                     case DialogResult.No:
@@ -389,7 +394,7 @@ namespace FinalProjectChatClient
                 string conts = String.Join(",", party);
 
                 // Send initial request to server
-                ws.Send(String.Format("<udConv conv=\"{0}\" addPa=\"{1}\" />", name, conts));
+                ws.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
                 // Wait for a response from the server
                 clientModel.WaitFlag = true;
                 while (clientModel.WaitFlag)
@@ -426,42 +431,42 @@ namespace FinalProjectChatClient
         #region Message Handlers
 
         /// <summary>
-        /// Builds the list of contacts from a properly formatted string.
-        /// </summary>
-        /// <param name="contactList">A string formatted as such: "cont1,cont2,..." where each contact is as such: "username:displayName:status"</param>
-        private void ParseContacts(string contactList)
-        {
-            string[] contacts = contactList.Split(',');
-            string[] contInfo;
-
-            foreach (string contact in contacts)
-            {
-                contInfo = contact.Split(':');
-                clientModel.ContactList.Add(new Contact(contInfo[0], contInfo[1], contInfo[2]));
-            }
-        }
-
-        /// <summary>
         /// Handles messages from the server containing information about signing up or logging in.
         /// </summary>
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleAccessMessage(Dictionary<string, string> mssg)
         {
+            string[] un, dn, st;
+
             if (mssg.ContainsKey("error"))
             {
                 ChatClientForm.ShowError(mssg["error"]);
             }
-            else
+            else // For login use only
             {
-                clientModel.DisplayName = mssg["dispName"];
-                clientModel.ContactList = new List<Contact>();
-                ParseContacts(mssg["cont"]);
-                clientModel.State = FlowState.Main;
-                clientModel.Status = "Online";
-                if (Output != null)
+                un = mssg["contUsername"].Split(',');
+                dn = mssg["contDispName"].Split(',');
+                st = mssg["state"].Split(',');
+
+                if (un.Length == dn.Length && un.Length == st.Length)
                 {
-                    Output("UpdateStatus", "Online");
-                    Output("UpdateName", clientModel.DisplayName);
+                    clientModel.DisplayName = mssg["dispName"];
+                    clientModel.ContactList = new List<Contact>();
+                    for (int i = 0; i < un.Length; i++)
+                    {
+                        clientModel.ContactList.Add(new Contact(un[i], dn[i], st[i]));
+                    }
+                    clientModel.State = FlowState.Main;
+                    clientModel.Status = "Online";
+                    if (Output != null)
+                    {
+                        Output("UpdateStatus", "Online");
+                        Output("UpdateName", clientModel.DisplayName);
+                    }
+                }
+                else
+                {
+                    clientModel.ErrorFlag = true;
                 }
             }
         }
@@ -532,7 +537,7 @@ namespace FinalProjectChatClient
             }
             else
             {
-                string[] participants = mssg["addPa"].Split(',');
+                string[] participants = mssg["par"].Split(',');
                 string name = mssg["conv"];
 
                 if (clientModel.ConversationList.ContainsKey(name))

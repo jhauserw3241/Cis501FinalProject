@@ -17,6 +17,8 @@
 tags: <a="">
     
     User and Contact:
+	contDispName (a contact's display name)
+	contUsername (a contact's username)
 	dispName (a user's display name)
 	username (a user's username)
 	password (a user's password)
