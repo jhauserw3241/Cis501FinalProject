@@ -8,7 +8,7 @@ namespace FinalProjectChatClient
 {
     public delegate void ClientInputHandler(string action, params object[] vars);
 
-    public delegate void ClientOutputHandler(string action, params object[] vars);
+    public delegate void ClientOutputHandler(string action, string param1 = "", string param2 = "");
     
     public enum FlowState { Entry, Access, Main, Exit };
 }
