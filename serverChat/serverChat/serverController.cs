@@ -193,6 +193,34 @@ namespace serverChat
             output("UpdateConversationList", convList);
         }
 
+        // Create User
+        //
+        // Create user and add it to list of users
+        // @param uname The username of the new user
+        // @param pass The password of the new user
+        // @return the error message string if there is one
+        public string CreateUser(string uname, string pass)
+        {
+            // Check if the username is already being used
+            if (IsUsernameUsed(uname))
+            {
+                return "Username already used.";
+            }
+
+            // Create user object from user info
+            ServerUser user = new ServerUser(uname);
+            user.SetPassword(pass);
+            user.SetStatus(STATUS.Online);
+
+            // Add user to list
+            AddUserToList(user);
+
+            // Update the view
+            output("UpdateUserList", data.GetUserList());
+
+            return "";
+        }
+
         // Add Participant To Conversation
         //
         // Add the specified participant to the specified conversation
