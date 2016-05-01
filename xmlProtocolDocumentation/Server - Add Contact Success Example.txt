@@ -1,2 +1,2 @@
 <!-- This is sent to the user that is being added by the source -->
-<addCont username="newUser420" dispName="newUser420" state="Online">
+<addCont username="newUser420" dispName="newUser420" state="Online" />

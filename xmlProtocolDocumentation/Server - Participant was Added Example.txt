@@ -1,4 +1,2 @@
 <!-- The message that the old participants receive contains the new participant  -->
-<udConv dispName="Conv_Name">
-<addPa username="newUser69" />
-</udConv>
+<udConv dispName="Conv_Name" par="newUser69" />
