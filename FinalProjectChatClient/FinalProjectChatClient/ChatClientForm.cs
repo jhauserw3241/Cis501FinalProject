@@ -53,22 +53,22 @@ namespace FinalProjectChatClient
         /// Updates the appropriate portions.
         /// </summary>
         /// <param name="action">What of the form to update.</param>
-        public void HandleFormOutput(string action, params object[] vars)
+        public void HandleFormOutput(string action, string param1 = "", string param2 = "")
         {
             switch (action)
             {
                 case "AddCont":
-                    contactsList.Items.Add((Contact)vars[0]);
+                    contactsList.Items.Add(clientModel.ContactList.Last());
                     break;
                 case "RemoveCont":
-                    contactsList.Items.Remove((Contact)vars[0]);
+                    contactsList.Items.Remove(clientModel.ContactList.Find(x => x.Username.Equals(param1)));
                     RemoveContactTextBox.Text = String.Empty;
                     break;
                 case "ClrAddCont":
                     addContactTextBox.Text = String.Empty;
                     break;
                 case "CreateConv":
-                    CreateConversationTab((string)vars[0]);
+                    CreateConversationTab(param1);
                     break;
                 case "AddPart":
                     AddParticipantTextBox.Text = String.Empty;
@@ -77,16 +77,16 @@ namespace FinalProjectChatClient
                     RemoveConversationTab(conversationTabController.SelectedTab);
                     break;
                 case "Message":
-                    conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += String.Join(Environment.NewLine, (List<string>)vars[1]);
+                    conversationTabs.Find(x => x.Item1.Name.Equals(param1)).Item2.Text += param2;
                     break;
                 case "ClrMsg":
                     messageBox.Text = String.Empty;
                     break;
                 case "UpdateStatus":
-                    userStatusLabel.Text = "Status: " + (string)vars[0];
+                    userStatusLabel.Text = "Status: " + clientModel.Status;
                     break;
                 case "UpdateName":
-                    dispNameLabel.Text = "Name: " + (string)vars[0];
+                    dispNameLabel.Text = "Name: " + clientModel.DisplayName;
                     changeDispNameTextBox.Text = String.Empty;
                     break;
             }
