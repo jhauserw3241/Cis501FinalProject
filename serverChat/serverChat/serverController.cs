@@ -228,6 +228,7 @@ namespace serverChat
             return "";
         }
 
+        #region Modify Objects
         // Add Participant To Conversation
         //
         // Add the specified participant to the specified conversation
@@ -259,6 +260,7 @@ namespace serverChat
 
             return true;
         }
+        #endregion
 
         // Get User Obj Message
         //
