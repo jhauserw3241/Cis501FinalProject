@@ -195,12 +195,12 @@ namespace serverChat
         // Create conversation and add it to the list of conversations
         // @param name The conversation name of the new conversation
         // @return the error message string if there is one+
-        public void AddConversation(string name)
+        public string CreateConversation(string name)
         {
             // Check if the username is already being used
-            if (IsUsernameUsed(uname))
+            if (IsConvNameUsed(name))
             {
-                return "Username already used.";
+                return "Conversation name is already being used.";
             }
 
             // Create conversation object from conversation info
@@ -211,6 +211,8 @@ namespace serverChat
 
             // Update the view
             output("UpdateConversationList", data.GetConversationList());
+
+            return "";
         }
 
         // Create User
