@@ -90,6 +90,23 @@ namespace serverChat
             return participants;
         }
 
+        // Get Participants List Usernames
+        //
+        // Get the list of usernames of the participants in the conversation
+        // @return the list of usernames for the participant list
+        public List<string> GetParticipantListUsernames()
+        {
+            List<string> usernames = new List<string>();
+            int size = participants.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                usernames.Add(participants.ElementAt(i));
+            }
+
+            return usernames;
+        }
+
         // Remove Participant
         //
         // Remove a participant to the conversation
