@@ -226,7 +226,7 @@ namespace serverChat
             // Check if the username is already being used
             if (IsUsernameUsed(uname))
             {
-                return "Username already used.";
+                return "Username is already being used.";
             }
 
             // Create user object from user info
