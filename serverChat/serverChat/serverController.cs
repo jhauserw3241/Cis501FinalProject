@@ -143,6 +143,7 @@ namespace serverChat
         }
         #endregion
 
+        #region Add Elements to Model Lists
         // Add User To List
         //
         // Add the user to the list of all of the users in the model
@@ -174,6 +175,7 @@ namespace serverChat
             // Set the current conversation list to the model conversation list
             data.SetConversationList(convList);
         }
+        #endregion
 
         //
         // Add conversation to the list of conversations
