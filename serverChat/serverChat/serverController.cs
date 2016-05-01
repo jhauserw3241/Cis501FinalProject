@@ -49,6 +49,54 @@ namespace serverChat
         // @param e The client message information
         protected override void OnMessage(MessageEventArgs e)
         {
+            Dictionary<string, string> input = DeserializeXml(e.Data);
+            string output = "";
+
+            //if (!msg.ContainsKey("action")) return;
+
+            switch (input["action"])
+            {
+                case "sign":
+                    // TODO: Check if username is already used
+                    // TODO: Handle creation of user
+
+                    break;
+                case "login":
+                    // TODO: Check if the username and password match
+                    // a currently existing user
+
+                    break;
+                case "addCont":
+                    // TODO: Check if the user currently has the specified user as a contact
+                    //// Otherwise, TODO: Add the specified user as a contact
+
+                    break;
+                case "rmCont":
+                    // TODO: Verify contact is part of user contact list
+                    // TODO: Remove contact
+
+                    break;
+                case "udConv":
+                    // TODO: Verify conversation exists
+                    // TODO: Update the specified aspects of the conversation
+
+                    break;
+                case "udCont":
+                    // TODO: Verify user existence
+                    // TODO: Update the specified parts of the user object
+
+                    break;
+                case "msg":
+                    // TODO: Pass message
+
+                    break;
+                default:
+                    // TODO: Pass error message
+
+                    break;
+            }
+
+            Send(output);
         }
         #endregion
 
