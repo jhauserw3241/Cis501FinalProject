@@ -123,19 +123,12 @@ namespace serverChat
             }
             else
             {
-                // Setup user creation
-                ServerUser curUser = new ServerUser();
-                //List<ServerUser> userList = data.GetUserList();
-
-                // Update the object with provided data
-                curUser.SetUsername(uname);
-                curUser.SetName(uname);
+                // Create user
+                ServerUser curUser = new ServerUser(uname);
                 curUser.SetPassword(pass);
 
                 // Update user list in model
                 AddUserToList(curUser);
-                //userList.Add(curUser);
-                //data.SetUserList(userList);
             }
 
             //return false;
