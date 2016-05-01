@@ -177,6 +177,29 @@ namespace serverChat
             output("UpdateUserList", userList);
         }
 
+        // Get User Obj Message
+        //
+        // Get the output message that is from the new or previously
+        // existing user object
+        // @param userObj The object for the user
+        // @return a string that creates a new user on the client side
+        public string GetUserObjMessage(ServerUser user)
+        {
+            // Convert the contact list to a single string
+            string contUNames = string.Join(",", user.GetContactListUsernames());
+            string contDNames = string.Join(",", user.GetContactListNames());
+
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            output.Add("action", "login");
+            output.Add("username", user.GetUsername());
+            output.Add("dispName", user.GetName());
+            output.Add("password", user.GetPassword());
+            output.Add("contUsername", contUNames);
+            output.Add("contDisplName", contDNames);
+            output.Add("state", "Online");
+            return SerializeXml(output);
+        }
+
         // Get Conversation Message
         //
         // Get the output message that is for the new information for the conversation
