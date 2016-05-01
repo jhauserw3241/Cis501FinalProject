@@ -43,8 +43,6 @@ namespace FinalProjectChatClient
             InitializeComponent();
             clientModel = model;
             conversationTabs = new List<Tuple<TabPage, Label>>();
-
-            contactsList.Items.Add(new Contact("admin", "Admin", "Online"));
         }
 
         #region Form Output

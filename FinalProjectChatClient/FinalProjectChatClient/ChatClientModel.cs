@@ -25,7 +25,7 @@ namespace FinalProjectChatClient
         
         public ChatClientModel()
         {
-            ContactList = new List<Contact>() { new Contact("admin", "Admin", "Online") };
+            ContactList = new List<Contact>();
             ConversationList = new Dictionary<string, List<string>>();
             DisplayName = "";
             Username = "";

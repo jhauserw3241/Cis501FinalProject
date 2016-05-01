@@ -23,6 +23,7 @@ namespace FinalProjectChatClient
         private EntryPopUp entryForm;
         private LoginPopUp loginForm;
         private SignupPopUp signupForm;
+        private WaitForm waitForm;
         private WebSocket ws;
 
         #endregion
@@ -66,6 +67,7 @@ namespace FinalProjectChatClient
         public ChatClientController(ChatClientModel model)
         {
             clientModel = model;
+            waitForm = new WaitForm();
             ws = new WebSocket("ws://127.0.0.1:8001/chat");
             ws.OnMessage += HandleMessage;
             ws.Connect();
@@ -240,10 +242,13 @@ namespace FinalProjectChatClient
                     case DialogResult.Yes:
                         clientModel.State = FlowState.Access;
                         LoginAction();
+                        waitForm.Show();
+                        waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
                             System.Threading.Thread.Sleep(1000);
                         }
+                        waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
@@ -259,10 +264,13 @@ namespace FinalProjectChatClient
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
                         SignupAction();
+                        waitForm.Show();
+                        waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
                             System.Threading.Thread.Sleep(1000);
                         }
+                        waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = signupForm.Username;
@@ -371,10 +379,13 @@ namespace FinalProjectChatClient
             ws.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
             // Wait for a response from the server
             clientModel.WaitFlag = true;
+            waitForm.Show();
+            waitForm.Refresh();
             while (clientModel.WaitFlag)
             {
                 System.Threading.Thread.Sleep(1000);
             }
+            waitForm.Hide();
             // If there was no error, add participant to client side
             if (!clientModel.ErrorFlag)
             {
@@ -402,10 +413,13 @@ namespace FinalProjectChatClient
                 ws.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
                 // Wait for a response from the server
                 clientModel.WaitFlag = true;
+                waitForm.Show();
+                waitForm.Refresh();
                 while (clientModel.WaitFlag)
                 {
                     System.Threading.Thread.Sleep(1000);
                 }
+                waitForm.Hide();
                 // Make sure there were no errors
                 if (!clientModel.ErrorFlag)
                 {
@@ -456,7 +470,6 @@ namespace FinalProjectChatClient
                 if (un.Length == dn.Length && un.Length == st.Length)
                 {
                     clientModel.DisplayName = mssg["dispName"];
-                    clientModel.ContactList = new List<Contact>();
                     for (int i = 0; i < un.Length; i++)
                     {
                         clientModel.ContactList.Add(new Contact(un[i], dn[i], st[i]));

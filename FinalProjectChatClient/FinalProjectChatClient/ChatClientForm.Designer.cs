@@ -240,7 +240,7 @@ namespace FinalProjectChatClient
             this.displayNameProfileOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeDispNameTextBox});
             this.displayNameProfileOption.Name = "displayNameProfileOption";
-            this.displayNameProfileOption.Size = new System.Drawing.Size(211, 30);
+            this.displayNameProfileOption.Size = new System.Drawing.Size(207, 30);
             this.displayNameProfileOption.Text = "Display Name";
             // 
             // changeDispNameTextBox
@@ -254,25 +254,25 @@ namespace FinalProjectChatClient
             this.onlineStatusOption,
             this.awayStatusOption});
             this.statusProfileOption.Name = "statusProfileOption";
-            this.statusProfileOption.Size = new System.Drawing.Size(211, 30);
+            this.statusProfileOption.Size = new System.Drawing.Size(207, 30);
             this.statusProfileOption.Text = "Status";
             // 
             // onlineStatusOption
             // 
             this.onlineStatusOption.Name = "onlineStatusOption";
-            this.onlineStatusOption.Size = new System.Drawing.Size(211, 30);
+            this.onlineStatusOption.Size = new System.Drawing.Size(148, 30);
             this.onlineStatusOption.Text = "Online";
             // 
             // awayStatusOption
             // 
             this.awayStatusOption.Name = "awayStatusOption";
-            this.awayStatusOption.Size = new System.Drawing.Size(211, 30);
+            this.awayStatusOption.Size = new System.Drawing.Size(148, 30);
             this.awayStatusOption.Text = "Away";
             // 
             // logoutProfileOption
             // 
             this.logoutProfileOption.Name = "logoutProfileOption";
-            this.logoutProfileOption.Size = new System.Drawing.Size(211, 30);
+            this.logoutProfileOption.Size = new System.Drawing.Size(207, 30);
             this.logoutProfileOption.Text = "Logout";
             // 
             // contactsMenu
