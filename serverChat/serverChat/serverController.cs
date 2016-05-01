@@ -456,6 +456,25 @@ namespace serverChat
 
             return false;
         }
+
+        // Is Conversation Name Used
+        //
+        // Check if the conversation name is currently being used by another conversation
+        // @param name The conversation name being requested
+        public bool IsConvNameUsed(string name)
+        {
+            List<ServerConversation> convList = data.GetConversationList();
+            int size = convList.Count;
+            for (int i = 0; i < size; i++)
+            {
+                if (name == convList.ElementAt(i).GetConversationName())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         #endregion
 
         #region Destroy Objects
