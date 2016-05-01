@@ -260,26 +260,6 @@ namespace serverChat
             return true;
         }
 
-        // Create User
-        //
-        // Create user and add it to list of users
-        // @param uname The username of the new user
-        // @param pass The password of the new user
-        public void CreateUser(string uname, string pass)
-        {
-            // Create user object from user info
-            ServerUser user = new ServerUser(uname);
-            user.SetPassword(pass);
-            user.SetStatus(STATUS.Online);
-
-            // Add user to list
-            List<ServerUser> userList = data.GetUserList();
-            userList.Add(user);
-
-            // Update the view
-            output("UpdateUserList", userList);
-        }
-
         // Get User Obj Message
         //
         // Get the output message that is from the new or previously
