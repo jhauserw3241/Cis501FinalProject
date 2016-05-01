@@ -47,6 +47,23 @@ namespace serverChat
             return contacts;
         }
 
+        // Get Contact List Names
+        //
+        // Get the list of display names for the contacts for the current user
+        // @return the list of display names for the contact list
+        public List<string> GetContactListNames()
+        {
+            List<string> dNames = new List<string>();
+            int size = contacts.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                dNames.Add(contacts.ElementAt(i).GetName());
+            }
+
+            return dNames;
+        }
+
         // Get Contact List Usernames
         //
         // Get the list of usernames for the contacts for the current user
