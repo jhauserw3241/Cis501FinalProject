@@ -34,7 +34,6 @@ namespace FinalProjectChatClient
             clientController.SignupForm = new SignupPopUp();
 
             // Assign controller's generic handler to the appropriate form components
-            clientController.ClientForm.OfflineStatusOption.Click += clientController.HandleGenericInput;
             clientController.ClientForm.AwayStatusOption.Click += clientController.HandleGenericInput;
             clientController.ClientForm.OnlineStatusOption.Click += clientController.HandleGenericInput;
             clientController.ClientForm.CreateConversationOption.Click += clientController.HandleGenericInput;

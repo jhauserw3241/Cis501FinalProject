@@ -1,1 +1,1 @@
-<udConv conv="Conv_Name" par="Could not add member." />
+<udConv conv="Conv_Name" error="Could not add member." />

@@ -1,2 +1,2 @@
 <!-- The message that the new participant receives contains everyone else in the conversation  -->
-<udConv conv="Conv_Name" par="newUser420,admin" text="<!-- The previous transcript -->" />
+<udConv conv="Conv_Name" par="newUser420,admin" text="" />

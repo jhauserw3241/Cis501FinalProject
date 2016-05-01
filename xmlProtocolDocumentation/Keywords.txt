@@ -2,26 +2,17 @@
 
     Access messages:
 	sign - request new account
-	cont - a contact that the user knows (only used in login and logout)
+	login - when requesting log in
+	logout - When requesting log out
 
     Conversation messages:
-	addPa - add a participant to a conversation (only used in updating a conversation)
-	leave - remove a participant from a conversation (only used in updating a conversation)
+	udConv - Update the conversation information
+	msg - sending a message
 
     Contact messages:
 	addCont - add a contact
 	rmCont - remove contact
 	udCont - update the contact information
-
-Region Elements: <a></a>
-
-	logout - When requesting log out
-	udConv - Update the conversation information
-	msg - sending a message
-
-"Single Line" or Region Elements:
-
-	login - when requesting log in
 
 tags: <a="">
     
@@ -30,10 +21,14 @@ tags: <a="">
 	username (a user's username)
 	password (a user's password)
 	state ("Offline", "Away", "Online")
+	cont (a list of usernames for the user's contacts)
     
     Contact and Converstion:
 	source (the source of a contact or conversation message, always a username)
 	conv (a conversation name)
+	par (the list of participants in the current conversation)
+	leave (remove a participant from a conversation)
     
     Other:
+	text (for text)
 	error (for sending error messages)

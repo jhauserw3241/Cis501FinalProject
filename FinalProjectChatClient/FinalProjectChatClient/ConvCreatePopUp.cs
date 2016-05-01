@@ -24,7 +24,7 @@ namespace FinalProjectChatClient
         {
             get { return participantListBox.Items; }
         }
-        
+
         public event ClientInputHandler CreationInput;
 
         /// <summary>
