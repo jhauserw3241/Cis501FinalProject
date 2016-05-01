@@ -83,12 +83,12 @@ namespace FinalProjectChatClient
             if (sender.Equals(clientForm.AwayStatusOption))
             {
                 ws.Send(String.Format("<udCont source=\"{0}\" state=\"Away\" />", clientModel.Username));
-                if (Output != null) Output("UpdateStatus", "Away");
+                if (Output != null) Output("UpdateStatus");
             }
             else if (sender.Equals(clientForm.OnlineStatusOption))
             {
                 ws.Send(String.Format("<udCont source=\"{0}\" state=\"Online\" />", clientModel.Username));
-                if (Output != null) Output("UpdateStatus", "Online");
+                if (Output != null) Output("UpdateStatus");
             }
             else if (sender.Equals(clientForm.CreateConversationOption))
             {
@@ -150,7 +150,7 @@ namespace FinalProjectChatClient
                         {
                             ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, participant.Username));
                             clientModel.ContactList.Remove(participant);
-                            if (Output != null) Output("RemoveCont", participant);
+                            if (Output != null) Output("RemoveCont", participant.Username);
                         }
                     }
                     e.SuppressKeyPress = true;
@@ -197,7 +197,7 @@ namespace FinalProjectChatClient
                     {
                         clientModel.DisplayName = clientForm.ChangeDispNameTextBox.Text;
                         ws.Send(String.Format("<udCont source=\"{0}\" dispName=\"{1}\" />", clientModel.Username, clientModel.DisplayName));
-                        if (Output != null) Output("UpdateName", clientModel.DisplayName);
+                        if (Output != null) Output("UpdateName");
                     }
                     e.SuppressKeyPress = true;
                 }
@@ -465,8 +465,8 @@ namespace FinalProjectChatClient
                     clientModel.Status = "Online";
                     if (Output != null)
                     {
-                        Output("UpdateStatus", "Online");
-                        Output("UpdateName", clientModel.DisplayName);
+                        Output("UpdateStatus");
+                        Output("UpdateName");
                     }
                 }
                 else
@@ -490,7 +490,7 @@ namespace FinalProjectChatClient
             {
                 Contact cont = new Contact(mssg["username"], mssg["dispName"], mssg["state"]);
                 clientModel.ContactList.Add(cont);
-                if (Output != null) Output("AddCont", cont);
+                if (Output != null) Output("AddCont");
             }
         }
 
@@ -579,7 +579,7 @@ namespace FinalProjectChatClient
             if (participant != null)
             {
                 clientModel.ContactList.Remove(participant);
-                if (Output != null) Output("RemoveCont", participant);
+                if (Output != null) Output("RemoveCont", mssg["source"]);
             }
         }
 
