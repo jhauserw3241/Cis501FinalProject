@@ -72,7 +72,7 @@ namespace FinalProjectChatClient
         }
 
         #region Input Handlers
-        
+
         /// <summary>
         /// Handles input that takes generic event arguments.
         /// </summary>
@@ -112,7 +112,7 @@ namespace FinalProjectChatClient
 
                 ws.Send(String.Format("<udConv conv=\"{0}\" leave=\"{1}\" />", page.Text, clientModel.Username));
                 clientModel.ConversationList.Remove(page.Text);
-                if (Output != null) Output("LeaveConv", page);
+                if (Output != null) Output("LeaveConv");
             }
             else if (sender.Equals(clientForm.LogoutProfileOption))
             {
@@ -182,6 +182,11 @@ namespace FinalProjectChatClient
                         {
                             ws.Send(String.Format("<msg source=\"{0}\" conv=\"{1}\" text=\"{2}\" />", clientModel.Username, clientForm.ConversationTabController.SelectedTab.Text, FormatForChat(clientForm.MessageBox.Text)));
                             if (Output != null) Output("ClrMsg");
+                            clientModel.WaitFlag = true;
+                            while (clientModel.WaitFlag)
+                            {
+                                System.Threading.Thread.Sleep(1000);
+                            }
                         }
                         e.SuppressKeyPress = true;
                     }
@@ -363,7 +368,7 @@ namespace FinalProjectChatClient
         /// <param name="participant">The participant to add.</param>
         private void AddConvParticipant(string name, string participant)
         {
-            ws.Send(String.Format("<udCont conv=\"{0}\" addPa=\"{1}\" />", name, participant));
+            ws.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
             // Wait for a response from the server
             clientModel.WaitFlag = true;
             while (clientModel.WaitFlag)
@@ -495,7 +500,14 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleChatMessage(Dictionary<string, string> mssg)
         {
-            Output("Message", mssg["conv"], mssg["text"]);
+            if (mssg.ContainsKey("error"))
+            {
+                Output("Message", mssg["conv"], mssg["error"]);
+            }
+            else
+            {
+                Output("Message", mssg["conv"], mssg["text"]);
+            }
         }
 
         /// <summary>
