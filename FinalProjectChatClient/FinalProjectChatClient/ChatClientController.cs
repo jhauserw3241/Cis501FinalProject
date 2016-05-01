@@ -707,7 +707,7 @@ namespace FinalProjectChatClient
         /// <returns>Whether or not the string passes the inspection.</returns>
         private bool CheckCapital(string str)
         {
-            return Regex.IsMatch(str, "^[A-Z]$");
+            return Regex.IsMatch(str, "[A-Z]");
         }
 
         /// <summary>
@@ -717,7 +717,7 @@ namespace FinalProjectChatClient
         /// <returns>Whether or not the string passes the inspection.</returns>
         private bool CheckNumber(string str)
         {
-            return Regex.IsMatch(str, "^[0-9]$");
+            return Regex.IsMatch(str, "[0-9]");
         }
 
         /// <summary>
@@ -727,7 +727,7 @@ namespace FinalProjectChatClient
         /// <returns>Whether or not the string passes the inspection.</returns>
         private bool CheckChar(string str)
         {
-            return Regex.IsMatch(str, "^[_!@#$%^&.<>]$");
+            return Regex.IsMatch(str, "[_!@#$%^&.<>]");
         }
 
         /// <summary>
