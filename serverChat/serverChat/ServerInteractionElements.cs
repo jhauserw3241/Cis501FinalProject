@@ -8,5 +8,5 @@ namespace serverChat
 {
     public delegate void ServerOutputHandler(string action, params object[] vars);
 
-    public enum STATUS {online, away, offline};
+    public enum STATUS {Online, Away, Offline};
 }
