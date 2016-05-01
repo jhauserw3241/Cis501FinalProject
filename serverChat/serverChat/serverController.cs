@@ -333,6 +333,7 @@ namespace serverChat
             return SerializeXml(output);
         }
 
+        #region Get Model Info
         // Get Conversation Object
         //
         // Get the conversation from the list in the model
@@ -414,6 +415,7 @@ namespace serverChat
 
             return new ServerUser();
         }
+        #endregion
 
         #region Check Availability
         // Is Username Used
