@@ -423,6 +423,7 @@ namespace serverChat
             return new ServerUser();
         }
 
+        #region Check Availability
         // Is Username Used
         //
         // Check if hte username is currently being used by another user
@@ -441,6 +442,7 @@ namespace serverChat
 
             return false;
         }
+        #endregion
 
         // Remove Conversation From List
         //
