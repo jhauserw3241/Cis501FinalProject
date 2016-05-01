@@ -159,7 +159,22 @@ namespace serverChat
             data.SetUserList(userList);
         }
 
-        // Add Conversation
+        // Add Conversation To List
+        //
+        // Add the conversation to the list of all conversations in the model
+        // @param conv The current conversation
+        public void AddConvToList(ServerConversation conv)
+        {
+            // Get the list of all conversations from the model
+            List<ServerConversation> convList = data.GetConversationList();
+
+            // Add the current conversation object
+            convList.Add(conv);
+
+            // Set the current conversation list to the model conversation list
+            data.SetConversationList(convList);
+        }
+
         //
         // Add conversation to the list of conversations
         // @param name The conversation name of the new conversation
