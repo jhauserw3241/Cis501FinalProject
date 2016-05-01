@@ -168,6 +168,25 @@ namespace serverChat
             // Set the current conversation list to the model conversation list
             data.SetConversationList(convList);
         }
+
+        // Remove User From List
+        //
+        // Remove the user from the list in the model
+        // @arg username The username for the current user
+        public void RemoveUserFromList(string username)
+        {
+            // Get the list of all users from the model
+            List<ServerUser> userList = data.GetUserList();
+
+            // Get the user object from the list in the model
+            ServerUser user = GetUserObj(username);
+
+            // Remove the user object from the list of all users from the model
+            userList.Remove(user);
+
+            // Set the user list to the updated list
+            data.SetUserList(userList);
+        }
         #endregion
 
         #region Create Objects
@@ -482,25 +501,6 @@ namespace serverChat
 
             // Set the new list of participants as a new relationship
             data.SetContactRelationshipList(contRels);
-        }
-
-        // Remove User From List
-        //
-        // Remove the user from the list in the model
-        // @arg username The username for the current user
-        public void RemoveUserFromList(string username)
-        {
-            // Get the list of all users from the model
-            List<ServerUser> userList = data.GetUserList();
-
-            // Get the user object from the list in the model
-            ServerUser user = GetUserObj(username);
-
-            // Remove the user object from the list of all users from the model
-            userList.Remove(user);
-
-            // Set the user list to the updated list
-            data.SetUserList(userList);
         }
 
         #region XML Serialization
