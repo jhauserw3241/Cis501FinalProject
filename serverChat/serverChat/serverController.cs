@@ -177,6 +177,21 @@ namespace serverChat
             output("UpdateUserList", userList);
         }
 
+        // Get the Add Contact Message
+        //
+        // Get the output message that is for adding a new contact to the user's profile
+        // @param contact The user object for the new contact
+        // @return a string that creates a new contact on the client side
+        public string GetAddContMessage(ServerUser contact)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            output.Add("action", "addCont");
+            output.Add("username", contact.GetUsername());
+            output.Add("dispName", contact.GetName());
+            output.Add("state", contact.GetStatus().ToString());
+            return SerializeXml(output);
+        }
+
         // Add User
         //
         // Add user to list of users
