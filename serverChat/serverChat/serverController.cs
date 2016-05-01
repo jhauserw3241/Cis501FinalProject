@@ -303,6 +303,7 @@ namespace serverChat
             data.SetUserList(userList);
         }
 
+        #region XML Serialization
         // Deserialize XML
         //
         // Deserialize the provided XML
@@ -371,5 +372,6 @@ namespace serverChat
 
             return output;
         }
+        #endregion
     }
 }
