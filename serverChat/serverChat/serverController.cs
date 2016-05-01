@@ -100,6 +100,7 @@ namespace serverChat
         }
         #endregion
 
+        #region Process Input
         // Process Sign Up
         //
         // Process a request for a new user to be created
@@ -140,6 +141,7 @@ namespace serverChat
             //return false;
             return output;
         }
+        #endregion
 
         // Add User To List
         //
