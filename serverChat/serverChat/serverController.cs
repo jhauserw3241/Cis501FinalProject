@@ -177,6 +177,7 @@ namespace serverChat
         }
         #endregion
 
+        #region Create Objects
         // Create Conversation
         //
         // Create conversation and add it to the list of conversations
@@ -227,6 +228,7 @@ namespace serverChat
 
             return "";
         }
+        #endregion
 
         #region Modify Objects
         // Add Participant To Conversation
