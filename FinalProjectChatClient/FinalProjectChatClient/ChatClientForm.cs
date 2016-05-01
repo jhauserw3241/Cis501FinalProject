@@ -74,7 +74,7 @@ namespace FinalProjectChatClient
                     AddParticipantTextBox.Text = String.Empty;
                     break;
                 case "LeaveConv":
-                    RemoveConversationTab((TabPage)vars[0]);
+                    RemoveConversationTab(conversationTabController.SelectedTab);
                     break;
                 case "Message":
                     conversationTabs.Find(x => x.Item1.Name.Equals((string)vars[0])).Item2.Text += String.Join(Environment.NewLine, (List<string>)vars[1]);
