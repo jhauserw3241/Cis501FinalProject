@@ -334,5 +334,42 @@ namespace serverChat
 
             return output;
         }
+
+        // Serialize XML
+        //
+        // Serialize the provided XML
+        // @param infoDict The dictionary containing the information to be convert to XML
+        // @return a string containing the message with the unparsed XML string
+        public string SerializeXml(Dictionary<string, string> infoDict)
+        {
+            string output = "<";
+
+            // Add the correct action to the XML string
+            if (infoDict.ContainsKey("action"))
+            {
+                output += (infoDict["action"] + " ");
+
+                infoDict.Remove("action");
+            }
+            else
+            {
+                output += "error ";
+            }
+
+            // Add each of the attributes to the XML string
+            int size = infoDict.Count;
+            for (int i = 0; i < size; i++)
+            {
+                KeyValuePair<string, string> curEle = infoDict.ElementAt(i);
+
+                output += string.Format("{0}=\"{1}\" ", curEle.Key, curEle.Value);
+
+                infoDict.Remove(curEle.Key);
+            }
+
+            output += "/>";
+
+            return output;
+        }
     }
 }
