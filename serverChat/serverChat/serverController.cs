@@ -136,7 +136,7 @@ namespace serverChat
         }
         #endregion
 
-        #region Add Elements to Model Lists
+        #region Modify Model Data
         // Add User To List
         //
         // Add the user to the list of all of the users in the model
