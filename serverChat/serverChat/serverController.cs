@@ -177,20 +177,27 @@ namespace serverChat
         }
         #endregion
 
+        // Create Conversation
         //
-        // Add conversation to the list of conversations
+        // Create conversation and add it to the list of conversations
         // @param name The conversation name of the new conversation
+        // @return the error message string if there is one+
         public void AddConversation(string name)
         {
+            // Check if the username is already being used
+            if (IsUsernameUsed(uname))
+            {
+                return "Username already used.";
+            }
+
             // Create conversation object from conversation info
             ServerConversation conv = new ServerConversation(name);
 
             // Add conversation to list
-            List<ServerConversation> convList = data.GetConversationList();
-            convList.Add(conv);
+            AddConvToList(conv);
 
             // Update the view
-            output("UpdateConversationList", convList);
+            output("UpdateConversationList", data.GetConversationList());
         }
 
         // Create User
