@@ -51,9 +51,47 @@ namespace serverChat
         }
         #endregion
 
-        // Add Contact To List
+        // Process Sign Up
         //
-        // Add the contact to the list of all of the users in the model
+        // Process a request for a new user to be created
+        // @param uInfo The information for the new user
+        // @return a string containing the xml
+        public string ProcessSignUp(Dictionary<string, string> uInfo)
+        {
+            string uname = uInfo["username"];
+            string pass = uInfo["password"];
+            string output = "";
+
+            // Check if the provided username is already being used
+            if (IsUsernameUsed(uname))
+            {
+                // Create error data
+                Dictionary<string, string> errorData = new Dictionary<string, string>();
+                errorData.Add("action", "error");
+                errorData.Add("error", "Username is already being used.");
+                output = SerializeXml(errorData);
+            }
+            else
+            {
+                // Setup user creation
+                ServerUser curUser = new ServerUser();
+                //List<ServerUser> userList = data.GetUserList();
+
+                // Update the object with provided data
+                curUser.SetUsername(uname);
+                curUser.SetName(uname);
+                curUser.SetPassword(pass);
+
+                // Update user list in model
+                AddUserToList(curUser);
+                //userList.Add(curUser);
+                //data.SetUserList(userList);
+            }
+
+            //return false;
+            return output;
+        }
+
         // @arg user The current user
         public void AddContactToList(ServerUser user)
         {
