@@ -333,28 +333,6 @@ namespace serverChat
             return SerializeXml(output);
         }
 
-        // Add User
-        //
-        // Add user to list of users
-        // @param username The username of the new user
-        // @param dName The display name of the new user
-        // @param status The status of the new user
-        public void AddUser(string username, string dName, STATUS status)
-        {
-            // Create user object from user info
-            ServerUser user = new ServerUser();
-            user.SetUsername(username);
-            user.SetName(dName);
-            user.SetStatus(status);
-
-            // Add user to list
-            List<ServerUser> userList = data.GetUserList();
-            userList.Add(user);
-
-            // Update the view
-            output("UpdateUserList", userList);
-        }
-
         // Get Conversation Object
         //
         // Get the conversation from the list in the model
