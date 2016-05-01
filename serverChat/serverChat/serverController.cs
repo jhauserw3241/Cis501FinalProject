@@ -440,7 +440,7 @@ namespace serverChat
         #region Check Availability
         // Is Username Used
         //
-        // Check if hte username is currently being used by another user
+        // Check if the username is currently being used by another user
         // @param name The username being requested
         public bool IsUsernameUsed(string name)
         {
