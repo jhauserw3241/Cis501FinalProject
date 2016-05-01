@@ -101,12 +101,12 @@ namespace serverChat
         #endregion
 
         #region Process Input
-        // Process Sign Up
+        // Process Sign Up Request
         //
         // Process a request for a new user to be created
         // @param uInfo The information for the new user
         // @return a string containing the xml
-        public string ProcessSignUp(Dictionary<string, string> uInfo)
+        public string ProcessSignUpRequest(Dictionary<string, string> uInfo)
         {
             string uname = uInfo["username"];
             string pass = uInfo["password"];
