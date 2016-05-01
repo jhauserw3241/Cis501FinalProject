@@ -304,6 +304,7 @@ namespace serverChat
         }
         #endregion
 
+        #region Create Response
         // Get User Obj Message
         //
         // Get the output message that is from the new or previously
@@ -358,6 +359,7 @@ namespace serverChat
             output.Add("state", contact.GetStatus().ToString());
             return SerializeXml(output);
         }
+        #endregion
 
         #region Get Model Info
         // Get Conversation Object
