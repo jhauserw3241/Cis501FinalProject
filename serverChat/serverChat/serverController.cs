@@ -145,11 +145,11 @@ namespace serverChat
 
         // Add User To List
         //
-        // Add the users to the list of all of the users in the model
+        // Add the user to the list of all of the users in the model
         // @arg user The current user
         public void AddUserToList(ServerUser user)
         {
-            // Get the list of all contacts from the model
+            // Get the list of all users from the model
             List<ServerUser> userList = data.GetUserList();
 
             // Add the current user object
