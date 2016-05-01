@@ -444,6 +444,7 @@ namespace serverChat
         }
         #endregion
 
+        #region Destroy Objects
         // Remove Conversation From List
         //
         // Remove the conversation from the list in the model
@@ -462,6 +463,7 @@ namespace serverChat
             // Set the conversation list to the updated list
             data.SetConversationList(convList);
         }
+        #endregion
 
         // Remove Participant From Conversation Participants
         //
