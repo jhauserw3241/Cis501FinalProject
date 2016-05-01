@@ -302,5 +302,37 @@ namespace serverChat
             // Set the user list to the updated list
             data.SetUserList(userList);
         }
+
+        // Deserialize XML
+        //
+        // Deserialize the provided XML
+        // @param msg The message containing the unparsed XML string
+        // @return the dictionary containing the keywords and their values
+        public Dictionary<string, string> DeserializeXml(string msg)
+        {
+            // Convert the message string to a XML object
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(msg);
+
+            // Initialize the dictionary
+            Dictionary<string, string> output = new Dictionary<string, string>();
+
+            // Add the action element to the dictionary
+            output.Add("action", xml.DocumentElement.Name);
+
+            // Go through all the nodes in the provided XML object
+            foreach (XmlElement node in xml)
+            {
+                // Go through all the attributes for the provided node
+                XmlAttributeCollection attList = node.Attributes;
+                foreach (XmlAttribute at in attList)
+                {
+                    // Add the current attribute and its value to the dictionary
+                    output.Add(at.LocalName, at.Value);
+                }
+            }
+
+            return output;
+        }
     }
 }
