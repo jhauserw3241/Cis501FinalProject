@@ -13,97 +13,26 @@ namespace serverChat
     public partial class ServerView : Form
     {
         // Declare objects
+        private ServerModel data = new ServerModel();
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
-        private List<ServerUser> usersList = new List<ServerUser>();
-        private List<ServerConversation> convsList = new List<ServerConversation>();
+        private List<ServerUser> viewUserList = new List<ServerUser>();
+        private List<ServerConversation> viewConvList = new List<ServerConversation>();
         private bool userFlag = false;
         private bool convFlag = false;
 
         #region Class Modification
         // Constructor
-        public ServerView()
+        //
+        // @param d The model object
+        public ServerView(ServerModel d)
         {
+            data = d;
+
             // Initialize the form
             InitializeComponent();
         }
         #endregion
-
-        //#region GUI Elements Handling
-        //// Handle Conversation Button Clicked
-        ////
-        //// Handle actions taken when the conversation button is clicked
-        //private void convButton_Click(object sender, EventArgs e)
-        //{
-        //    // Set flags for category selected
-        //    userFlag = false;
-        //    convFlag = true;
-
-        //    // Put all of the elements from the conversation list into the list box
-        //    RemoveAllListBoxEles();
-        //    UpdateConvListBox();
-        //}
-
-        //// Handle Item Selected from List Box
-        ////
-        //// Handle actions taken when the user selects an item from the list box
-        //private void eleListBox_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    // Clear text box
-        //    currentInfo.Clear();
-
-        //    // Handle user selected
-        //    if ((userFlag == true) || (convFlag == false))
-        //    {
-        //        // TODO: Get user object for selected user
-
-        //        // Display username
-        //        currentInfo.AppendText("Username: " + user.GetUsername());
-
-        //        // Display display name
-        //        currentInfo.AppendText("Display Name: " + user.GetName());
-
-        //        // Display status
-        //        currentInfo.AppendText("Status: " + user.GetStatus());
-
-        //        // Display ip address
-        //        currentInfo.AppendText("IP Address: " + user.GetIpAddress());
-        //    }
-        //    // Handle conversation selected
-        //    else if ((userFlag == false) || (convFlag == true))
-        //    {
-        //        // TODO: Get conversation object for selected user
-
-        //        // Display name
-        //        currentInfo.AppendText("Name: " + conv.GetConversationName());
-
-        //        // Display list of usernames for participants
-        //        currentInfo.AppendText("List of Participants: " + conv.GetParicipantList().ToString());
-
-        //        // Display most recent message
-        //        currentInfo.AppendText("Most Recent Message: " + conv.GetCurrentMessage());
-        //    }
-        //    // Handle error case
-        //    else
-        //    {
-        //        MessageBox.Show("ERROR: You need to pick either the 'Users' or 'Conversations' button before you can choose an option.");
-        //    }
-        //}
-
-        //// Handle User Button Clicked
-        ////
-        //// Handle actions taken when the user button has been clicked
-        //private void usersButton_Click(object sender, EventArgs e)
-        //{
-        //    // Set flags for category selected
-        //    userFlag = true;
-        //    convFlag = false;
-
-        //    // Put all of the elements from the user list into the list box
-        //    RemoveAllListBoxEles();
-        //    UpdateUserListBox();
-        //}
-        //#endregion
 
         #region Helper Methods
         // Add Conversation to Conversation ComboBox
@@ -116,39 +45,51 @@ namespace serverChat
             eleListBox.Items.Add(name);
         }
 
-        // Handle Form Output
+        // Display Conversation Information
         //
-        // Handle any actions that need to be taken for the view
-        // @param action What form needs to update
-        public void HandleFormOutput(string action, params object[] vars)
+        // Display the information for the conversation
+        private void DisplayConvInfo()
         {
-            //int size = vars.Count();
+            currentInfo.AppendText(string.Format("Name: {0}", conv.GetConversationName()));
+            currentInfo.AppendText(string.Format("Participants: {0}", conv.GetParticipantListUsernames().ToString()));
+        }
 
-            switch (action)
+        // Display User Information
+        //
+        // Display the information for the user
+        private void DisplayUserInfo()
+        {
+            currentInfo.AppendText(string.Format("Username: {0}", user.GetUsername()));
+            currentInfo.AppendText(string.Format("Display Name: {0}", user.GetName()));
+            currentInfo.AppendText(string.Format("Password: {0}", user.GetPassword()));
+            currentInfo.AppendText(string.Format("IP Address: {0}", user.GetIpAddress()));
+            currentInfo.AppendText(string.Format("Status: {0}", user.GetStatus().ToString()));
+            currentInfo.AppendText(string.Format("Contacts: {0}", user.GetContactListUsernames().ToString()));
+        }
+
+        // Populate Conversation List Box
+        //
+        // Populate the conversation list box with the list of conversations in the view
+        private void PopulateConvListBox()
+        {
+            int size = viewConvList.Count;
+            for (int i = 0; i < size; i++)
             {
-                case "UpdateUserList":
-                    //for (int i = 0; i < size; i++)
-                    //{
-                    //    usersList.Add((ServerUser)vars[i]);
-                    //}
-                    MessageBox.Show("Update user list!!!");
-                    break;
-                case "UpdateConversationList":
-                    //for (int i = 0; i < size; i++)
-                    //{
-                    //    convsList.Add((ServerConversation)vars[i]);
-                    //}
-                    MessageBox.Show("Update conversation list!!!");
-                    break;
-                case "ProvideEleName":
-                    MessageBox.Show("Element chosen from list");
-                    break;
-                case "InvalidInputOption":
-                    MessageBox.Show("You aren't supposed to click that!");
-                    break;
-                default:
-                    MessageBox.Show("ERROR: Invalid action provided to form.");
-                    break;
+                string name = viewConvList.ElementAt(i).GetConversationName();
+                eleListBox.Items.Add(name);
+            }
+        }
+
+        // Populate User List Box
+        //
+        // Populate the user list box with the list of users in the view
+        private void PopulateUserListBox()
+        {
+            int size = viewUserList.Count;
+            for (int i = 0; i < size; i++)
+            {
+                string username = viewUserList.ElementAt(i).GetUsername();
+                eleListBox.Items.Add(username);
             }
         }
 
@@ -163,31 +104,108 @@ namespace serverChat
                 eleListBox.Items.RemoveAt(i);
             }
         }
+        #endregion
 
-        // Update User List Box
+        #region Handle Input
+        // Display Selected Information
         //
-        // Update the user list box with the list of ServerUser objects
-        private void UpdateUserListBox()
+        // Display the information for the item selected by the user
+        // @param index The index of the selected element in its list
+        private void DisplaySelectedInformation(int index)
         {
-            int size = usersList.Count;
-            for (int i = 0; i < size; i++)
+            // TODO: Add check to make sure that there are elements in the listbox to select
+            if ((userFlag == true) || (convFlag == false))
             {
-                string username = usersList.ElementAt(i).GetUsername();
-                eleListBox.Items.Add(username);
+                // Update the user object with the selected user element
+                user = viewUserList.ElementAt(index);
+
+                // Display the information of the selected user
+                DisplayUserInfo();
+            }
+            else if ((userFlag == false) || (convFlag == true))
+            {
+                // Update the conversation object with the selected conversation element
+                conv = viewConvList.ElementAt(index);
+
+                // Display the information of the selected conversation
+                DisplayConvInfo();
+            }
+            else
+            {
+                MessageBox.Show("ERROR: Invalid flag set selected");
             }
         }
 
-        // Update Conversation List Box
+        // Handle Form Output
         //
-        // Update the conversation list box with the list of ServerConversation object
-        private void UpdateConvListBox()
+        // Handle any actions that need to be taken for the view
+        // @param action What form needs to update
+        public void HandleFormOutput(string action, params object[] vars)
         {
-            int size = convsList.Count;
-            for (int i = 0; i < size; i++)
+            switch (action)
             {
-                string name = convsList.ElementAt(i).GetConversationName();
-                eleListBox.Items.Add(name);
+                case "UpdateUserList":
+                    UpdateUserList();
+                    break;
+                case "UpdateConversationList":
+                    UpdateConvList();
+                    break;
+                case "ProvideEleName":
+                    DisplaySelectedInformation((int)vars[0]);
+                    break;
+                case "InvalidInputOption":
+                    MessageBox.Show("Error: You tried to user a GUI element incorrectly.");
+                    break;
+                default:
+                    MessageBox.Show("ERROR: Invalid action provided to form.");
+                    break;
             }
+        }
+
+        // Update Conversation List
+        //
+        // Update the conversation list both inside of the view and on the form
+        private void UpdateConvList()
+        {
+            // Enable the listbox if it isn't already enabled
+            if (!eleListBox.Enabled)
+            {
+                eleListBox.Enabled = true;
+            }
+
+            // Update view flags
+            userFlag = false;
+            convFlag = true;
+
+            // Update conversation list in view
+            viewConvList = data.GetConversationList();
+
+            // Update conversation list in the listbox on the form
+            RemoveAllListBoxEles();
+            PopulateConvListBox();
+        }
+
+        // Update User List
+        //
+        // Update the user list both inside of the view and on the form
+        private void UpdateUserList()
+        {
+            // Enable the listbox if it isn't already enabled
+            if (!eleListBox.Enabled)
+            {
+                eleListBox.Enabled = true;
+            }
+
+            // Update view flags
+            userFlag = true;
+            convFlag = false;
+
+            // Update user list in view
+            viewUserList = data.GetUserList();
+
+            // Update user list in the listbox on the form
+            RemoveAllListBoxEles();
+            PopulateUserListBox();
         }
         #endregion
     }

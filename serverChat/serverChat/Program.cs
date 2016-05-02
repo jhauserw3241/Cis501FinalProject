@@ -23,7 +23,7 @@ namespace serverChat
             // Create objects
             ServerModel data = new ServerModel();
             ServerController cont = new ServerController(data);
-            ServerView view = new ServerView();
+            ServerView view = new ServerView(data);
 
             // Create connection from view to controller
             view.ConversationsButton.Click += cont.HandleGenericInput;

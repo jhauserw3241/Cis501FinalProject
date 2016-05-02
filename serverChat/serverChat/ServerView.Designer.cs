@@ -107,6 +107,7 @@ namespace serverChat
             //
             // eleListBox
             //
+            this.eleListBox.Enabled = false;
             this.eleListBox.FormattingEnabled = true;
             this.eleListBox.Location = new System.Drawing.Point(12, 70);
             this.eleListBox.Name = "eleListBox";
