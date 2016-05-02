@@ -29,81 +29,81 @@ namespace serverChat
         }
         #endregion
 
-        #region GUI Elements Handling
-        // Handle Conversation Button Clicked
-        //
-        // Handle actions taken when the conversation button is clicked
-        private void convButton_Click(object sender, EventArgs e)
-        {
-            // Set flags for category selected
-            userFlag = false;
-            convFlag = true;
+        //#region GUI Elements Handling
+        //// Handle Conversation Button Clicked
+        ////
+        //// Handle actions taken when the conversation button is clicked
+        //private void convButton_Click(object sender, EventArgs e)
+        //{
+        //    // Set flags for category selected
+        //    userFlag = false;
+        //    convFlag = true;
 
-            // Put all of the elements from the conversation list into the list box
-            RemoveAllListBoxEles();
-            UpdateConvListBox();
-        }
+        //    // Put all of the elements from the conversation list into the list box
+        //    RemoveAllListBoxEles();
+        //    UpdateConvListBox();
+        //}
 
-        // Handle Item Selected from List Box
-        //
-        // Handle actions taken when the user selects an item from the list box
-        private void eleListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Clear text box
-            currentInfo.Clear();
+        //// Handle Item Selected from List Box
+        ////
+        //// Handle actions taken when the user selects an item from the list box
+        //private void eleListBox_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    // Clear text box
+        //    currentInfo.Clear();
 
-            // Handle user selected
-            if ((userFlag == true) || (convFlag == false))
-            {
-                // TODO: Get user object for selected user
+        //    // Handle user selected
+        //    if ((userFlag == true) || (convFlag == false))
+        //    {
+        //        // TODO: Get user object for selected user
 
-                // Display username
-                currentInfo.AppendText("Username: " + user.GetUsername());
+        //        // Display username
+        //        currentInfo.AppendText("Username: " + user.GetUsername());
 
-                // Display display name
-                currentInfo.AppendText("Display Name: " + user.GetName());
+        //        // Display display name
+        //        currentInfo.AppendText("Display Name: " + user.GetName());
 
-                // Display status
-                currentInfo.AppendText("Status: " + user.GetStatus());
+        //        // Display status
+        //        currentInfo.AppendText("Status: " + user.GetStatus());
 
-                // Display ip address
-                currentInfo.AppendText("IP Address: " + user.GetIpAddress());
-            }
-            // Handle conversation selected
-            else if ((userFlag == false) || (convFlag == true))
-            {
-                // TODO: Get conversation object for selected user
+        //        // Display ip address
+        //        currentInfo.AppendText("IP Address: " + user.GetIpAddress());
+        //    }
+        //    // Handle conversation selected
+        //    else if ((userFlag == false) || (convFlag == true))
+        //    {
+        //        // TODO: Get conversation object for selected user
 
-                // Display name
-                currentInfo.AppendText("Name: " + conv.GetConversationName());
+        //        // Display name
+        //        currentInfo.AppendText("Name: " + conv.GetConversationName());
 
-                // Display list of usernames for participants
-                currentInfo.AppendText("List of Participants: " + conv.GetParicipantList().ToString());
+        //        // Display list of usernames for participants
+        //        currentInfo.AppendText("List of Participants: " + conv.GetParicipantList().ToString());
 
-                // Display most recent message
-                currentInfo.AppendText("Most Recent Message: " + conv.GetCurrentMessage());
-            }
-            // Handle error case
-            else
-            {
-                MessageBox.Show("ERROR: You need to pick either the 'Users' or 'Conversations' button before you can choose an option.");
-            }
-        }
+        //        // Display most recent message
+        //        currentInfo.AppendText("Most Recent Message: " + conv.GetCurrentMessage());
+        //    }
+        //    // Handle error case
+        //    else
+        //    {
+        //        MessageBox.Show("ERROR: You need to pick either the 'Users' or 'Conversations' button before you can choose an option.");
+        //    }
+        //}
 
-        // Handle User Button Clicked
-        //
-        // Handle actions taken when the user button has been clicked
-        private void usersButton_Click(object sender, EventArgs e)
-        {
-            // Set flags for category selected
-            userFlag = true;
-            convFlag = false;
+        //// Handle User Button Clicked
+        ////
+        //// Handle actions taken when the user button has been clicked
+        //private void usersButton_Click(object sender, EventArgs e)
+        //{
+        //    // Set flags for category selected
+        //    userFlag = true;
+        //    convFlag = false;
 
-            // Put all of the elements from the user list into the list box
-            RemoveAllListBoxEles();
-            UpdateUserListBox();
-        }
-        #endregion
+        //    // Put all of the elements from the user list into the list box
+        //    RemoveAllListBoxEles();
+        //    UpdateUserListBox();
+        //}
+        //#endregion
 
         #region Helper Methods
         // Add Conversation to Conversation ComboBox
@@ -122,21 +122,29 @@ namespace serverChat
         // @param action What form needs to update
         public void HandleFormOutput(string action, params object[] vars)
         {
-            int size = vars.Count();
+            //int size = vars.Count();
 
             switch (action)
             {
                 case "UpdateUserList":
-                    for (int i = 0; i < size; i++)
-                    {
-                        usersList.Add((ServerUser)vars[i]);
-                    }
+                    //for (int i = 0; i < size; i++)
+                    //{
+                    //    usersList.Add((ServerUser)vars[i]);
+                    //}
+                    MessageBox.Show("Update user list!!!");
                     break;
                 case "UpdateConversationList":
-                    for (int i = 0; i < size; i++)
-                    {
-                        convsList.Add((ServerConversation)vars[i]);
-                    }
+                    //for (int i = 0; i < size; i++)
+                    //{
+                    //    convsList.Add((ServerConversation)vars[i]);
+                    //}
+                    MessageBox.Show("Update conversation list!!!");
+                    break;
+                case "ProvideEleName":
+                    MessageBox.Show("Element chosen from list");
+                    break;
+                case "InvalidInputOption":
+                    MessageBox.Show("You aren't supposed to click that!");
                     break;
                 default:
                     MessageBox.Show("ERROR: Invalid action provided to form.");

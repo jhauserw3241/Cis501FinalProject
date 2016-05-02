@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using WebSocketSharp;
 using WebSocketSharp.Server;
+using System.Windows.Forms;
 
 namespace serverChat
 {
@@ -13,6 +14,47 @@ namespace serverChat
     {
         private ServerModel data = new ServerModel();
         public event ServerOutputHandler output;
+
+        #region Handle View Output
+        // Handle Generic Input
+        //
+        // Handle input that provides the generic event arugments
+        // @param sender The component that raised the event
+        // @param e The supplied arguments
+        public void HandleGenericInput(object sender, EventArgs e)
+        {
+            switch (((Button)sender).Name)
+            {
+                case "usersButton":
+                    output("UpdateUserList", "");
+                    break;
+                case "convButton":
+                    output("UpdateConversationList", "");
+                    break;
+                default:
+                    output("InvalidInputOption", "");
+                    break;
+            }
+        }
+
+        // Handle Mouse Input
+        //
+        // Handle input that provides the mouse event arugments
+        // @param sender The component that raised the event
+        // @param e The supplied arguments
+        public void HandleMouseInput(object sender, MouseEventArgs e)
+        {
+            switch(((ListBox)sender).Name)
+            {
+                case "eleListBox":
+                    output("ProvideEleName", ((ListBox)sender).SelectedIndex);
+                    break;
+                default:
+                    output("InvalidInputOption");
+                    break;
+            }
+        }
+        #endregion
 
         #region Manipulate Class
         // Constructor
