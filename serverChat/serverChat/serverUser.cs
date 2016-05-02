@@ -64,6 +64,23 @@ namespace serverChat
             return dNames;
         }
 
+        // Get Contact List Statuses
+        //
+        // Get the list of statuses for the contacts for the current user
+        // @return the list of status for the contact list in string form
+        public List<string> GetContactListStatuses()
+        {
+            List<string> statuses = new List<string>();
+            int size = contacts.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                statuses.Add(contacts.ElementAt(i).GetStatus().ToString());
+            }
+
+            return statuses;
+        }
+
         // Get Contact List Usernames
         //
         // Get the list of usernames for the contacts for the current user
