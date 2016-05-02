@@ -99,9 +99,7 @@ namespace serverChat
             switch (input["action"])
             {
                 case "sign":
-                    // TODO: Check if username is already used
-                    // TODO: Handle creation of user
-
+                    output = ProcessSignUpRequest(input);
                     break;
                 case "login":
                     // TODO: Check if the username and password match
@@ -147,34 +145,30 @@ namespace serverChat
         //
         // Process a request for a new user to be created
         // @param uInfo The information for the new user
-        // @return a string containing the xml
+        // @return a string containing the xml response
         public string ProcessSignUpRequest(Dictionary<string, string> uInfo)
         {
-            string uname = uInfo["username"];
-            string pass = uInfo["password"];
-            string output = "";
+            Dictionary<string, string> output = new Dictionary<string, string>();
 
-            // Check if the provided username is already being used
-            if (IsUsernameUsed(uname))
+            // Create the user
+            string error = CreateUser(uInfo["username"], uInfo["password"]);
+
+            // Check if the creation was succesful
+            if (error == "")
             {
-                // Create error data
-                Dictionary<string, string> errorData = new Dictionary<string, string>();
-                errorData.Add("action", "error");
-                errorData.Add("error", "Username is already being used.");
-                output = SerializeXml(errorData);
+                output.Add("action", "success");
             }
             else
             {
-                // Create user
-                ServerUser curUser = new ServerUser(uname);
-                curUser.SetPassword(pass);
-
-                // Update user list in model
-                AddUserToList(curUser);
+                output.Add("action", "error");
+                output.Add("error", error);
             }
 
-            //return false;
-            return output;
+            return SerializeXml(output);
+        }
+
+            }
+
         }
         #endregion
 
