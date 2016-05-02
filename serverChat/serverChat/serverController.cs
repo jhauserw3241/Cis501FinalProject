@@ -466,14 +466,17 @@ namespace serverChat
         public ServerUser GetUserObj(string username)
         {
             List<ServerUser> usersList = data.GetUserList();
-            int usersListLen = usersList.Count;
+            int size = usersList.Count;
 
-            if (usersListLen != 0)
+            if (size != 0)
             {
-                for (int i = 0; i < usersListLen; i++)
+                for (int i = 0; i < size; i++)
                 {
-                    // TODO: Check if the user's username matches and return it
-                    return new ServerUser();
+                    ServerUser curUser = usersList.ElementAt(i);
+                    if (curUser.GetUsername() == username)
+                    {
+                        return curUser;
+                    }
                 }
             }
 
