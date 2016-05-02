@@ -32,7 +32,7 @@ namespace ChatClientTest
         public void ContactToStringTest()
         {
             Contact cnt = new Contact("Joy", "Joy_KSU", "Online");
-            //Assert.AreEqual("",);
+            Assert.AreEqual("Joy_KSU : Joy : Online", cnt.ToString());
         }
 
         [TestMethod]
