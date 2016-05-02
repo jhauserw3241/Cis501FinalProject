@@ -4,12 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary1
+namespace ClientConversation
 {
     public class ClientConversation
     {
         private string convoName;
         private List<string> participants = new List<string>();
+
+        public ClientConversation()
+        {
+            convoName = "";
+            participants = null;
+        }
+
+        public ClientConversation(string cN ,List<string> p)
+        {
+            convoName = cN;
+            participants.AddRange(p);
+        }
 
         public string ConvoName
         {

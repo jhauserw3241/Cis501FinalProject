@@ -9,8 +9,22 @@ namespace Contact
     public class ContactClient
     {
         private string displayName;
-        private bool status;
+        private string status;
         private string userName;
+
+        public ContactClient()
+        {
+            displayName = "";
+            userName = "";
+            status = "";
+        }
+
+        public ContactClient(string d, string u, string s)
+        {
+            displayName = d;
+            userName = u;
+            status = s;
+        }
 
         public string DisplayName
         {
