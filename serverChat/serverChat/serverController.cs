@@ -102,9 +102,7 @@ namespace serverChat
                     output = ProcessSignUpRequest(input);
                     break;
                 case "login":
-                    // TODO: Check if the username and password match
-                    // a currently existing user
-
+                    output = ProcessLoginRequest(input);
                     break;
                 case "addCont":
                     // TODO: Check if the user currently has the specified user as a contact
@@ -167,8 +165,49 @@ namespace serverChat
             return SerializeXml(output);
         }
 
+        // Process Login Request
+        //
+        // Process a request for a an existing user to login
+        // @param uInfo The information for the existing user
+        // @return a string containing the xml response
+        public string ProcessLoginRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+
+            // Get the user object that matches the provided username
+            ServerUser user = GetUserObj(uInfo["username"]);
+
+            // Check if the user exists
+            if (user == new ServerUser())
+            {
+                output.Add("action", "error");
+                output.Add("error", "The username isn't valid.");
+                return SerializeXml(output);
             }
 
+            // Check if the password is correct
+            if (user.GetPassword() != uInfo["password"])
+            {
+                output.Add("action", "error");
+                output.Add("error", "The password isn't correct.");
+                return SerializeXml(output);
+            }
+
+            // Set the user status to online
+            UpdateUserStatus(uInfo["username"], STATUS.Online);
+
+            // Get the user contact info to send to the user
+            string contUsernames = string.Join(",", user.GetContactListUsernames());
+            string contDispNames = string.Join(",", user.GetContactListNames());
+            string contStatuses = string.Join(",", user.GetContactListStatuses());
+
+            output.Add("action", "login");
+            output.Add("dispName", user.GetName());
+            output.Add("contUsername", contUsernames);
+            output.Add("contDispName", contDispNames);
+            output.Add("contState", contStatuses);
+
+            return SerializeXml(output);
         }
         #endregion
 
