@@ -246,7 +246,7 @@ namespace serverChat
             AddConvToList(conv);
 
             // Update the view
-            output("UpdateConversationList", data.GetConversationList());
+            output("UpdateConversationList");
 
             return "";
         }
@@ -274,7 +274,7 @@ namespace serverChat
             AddUserToList(user);
 
             // Update the view
-            output("UpdateUserList", data.GetUserList());
+            output("UpdateUserList");
 
             return "";
         }
