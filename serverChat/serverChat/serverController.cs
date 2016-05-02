@@ -223,6 +223,26 @@ namespace serverChat
             // Set the user list to the updated list
             data.SetUserList(userList);
         }
+
+        // Update User Status
+        //
+        // Update the user status in the model
+        // @param username The username for the current user
+        // @param status The new status for the current user
+        public void UpdateUserStatus(string username, STATUS newStatus)
+        {
+            // Remove the user from the list
+            List<ServerUser> userList = data.GetUserList();
+            ServerUser curUser = GetUserObj(username);
+            userList.Remove(curUser);
+
+            // Update the user status
+            curUser.SetStatus(newStatus);
+
+            // Update the list in the model
+            userList.Add(curUser);
+            data.SetUserList(userList);
+        }
         #endregion
 
         #region Create Objects
