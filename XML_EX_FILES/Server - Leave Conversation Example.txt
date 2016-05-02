@@ -1,1 +1,0 @@
-<leave username="admin" from="Conv_Name" />

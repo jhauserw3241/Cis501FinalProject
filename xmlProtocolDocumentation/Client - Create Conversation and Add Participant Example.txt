@@ -1,0 +1,2 @@
+<!-- Create new conversation with (multiple) participants or add a participant to a pre-existing conversation -->
+<udConv conv="Conv_Name" par="newUser420,admin" />

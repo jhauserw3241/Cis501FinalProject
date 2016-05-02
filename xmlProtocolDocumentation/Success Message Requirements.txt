@@ -1,0 +1,4 @@
+When the client sends certain messages, it then waits to see if an error occured before allowing other actions. If the action succeeds the source client should be made aware so that it can stop expecting an error. Here are the actions where a success method should be sent back to the source client:
+Creating  a conversation
+Adding a participant to a conversation
+Sending a message to a conversation

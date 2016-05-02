@@ -28,96 +28,69 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.usersLabel = new System.Windows.Forms.Label();
-            this.usersComboBox = new System.Windows.Forms.ComboBox();
-            this.convLabel = new System.Windows.Forms.Label();
-            this.convComboBox = new System.Windows.Forms.ComboBox();
-            this.enterButton = new System.Windows.Forms.Button();
+            this.usersButton = new System.Windows.Forms.Button();
             this.currentInfo = new System.Windows.Forms.RichTextBox();
+            this.eleListBox = new System.Windows.Forms.ListBox();
+            this.convButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             //
-            // usersLabel
+            // usersButton
             //
-            this.usersLabel.AutoSize = true;
-            this.usersLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.usersLabel.Location = new System.Drawing.Point(9, 9);
-            this.usersLabel.Name = "usersLabel";
-            this.usersLabel.Size = new System.Drawing.Size(43, 13);
-            this.usersLabel.TabIndex = 0;
-            this.usersLabel.Text = "Users:";
-            //
-            // usersComboBox
-            //
-            this.usersComboBox.FormattingEnabled = true;
-            this.usersComboBox.Location = new System.Drawing.Point(12, 25);
-            this.usersComboBox.Name = "usersComboBox";
-            this.usersComboBox.Size = new System.Drawing.Size(141, 21);
-            this.usersComboBox.TabIndex = 1;
-            this.usersComboBox.SelectedIndexChanged += new System.EventHandler(this.usersComboBox_SelectedIndexChanged);
-            //
-            // convLabel
-            //
-            this.convLabel.AutoSize = true;
-            this.convLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.convLabel.Location = new System.Drawing.Point(9, 63);
-            this.convLabel.Name = "convLabel";
-            this.convLabel.Size = new System.Drawing.Size(91, 13);
-            this.convLabel.TabIndex = 2;
-            this.convLabel.Text = "Conversations:";
-            //
-            // convComboBox
-            //
-            this.convComboBox.FormattingEnabled = true;
-            this.convComboBox.Location = new System.Drawing.Point(12, 79);
-            this.convComboBox.Name = "convComboBox";
-            this.convComboBox.Size = new System.Drawing.Size(141, 21);
-            this.convComboBox.TabIndex = 3;
-            this.convComboBox.SelectedIndexChanged += new System.EventHandler(this.convComboBox_SelectedIndexChanged);
-            //
-            // enterButton
-            //
-            this.enterButton.Location = new System.Drawing.Point(41, 116);
-            this.enterButton.Name = "enterButton";
-            this.enterButton.Size = new System.Drawing.Size(75, 23);
-            this.enterButton.TabIndex = 4;
-            this.enterButton.Text = "Enter";
-            this.enterButton.UseVisualStyleBackColor = true;
-            this.enterButton.Click += new System.EventHandler(this.enterButton_Click);
+            this.usersButton.Location = new System.Drawing.Point(12, 12);
+            this.usersButton.Name = "usersButton";
+            this.usersButton.Size = new System.Drawing.Size(141, 23);
+            this.usersButton.TabIndex = 4;
+            this.usersButton.Text = "Users";
+            this.usersButton.UseVisualStyleBackColor = true;
+            this.usersButton.Click += new System.EventHandler(this.usersButton_Click);
             //
             // currentInfo
             //
             this.currentInfo.Location = new System.Drawing.Point(159, 9);
             this.currentInfo.Name = "currentInfo";
-            this.currentInfo.Size = new System.Drawing.Size(354, 298);
+            this.currentInfo.Size = new System.Drawing.Size(354, 299);
             this.currentInfo.TabIndex = 5;
             this.currentInfo.Text = "";
+            //
+            // eleListBox
+            //
+            this.eleListBox.FormattingEnabled = true;
+            this.eleListBox.Location = new System.Drawing.Point(12, 70);
+            this.eleListBox.Name = "eleListBox";
+            this.eleListBox.Size = new System.Drawing.Size(141, 238);
+            this.eleListBox.TabIndex = 6;
+            this.eleListBox.SelectedIndexChanged += new System.EventHandler(this.eleListBox_SelectedIndexChanged);
+            //
+            // convButton
+            //
+            this.convButton.Location = new System.Drawing.Point(12, 41);
+            this.convButton.Name = "convButton";
+            this.convButton.Size = new System.Drawing.Size(141, 23);
+            this.convButton.TabIndex = 7;
+            this.convButton.Text = "Conversations";
+            this.convButton.UseVisualStyleBackColor = true;
+            this.convButton.Click += new System.EventHandler(this.convButton_Click);
             //
             // ServerView
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(525, 319);
+            this.Controls.Add(this.convButton);
+            this.Controls.Add(this.eleListBox);
             this.Controls.Add(this.currentInfo);
-            this.Controls.Add(this.enterButton);
-            this.Controls.Add(this.convComboBox);
-            this.Controls.Add(this.convLabel);
-            this.Controls.Add(this.usersComboBox);
-            this.Controls.Add(this.usersLabel);
+            this.Controls.Add(this.usersButton);
             this.Name = "ServerView";
             this.Text = "Server Information";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label usersLabel;
-        private System.Windows.Forms.ComboBox usersComboBox;
-        private System.Windows.Forms.Label convLabel;
-        private System.Windows.Forms.ComboBox convComboBox;
-        private System.Windows.Forms.Button enterButton;
+        private System.Windows.Forms.Button usersButton;
         private System.Windows.Forms.RichTextBox currentInfo;
+        private System.Windows.Forms.ListBox eleListBox;
+        private System.Windows.Forms.Button convButton;
     }
 }
 

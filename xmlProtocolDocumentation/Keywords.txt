@@ -1,0 +1,36 @@
+"Single Line" Elements: <a />
+
+    Access messages:
+	sign - request new account
+	login - when requesting log in
+	logout - When requesting log out
+
+    Conversation messages:
+	udConv - Update the conversation information
+	msg - sending a message
+
+    Contact messages:
+	addCont - add a contact
+	rmCont - remove contact
+	udCont - update the contact information
+
+tags: <a="">
+    
+    User and Contact:
+	contDispName (a contact's display name)
+	contUsername (a contact's username)
+	dispName (a user's display name)
+	username (a user's username)
+	password (a user's password)
+	state ("Offline", "Away", "Online")
+	cont (a list of usernames for the user's contacts)
+    
+    Contact and Converstion:
+	source (the source of a contact or conversation message, always a username)
+	conv (a conversation name)
+	par (the list of participants in the current conversation)
+	leave (remove a participant from a conversation)
+    
+    Other:
+	text (for text)
+	error (for sending error messages)

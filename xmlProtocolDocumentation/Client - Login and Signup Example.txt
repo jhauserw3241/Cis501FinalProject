@@ -1,0 +1,2 @@
+<!-- action = login or sign (Depending on appropriate action) -->
+<action username="admin" password="123abc" />

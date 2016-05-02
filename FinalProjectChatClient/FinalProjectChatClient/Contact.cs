@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/* Contact.cs
+ * Author: Ryan Huber
+ * 
+ * Represents a contact that the user can interact with.
+ */
+using System;
 
 namespace FinalProjectChatClient
 {
@@ -12,11 +13,17 @@ namespace FinalProjectChatClient
         public string Status { get; set; }
         public string Username { get; private set; }
 
-        public Contact(string username, string dispName)
+        public Contact()
+        {
+            Username = "";
+            DisplayName = "";
+            Status = "";
+        }
+        public Contact(string username, string dispName, string status)
         {
             Username = username;
             DisplayName = dispName;
-            Status = "Online";
+            Status = status;
         }
         public override string ToString()
         {

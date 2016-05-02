@@ -8,11 +8,11 @@ namespace serverChat
 {
     public class ServerUser
     {
-        private List<ServerUser> contacts;
+        private List<ServerUser> contacts = new List<ServerUser> { };
         private string ipAddress;
         private string name;
         private string password;
-        private bool status;
+        private STATUS status;
         private string username;
 
         // Constructor
@@ -45,6 +45,23 @@ namespace serverChat
         public List<ServerUser> GetContactList()
         {
             return contacts;
+        }
+
+        // Get Contact List Names
+        //
+        // Get the list of display names for the contacts for the current user
+        // @return the list of display names for the contact list
+        public List<string> GetContactListNames()
+        {
+            List<string> dNames = new List<string>();
+            int size = contacts.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                dNames.Add(contacts.ElementAt(i).GetName());
+            }
+
+            return dNames;
         }
 
         // Get Contact List Usernames
@@ -95,7 +112,7 @@ namespace serverChat
         //
         // Get the status for the current user
         // @return a boolean that determines whether or not the user is online
-        public bool GetStatus()
+        public STATUS GetStatus()
         {
             return status;
         }
@@ -158,20 +175,31 @@ namespace serverChat
             name = dName;
         }
 
+        // Set Password
+        //
+        // Set the password for the current user
+        // @param pass A string containing the password for the current user
+        public void SetPassword(string pass)
+        {
+            password = pass;
+        }
+
         // Set Status
         //
         // Set the status of the current user
-        // @param online Whether or not the user is online
-        public void SetStatus(bool online)
+        // @param status Whether the user is online, away, or offline
+        public void SetStatus(STATUS s)
         {
-            status = online;
+            status = s;
         }
 
-        public void setPassword(string password)
+        // Set Username
+        //
+        // Set the username for the current user
+        // @param name A string containing the username for the current user
+        public void SetUsername(string name)
         {
-            this.password = password;
+            username = name;
         }
-
-
     }
 }

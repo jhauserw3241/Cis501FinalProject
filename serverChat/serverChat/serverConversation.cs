@@ -10,8 +10,8 @@ namespace serverChat
     {
         private string name;
         private string currentMessage;
-        private List<string> messageHistory;
-        private List<string> participants;
+        private List<string> messageHistory = new List<string>();
+        private List<string> participants = new List<string>();
 
         // Constructor
         public ServerConversation()
@@ -42,6 +42,16 @@ namespace serverChat
         public void AddParicipant(string username)
         {
             participants.Add(username);
+        }
+
+        // Contains Participant
+        //
+        // Check whether the specified participant is in the conversation
+        // @param par The username of the participant
+        // @return whether or not the participant is in the conversation
+        public bool ContainsParticipant(string par)
+        {
+            return participants.Contains(par);
         }
 
         // Get Conversation Name
@@ -78,6 +88,23 @@ namespace serverChat
         public List<string> GetParicipantList()
         {
             return participants;
+        }
+
+        // Get Participants List Usernames
+        //
+        // Get the list of usernames of the participants in the conversation
+        // @return the list of usernames for the participant list
+        public List<string> GetParticipantListUsernames()
+        {
+            List<string> usernames = new List<string>();
+            int size = participants.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                usernames.Add(participants.ElementAt(i));
+            }
+
+            return usernames;
         }
 
         // Remove Participant

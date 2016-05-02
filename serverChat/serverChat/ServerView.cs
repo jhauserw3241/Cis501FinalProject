@@ -13,112 +13,174 @@ namespace serverChat
     public partial class ServerView : Form
     {
         // Declare objects
-        private ServerModel data;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
+        private List<ServerUser> usersList = new List<ServerUser>();
+        private List<ServerConversation> convsList = new List<ServerConversation>();
+        private bool userFlag = false;
+        private bool convFlag = false;
 
+        #region Class Modification
         // Constructor
-        //
-        // @arg d The model object instance
-        public ServerView(ServerModel d)
+        public ServerView()
         {
-            // Update the server objects
-            data = d;
-
             // Initialize the form
             InitializeComponent();
         }
+        #endregion
 
+        #region GUI Elements Handling
+        // Handle Conversation Button Clicked
+        //
+        // Handle actions taken when the conversation button is clicked
+        private void convButton_Click(object sender, EventArgs e)
+        {
+            // Set flags for category selected
+            userFlag = false;
+            convFlag = true;
+
+            // Put all of the elements from the conversation list into the list box
+            RemoveAllListBoxEles();
+            UpdateConvListBox();
+        }
+
+        // Handle Item Selected from List Box
+        //
+        // Handle actions taken when the user selects an item from the list box
+        private void eleListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Clear text box
+            currentInfo.Clear();
+
+            // Handle user selected
+            if ((userFlag == true) || (convFlag == false))
+            {
+                // TODO: Get user object for selected user
+
+                // Display username
+                currentInfo.AppendText("Username: " + user.GetUsername());
+
+                // Display display name
+                currentInfo.AppendText("Display Name: " + user.GetName());
+
+                // Display status
+                currentInfo.AppendText("Status: " + user.GetStatus());
+
+                // Display ip address
+                currentInfo.AppendText("IP Address: " + user.GetIpAddress());
+            }
+            // Handle conversation selected
+            else if ((userFlag == false) || (convFlag == true))
+            {
+                // TODO: Get conversation object for selected user
+
+                // Display name
+                currentInfo.AppendText("Name: " + conv.GetConversationName());
+
+                // Display list of usernames for participants
+                currentInfo.AppendText("List of Participants: " + conv.GetParicipantList().ToString());
+
+                // Display most recent message
+                currentInfo.AppendText("Most Recent Message: " + conv.GetCurrentMessage());
+            }
+            // Handle error case
+            else
+            {
+                MessageBox.Show("ERROR: You need to pick either the 'Users' or 'Conversations' button before you can choose an option.");
+            }
+        }
+
+        // Handle User Button Clicked
+        //
+        // Handle actions taken when the user button has been clicked
+        private void usersButton_Click(object sender, EventArgs e)
+        {
+            // Set flags for category selected
+            userFlag = true;
+            convFlag = false;
+
+            // Put all of the elements from the user list into the list box
+            RemoveAllListBoxEles();
+            UpdateUserListBox();
+        }
+        #endregion
+
+        #region Helper Methods
         // Add Conversation to Conversation ComboBox
         //
         // Add a conversation to the list of conversations in the
         // Conversations ComboBox
         // @arg name The name of the conversation to be added
-        private void addConvOption(string name)
+        private void AddConvOption(string name)
         {
-            convComboBox.Items.Add(name);
+            eleListBox.Items.Add(name);
         }
 
-        // Add User to User ComboBox
+        // Handle Form Output
         //
-        // Add a username to the list of usernames in the User ComboBox
-        // @arg username The username of the user that was added
-        private void addUserOption(string username)
+        // Handle any actions that need to be taken for the view
+        // @param action What form needs to update
+        public void HandleFormOutput(string action, params object[] vars)
         {
-            usersComboBox.Items.Add(username);
-        }
+            int size = vars.Count();
 
-        // Conversation Combobox Selected Index Changed
-        //
-        // Handle the when the user chooses a value from the conversation drop down
-        // list that isn't the base value
-        private void convComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Disable the conversation drop down box
-            usersComboBox.AllowDrop = false;
-            usersComboBox.Enabled = false;
-
-            // TODO: Get the conversation object from the list of all users
-        }
-
-        // Enter Button Clicked
-        //
-        // Handle the when the enter button is clicked
-        private void enterButton_Click(object sender, EventArgs e)
-        {
-            // Create any text currently in the textbox
-            currentInfo.Clear();
-
-            // Determine if the user object is present
-            if (user != new ServerUser())
+            switch (action)
             {
-                currentInfo.AppendText("User display name: ra");
-                currentInfo.AppendText("Username: random");
-                currentInfo.AppendText("Password: pass");
-                return;
+                case "UpdateUserList":
+                    for (int i = 0; i < size; i++)
+                    {
+                        usersList.Add((ServerUser)vars[i]);
+                    }
+                    break;
+                case "UpdateConversationList":
+                    for (int i = 0; i < size; i++)
+                    {
+                        convsList.Add((ServerConversation)vars[i]);
+                    }
+                    break;
+                default:
+                    MessageBox.Show("ERROR: Invalid action provided to form.");
+                    break;
             }
+        }
 
-            // Determine if the conversation object is present
-            if (conv != new ServerConversation())
+        // Remove All List Box Elements
+        //
+        // Remove all of the elements from the eleListBox on the form
+        private void RemoveAllListBoxEles()
+        {
+            int size = eleListBox.Items.Count;
+            for (int i = 0; i < size; i++)
             {
-                currentInfo.AppendText("Conversation name: current name");
-                return;
+                eleListBox.Items.RemoveAt(i);
             }
-
-            // Send error to user
-            MessageBox.Show("You need to select either a user or a conversation!");
         }
 
-        // Remove Conversation from Conversation ComboBox
+        // Update User List Box
         //
-        // Remove a conversation from the list of conversations in
-        // the Conversations ComboBox
-        // @arg name The name of the conversation to be removed
-        private void removeConvOption(string name)
+        // Update the user list box with the list of ServerUser objects
+        private void UpdateUserListBox()
         {
-            convComboBox.Items.Remove(name);
+            int size = usersList.Count;
+            for (int i = 0; i < size; i++)
+            {
+                string username = usersList.ElementAt(i).GetUsername();
+                eleListBox.Items.Add(username);
+            }
         }
 
-        // Remove User from User ComboBox
+        // Update Conversation List Box
         //
-        // Remove a username from the list of usernames in the User ComboBox
-        // @arg username The username of the user that has been removed
-        private void removeUserOption(string username)
+        // Update the conversation list box with the list of ServerConversation object
+        private void UpdateConvListBox()
         {
-            usersComboBox.Items.Remove(username);
+            int size = convsList.Count;
+            for (int i = 0; i < size; i++)
+            {
+                string name = convsList.ElementAt(i).GetConversationName();
+                eleListBox.Items.Add(name);
+            }
         }
-
-        // Users Combobox Selected Index Changed
-        //
-        // Handle the when the user chooses a value from the user drop down list
-        // that isn't the base value
-        private void usersComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Disable the conversation drop down box
-            convComboBox.AllowDrop = false;
-            convComboBox.Enabled = false;
-
-            // TODO: Get the user object from the list of all users
-        }
+        #endregion
     }
 }
