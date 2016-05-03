@@ -222,14 +222,7 @@ namespace serverChat
         // @arg user The current user
         public void AddUserToList(ServerUser user)
         {
-            // Get the list of all users from the model
-            List<ServerUser> userList = data.GetUserList();
-
-            // Add the current user object
-            userList.Add(user);
-
-            // Set the current user list to the model user list
-            data.SetUserList(userList);
+            UpdateUserList(null, user);
         }
 
         // Add Conversation To List
@@ -238,14 +231,7 @@ namespace serverChat
         // @param conv The current conversation
         public void AddConvToList(ServerConversation conv)
         {
-            // Get the list of all conversations from the model
-            List<ServerConversation> convList = data.GetConversationList();
-
-            // Add the current conversation object
-            convList.Add(conv);
-
-            // Set the current conversation list to the model conversation list
-            data.SetConversationList(convList);
+            UpdateConvList(null, conv);
         }
 
         // Remove User From List
@@ -254,17 +240,7 @@ namespace serverChat
         // @arg username The username for the current user
         public void RemoveUserFromList(string username)
         {
-            // Get the list of all users from the model
-            List<ServerUser> userList = data.GetUserList();
-
-            // Get the user object from the list in the model
-            ServerUser user = GetUserObj(username);
-
-            // Remove the user object from the list of all users from the model
-            userList.Remove(user);
-
-            // Set the user list to the updated list
-            data.SetUserList(userList);
+            UpdateUserList(GetUserObj(username), null);
         }
 
         // Update User Status
@@ -274,16 +250,58 @@ namespace serverChat
         // @param status The new status for the current user
         public void UpdateUserStatus(string username, STATUS newStatus)
         {
-            // Remove the user from the list
+            ServerUser oldUser = GetUserObj(username);
+            ServerUser newUser = oldUser;
+            newUser.SetStatus(newStatus);
+
+            UpdateUserList(oldUser, newUser);
+        }
+
+        // Update Conversation List
+        //
+        // Update the conversation list in the model
+        // @param rConv The conversation element to remove
+        // @param aConv The conversation element to add
+        public void UpdateConvList(ServerConversation rConv, ServerConversation aConv)
+        {
+            List<ServerConversation> convList = data.GetConversationList();
+
+            // Check if the conversation object to remove has been specified
+            if (rConv != null)
+            {
+                convList.Remove(rConv);
+            }
+
+            // Check if the conversation object to add has been specified
+            if (aConv != null)
+            {
+                convList.Add(aConv);
+            }
+
+            data.SetConversationList(convList);
+        }
+
+        // Update User List
+        //
+        // Update the user list in the model
+        // @param rUser The user element to remove
+        // @param aUser The user element to add
+        public void UpdateUserList(ServerUser rUser, ServerUser aUser)
+        {
             List<ServerUser> userList = data.GetUserList();
-            ServerUser curUser = GetUserObj(username);
-            userList.Remove(curUser);
 
-            // Update the user status
-            curUser.SetStatus(newStatus);
+            // Check if the user object to remove has been specified
+            if (rUser != null)
+            {
+                userList.Remove(rUser);
+            }
 
-            // Update the list in the model
-            userList.Add(curUser);
+            // Check if the user object to add has been specified
+            if (aUser != null)
+            {
+                userList.Add(aUser);
+            }
+
             data.SetUserList(userList);
         }
         #endregion
