@@ -280,6 +280,7 @@ namespace FinalProjectChatClient
                         }
                         break;
                     case DialogResult.Cancel:
+                        exit = true;
                         Application.Exit();
                         break;
                 }
