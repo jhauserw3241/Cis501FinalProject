@@ -137,9 +137,9 @@ namespace serverChat
                     }
                     break;
                 case "udConv":
-                    // TODO: Verify conversation exists
-                    // TODO: Update the specified aspects of the conversation
-
+                    // TODO: Update all the users, not just source
+                    outputDict = ProcessUpdateConvRequest(input);
+                    Sessions.Broadcast(outputDict["all"]);
                     break;
                 case "udCont":
                     // TODO: Verify user existence
@@ -363,23 +363,27 @@ namespace serverChat
         // @return a dictionary containing the xml response
         public Dictionary<string, string> ProcessUpdateConvRequest(Dictionary<string, string> uInfo)
         {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
             Dictionary<string, string> output = new Dictionary<string, string>();
             string convName = uInfo["conv"];
 
-            output.Add("action", "udConv");
+            dataToSer.Add("action", "udConv");
 
             // Get conversation object
             ServerConversation conv = GetConvObj(convName);
             if (conv == new ServerConversation())
             {
-                output.Add("error", "The conversation doesn't exist.");
+                dataToSer.Add("error", "The conversation doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
                 return output;
             }
 
             // Update the name
             if (uInfo.ContainsKey("newConv"))
             {
-                ChangeConvName(conv, uInfo["newConv"]);
+                string newName = uInfo["newConv"];
+                ChangeConvName(conv, newName);
+                dataToSer.Add("newConv", newName);
             }
 
             // Update the participant list
@@ -388,10 +392,84 @@ namespace serverChat
                 string error = AddParsToConv(convName, uInfo["par"]);
                 if (error != "")
                 {
-                    output.Add("error", error);
+                    dataToSer.Add("error", error);
+                    output.Add("all", SerializeXml(dataToSer));
                     return output;
                 }
             }
+
+            //// Compile the success message for all the conversation participants
+            //List<string> partUsernames = conv.GetParticipantListUsernames();
+            //int size = partUsernames.Count;
+            //for(int i = 0; i < size; i++)
+            //{
+            //    output.Add("")
+            //}
+
+            output.Add("all", SerializeXml(dataToSer));
+
+            return output;
+        }
+
+        // Process Update Contact Request
+        //
+        // Process a request to update a contact from a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessUpdateContRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string sourceUsername = uInfo["username"];
+
+            dataToSer.Add("action", "udCont");
+            dataToSer.Add("username", sourceUsername);
+
+            // Get user
+            ServerUser oldUser = GetUserObj(sourceUsername);
+            if (oldUser == new ServerUser())
+            {
+                dataToSer.Add("error", "User doesn't exist.");
+                // TODO: Update "source" with source username
+                output.Add("source", SerializeXml(dataToSer));
+                return output;
+            }
+            ServerUser newUser = oldUser;
+
+            // Update the display name
+            if (uInfo.ContainsKey("newDispName"))
+            {
+                string newDispName = uInfo["newDispName"];
+                newUser.SetName(newDispName);
+                dataToSer.Add("newDispName", newDispName);
+            }
+
+            // Update the display name
+            if (uInfo.ContainsKey("newPassword"))
+            {
+                string newPassword = uInfo["newPassword"];
+                newUser.SetPassword(newPassword);
+                dataToSer.Add("newPassword", newPassword);
+            }
+
+            // Update the display name
+            if (uInfo.ContainsKey("newState"))
+            {
+                string newStatus = uInfo["newState"];
+                STATUS newStatusObj = ConvertStringStatus(newStatus);
+                UpdateUserStatus(sourceUsername, newStatusObj);
+                dataToSer.Add("newState", newStatus);
+            }
+
+            //// Compile the success message for all the conversation participants
+            //List<string> partUsernames = conv.GetParticipantListUsernames();
+            //int size = partUsernames.Count;
+            //for(int i = 0; i < size; i++)
+            //{
+            //    output.Add("")
+            //}
+
+            output.Add("all", SerializeXml(dataToSer));
 
             return output;
         }
@@ -454,6 +532,28 @@ namespace serverChat
             output.Add("dispName", user.GetName());
             output.Add("state", user.GetStatus().ToString());
             return SerializeXml(output);
+        }
+        #endregion
+
+        #region Convert Data Types
+        // Convert String to Status
+        //
+        // Convert the string to a status type
+        // @param stringStatus The string containing the status
+        // @return the status type
+        public STATUS ConvertStringStatus(string stringStatus)
+        {
+            switch (stringStatus)
+            {
+                case "Online":
+                    return STATUS.Online;
+                case "Away":
+                    return STATUS.Away;
+                case "Offline":
+                    return STATUS.Offline;
+                default:
+                    return STATUS.Offline;
+            }
         }
         #endregion
 
