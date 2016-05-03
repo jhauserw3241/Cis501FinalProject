@@ -108,6 +108,7 @@ namespace serverChat
                     Sessions.Broadcast(outputXml);
                     break;
                 case "login":
+                    // Assign cookie and add it to the list
                     outputXml = ProcessLoginRequest(input);
                     Sessions.Broadcast(outputXml);
                     break;
@@ -141,6 +142,12 @@ namespace serverChat
                 case "msg":
                     // TODO: Pass message
 
+                    break;
+                case "logout":
+                    // TODO: Remove their cookie from the list
+                    // TODO: Send update to everyone involved
+                    outputDict = ProcessLogoutRequest(input);
+                    Sessions.Broadcast(outputDict["source"]);
                     break;
                 default:
                     // TODO: Pass error message
@@ -272,6 +279,51 @@ namespace serverChat
             // Get output information
             output.Add("source", GetSerAddContInfo(newContact));
             output.Add("newCont", GetSerAddContInfo(sourceUser));
+
+            return output;
+        }
+
+        // Process Logout Request
+        //
+        // Process a request for an existing user to logout
+        // @param uInfo The information for the existing user
+        // @return a string containing the xml response
+        public Dictionary<string, string> ProcessLogoutRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string username = uInfo["username"];
+
+            // Get the user object that matches the provided username
+            ServerUser user = GetUserObj(username);
+
+            // Check if the user exists
+            if (user == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user doesn't exist.");
+                output.Add("all", SerializeXml(output));
+                return output;
+            }
+
+            // Set the user status to online
+            UpdateUserStatus(username, STATUS.Offline);
+
+            dataToSer.Add("action", "logout");
+            output.Add("source", SerializeXml(dataToSer));
+
+            List<string> contUnames = user.GetContactListUsernames();
+            int contNum = contUnames.Count;
+            for (int i = 0; i < contNum; i++)
+            {
+                string curUsername = contUnames.ElementAt(i);
+                dataToSer = new Dictionary<string, string>();
+                dataToSer.Add("action", "udCont");
+                dataToSer.Add("username", username);
+                dataToSer.Add("state", STATUS.Offline.ToString());
+
+                output.Add(curUsername, SerializeXml(dataToSer));
+            }
 
             return output;
         }
