@@ -471,8 +471,12 @@ namespace serverChat
             {
                 for (int i = 0; i < convListLen; i++)
                 {
-                    // TODO: Check if the conversation is in the list and return it
-                    return new ServerConversation();
+                    // Return the conversation with the specified name
+                    ServerConversation conv = convList.ElementAt(i);
+                    if (conv.GetConversationName() == name)
+                    {
+                        return conv;
+                    }
                 }
             }
 
