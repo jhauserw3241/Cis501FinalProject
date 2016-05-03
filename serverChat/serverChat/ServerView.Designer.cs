@@ -1,7 +1,60 @@
-﻿namespace serverChat
+﻿using System.Windows.Forms;
+
+namespace serverChat
 {
     partial class ServerView
     {
+        private RichTextBox currentInfo;
+        private Button convButton;
+        private ListBox eleListBox;
+        private Button usersButton;
+
+        #region Form Element Getters
+        // Current Info Text Box
+        //
+        // Get the current info element from the form
+        public RichTextBox CurrentInfoTextBox
+        {
+            get
+            {
+                return currentInfo;
+            }
+        }
+
+        // Conversations Button
+        //
+        // Get the conversations button element from the form
+        public Button ConversationsButton
+        {
+            get
+            {
+                return convButton;
+            }
+        }
+
+        // Element List Box
+        //
+        // Get the element list box element from the form
+        public ListBox ElementListBox
+        {
+            get
+            {
+                return eleListBox;
+            }
+        }
+
+        // Users Button
+        //
+        // Get the users button element from the form
+        public Button UsersButton
+        {
+            get
+            {
+                return usersButton;
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -42,24 +95,24 @@
             this.usersButton.TabIndex = 4;
             this.usersButton.Text = "Users";
             this.usersButton.UseVisualStyleBackColor = true;
-            this.usersButton.Click += new System.EventHandler(this.usersButton_Click);
             //
             // currentInfo
             //
             this.currentInfo.Location = new System.Drawing.Point(159, 9);
             this.currentInfo.Name = "currentInfo";
+            this.currentInfo.ReadOnly = true;
             this.currentInfo.Size = new System.Drawing.Size(354, 299);
             this.currentInfo.TabIndex = 5;
             this.currentInfo.Text = "";
             //
             // eleListBox
             //
+            this.eleListBox.Enabled = false;
             this.eleListBox.FormattingEnabled = true;
             this.eleListBox.Location = new System.Drawing.Point(12, 70);
             this.eleListBox.Name = "eleListBox";
             this.eleListBox.Size = new System.Drawing.Size(141, 238);
             this.eleListBox.TabIndex = 6;
-            this.eleListBox.SelectedIndexChanged += new System.EventHandler(this.eleListBox_SelectedIndexChanged);
             //
             // convButton
             //
@@ -69,7 +122,6 @@
             this.convButton.TabIndex = 7;
             this.convButton.Text = "Conversations";
             this.convButton.UseVisualStyleBackColor = true;
-            this.convButton.Click += new System.EventHandler(this.convButton_Click);
             //
             // ServerView
             //
@@ -87,10 +139,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button usersButton;
-        private System.Windows.Forms.RichTextBox currentInfo;
-        private System.Windows.Forms.ListBox eleListBox;
-        private System.Windows.Forms.Button convButton;
     }
 }
 

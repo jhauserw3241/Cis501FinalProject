@@ -68,7 +68,7 @@ namespace FinalProjectChatClient
         {
             clientModel = model;
             waitForm = new WaitForm();
-            ws = new WebSocket("ws://127.0.0.1:8001/chat");
+            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
             ws.OnMessage += HandleMessage;
             ws.Connect();
         }
@@ -246,7 +246,7 @@ namespace FinalProjectChatClient
                         waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
-                            System.Threading.Thread.Sleep(1000);
+                            System.Threading.Thread.Sleep(100);
                         }
                         waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
@@ -268,16 +268,19 @@ namespace FinalProjectChatClient
                         waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
-                            System.Threading.Thread.Sleep(1000);
+                            System.Threading.Thread.Sleep(100);
                         }
                         waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = signupForm.Username;
+                            clientModel.DisplayName = clientModel.Username;
+                            if (Output != null) Output("UpdateName");
                             exit = true;
                         }
                         break;
                     case DialogResult.Cancel:
+                        exit = true;
                         Application.Exit();
                         break;
                 }
@@ -289,6 +292,7 @@ namespace FinalProjectChatClient
         /// </summary>
         public void HandleMessage(object sender, MessageEventArgs e)
         {
+            MessageBox.Show("Message Recieved");
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
             clientModel.WaitFlag = false;
@@ -332,7 +336,7 @@ namespace FinalProjectChatClient
                 default:
                     if (mssg.ContainsKey("error"))
                     {
-                        ChatClientForm.ShowError((string)mssg["error"]);
+                        ChatClientForm.ShowError(mssg["error"]);
                         clientModel.ErrorFlag = true;
                     }
                     break;
@@ -461,7 +465,7 @@ namespace FinalProjectChatClient
             {
                 ChatClientForm.ShowError(mssg["error"]);
             }
-            else // For login use only
+            else if (mssg["action"].Equals("login"))
             {
                 un = mssg["contUsername"].Split(',');
                 dn = mssg["contDispName"].Split(',');
@@ -485,6 +489,15 @@ namespace FinalProjectChatClient
                 else
                 {
                     clientModel.ErrorFlag = true;
+                }
+            }
+            else if (mssg["action"].Equals("sign"))
+            {
+                clientModel.State = FlowState.Main;
+                clientModel.Status = "Online";
+                if (Output != null)
+                {
+                    Output("UpdateStatus");
                 }
             }
         }

@@ -6,13 +6,57 @@ using System.Threading.Tasks;
 using System.Xml;
 using WebSocketSharp;
 using WebSocketSharp.Server;
+using System.Windows.Forms;
 
 namespace serverChat
 {
     public class ServerController : WebSocketBehavior
     {
         private ServerModel data = new ServerModel();
-        public event ServerOutputHandler output;
+        public event ServerOutputHandler Output;
+        private int sessionCt = 0;
+
+        #region Handle View Output
+        // Handle Generic Input
+        //
+        // Handle input that provides the generic event arugments
+        // @param sender The component that raised the event
+        // @param e The supplied arguments
+        public void HandleGenericInput(object sender, EventArgs e)
+        {
+            Output("Debug", sessionCt.ToString());
+            switch (((Button)sender).Name)
+            {
+                case "usersButton":
+                    Output("UpdateUserList", "");
+                    break;
+                case "convButton":
+                    Output("UpdateConversationList", "");
+                    break;
+                default:
+                    Output("InvalidInputOption", "");
+                    break;
+            }
+        }
+
+        // Handle Mouse Input
+        //
+        // Handle input that provides the mouse event arugments
+        // @param sender The component that raised the event
+        // @param e The supplied arguments
+        public void HandleMouseInput(object sender, MouseEventArgs e)
+        {
+            switch(((ListBox)sender).Name)
+            {
+                case "eleListBox":
+                    Output("ProvideEleName", ((ListBox)sender).SelectedIndex);
+                    break;
+                default:
+                    Output("InvalidInputOption");
+                    break;
+            }
+        }
+        #endregion
 
         #region Manipulate Class
         // Constructor
@@ -52,19 +96,17 @@ namespace serverChat
             Dictionary<string, string> input = DeserializeXml(e.Data);
             string output = "";
 
+            sessionCt = Sessions.IDs.Count();
+
             //if (!msg.ContainsKey("action")) return;
 
             switch (input["action"])
             {
                 case "sign":
-                    // TODO: Check if username is already used
-                    // TODO: Handle creation of user
-
+                    output = ProcessSignUpRequest(input);
                     break;
                 case "login":
-                    // TODO: Check if the username and password match
-                    // a currently existing user
-
+                    output = ProcessLoginRequest(input);
                     break;
                 case "addCont":
                     // TODO: Check if the user currently has the specified user as a contact
@@ -96,7 +138,7 @@ namespace serverChat
                     break;
             }
 
-            Send(output);
+            Sessions.Broadcast(output);
         }
         #endregion
 
@@ -105,34 +147,71 @@ namespace serverChat
         //
         // Process a request for a new user to be created
         // @param uInfo The information for the new user
-        // @return a string containing the xml
+        // @return a string containing the xml response
         public string ProcessSignUpRequest(Dictionary<string, string> uInfo)
         {
-            string uname = uInfo["username"];
-            string pass = uInfo["password"];
-            string output = "";
+            Dictionary<string, string> output = new Dictionary<string, string>();
 
-            // Check if the provided username is already being used
-            if (IsUsernameUsed(uname))
+            // Create the user
+            string error = CreateUser(uInfo["username"], uInfo["password"]);
+
+            // Check if the creation was succesful
+            if (error == "")
             {
-                // Create error data
-                Dictionary<string, string> errorData = new Dictionary<string, string>();
-                errorData.Add("action", "error");
-                errorData.Add("error", "Username is already being used.");
-                output = SerializeXml(errorData);
+                output.Add("action", "sign");
             }
             else
             {
-                // Create user
-                ServerUser curUser = new ServerUser(uname);
-                curUser.SetPassword(pass);
-
-                // Update user list in model
-                AddUserToList(curUser);
+                output.Add("action", "error");
+                output.Add("error", error);
             }
 
-            //return false;
-            return output;
+            return SerializeXml(output);
+        }
+
+        // Process Login Request
+        //
+        // Process a request for a an existing user to login
+        // @param uInfo The information for the existing user
+        // @return a string containing the xml response
+        public string ProcessLoginRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+
+            // Get the user object that matches the provided username
+            ServerUser user = GetUserObj(uInfo["username"]);
+
+            // Check if the user exists
+            if (user == new ServerUser())
+            {
+                output.Add("action", "error");
+                output.Add("error", "The username isn't valid.");
+                return SerializeXml(output);
+            }
+
+            // Check if the password is correct
+            if (user.GetPassword() != uInfo["password"])
+            {
+                output.Add("action", "error");
+                output.Add("error", "The password isn't correct.");
+                return SerializeXml(output);
+            }
+
+            // Set the user status to online
+            UpdateUserStatus(uInfo["username"], STATUS.Online);
+
+            // Get the user contact info to send to the user
+            string contUsernames = string.Join(",", user.GetContactListUsernames());
+            string contDispNames = string.Join(",", user.GetContactListNames());
+            string contStatuses = string.Join(",", user.GetContactListStatuses());
+
+            output.Add("action", "login");
+            output.Add("dispName", user.GetName());
+            output.Add("contUsername", contUsernames);
+            output.Add("contDispName", contDispNames);
+            output.Add("contState", contStatuses);
+
+            return SerializeXml(output);
         }
         #endregion
 
@@ -187,6 +266,26 @@ namespace serverChat
             // Set the user list to the updated list
             data.SetUserList(userList);
         }
+
+        // Update User Status
+        //
+        // Update the user status in the model
+        // @param username The username for the current user
+        // @param status The new status for the current user
+        public void UpdateUserStatus(string username, STATUS newStatus)
+        {
+            // Remove the user from the list
+            List<ServerUser> userList = data.GetUserList();
+            ServerUser curUser = GetUserObj(username);
+            userList.Remove(curUser);
+
+            // Update the user status
+            curUser.SetStatus(newStatus);
+
+            // Update the list in the model
+            userList.Add(curUser);
+            data.SetUserList(userList);
+        }
         #endregion
 
         #region Create Objects
@@ -208,9 +307,6 @@ namespace serverChat
 
             // Add conversation to list
             AddConvToList(conv);
-
-            // Update the view
-            output("UpdateConversationList", data.GetConversationList());
 
             return "";
         }
@@ -236,9 +332,6 @@ namespace serverChat
 
             // Add user to list
             AddUserToList(user);
-
-            // Update the view
-            output("UpdateUserList", data.GetUserList());
 
             return "";
         }
@@ -376,8 +469,12 @@ namespace serverChat
             {
                 for (int i = 0; i < convListLen; i++)
                 {
-                    // TODO: Check if the conversation is in the list and return it
-                    return new ServerConversation();
+                    // Return the conversation with the specified name
+                    ServerConversation conv = convList.ElementAt(i);
+                    if (conv.GetConversationName() == name)
+                    {
+                        return conv;
+                    }
                 }
             }
 
@@ -430,14 +527,17 @@ namespace serverChat
         public ServerUser GetUserObj(string username)
         {
             List<ServerUser> usersList = data.GetUserList();
-            int usersListLen = usersList.Count;
+            int size = usersList.Count;
 
-            if (usersListLen != 0)
+            if (size != 0)
             {
-                for (int i = 0; i < usersListLen; i++)
+                for (int i = 0; i < size; i++)
                 {
-                    // TODO: Check if the user's username matches and return it
-                    return new ServerUser();
+                    ServerUser curUser = usersList.ElementAt(i);
+                    if (curUser.GetUsername() == username)
+                    {
+                        return curUser;
+                    }
                 }
             }
 

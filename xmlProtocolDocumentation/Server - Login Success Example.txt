@@ -1,1 +1,1 @@
-<login dispName="Admin" contUsername="newUser420,newUser69" contDispName="newUser420,newUser69" state="Online,Offline" />
+<login dispName="Admin" contUsername="newUser420,newUser69" contDispName="newUser420,newUser69" contState="Online,Offline" />

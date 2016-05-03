@@ -23,23 +23,26 @@ namespace serverChat
             // Create objects
             ServerModel data = new ServerModel();
             ServerController cont = new ServerController(data);
-            ServerView form = new ServerView();
+            ServerView view = new ServerView(data);
 
             // Create connection from view to controller
-            cont.output += form.HandleFormOutput;
+            view.ConversationsButton.Click += cont.HandleGenericInput;
+            view.UsersButton.Click += cont.HandleGenericInput;
+            view.ElementListBox.MouseDoubleClick += cont.HandleMouseInput;
+            cont.Output += view.HandleFormOutput;
 
             // Create connection to the websocket
             // Start a websocket server at port 8001
             var ws = new WebSocketServer(8001);
 
             // Add the Echo websocket service
-            ws.AddWebSocketService<ServerController>("/", ()=>new ServerController(data));
+            ws.AddWebSocketService<ServerController>("/Chat", ()=>new ServerController(data));
 
             // Start the server
             ws.Start();
 
             // Execute form
-            Application.Run(form);
+            Application.Run(view);
 
             // Stop the server
             ws.Stop();

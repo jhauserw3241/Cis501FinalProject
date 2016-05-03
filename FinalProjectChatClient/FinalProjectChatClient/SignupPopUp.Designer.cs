@@ -82,7 +82,7 @@
             this.okButton.Location = new System.Drawing.Point(105, 198);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 36);
-            this.okButton.TabIndex = 4;
+            this.okButton.TabIndex = 5;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.OKButton_Click);
@@ -95,7 +95,7 @@
             this.cancelButton.Location = new System.Drawing.Point(323, 198);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(90, 36);
-            this.cancelButton.TabIndex = 5;
+            this.cancelButton.TabIndex = 6;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
@@ -107,7 +107,7 @@
             this.reEnterTextBox.Name = "reEnterTextBox";
             this.reEnterTextBox.PasswordChar = '*';
             this.reEnterTextBox.Size = new System.Drawing.Size(347, 32);
-            this.reEnterTextBox.TabIndex = 6;
+            this.reEnterTextBox.TabIndex = 4;
             // 
             // reEnterLabel
             // 
