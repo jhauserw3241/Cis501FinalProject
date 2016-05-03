@@ -986,7 +986,6 @@ namespace FinalProjectChatClient
         ~ChatClientController()
         {
             if (clientModel.State == FlowState.Main) LogoutAction();
-            ws.Close();
         }
     }
 }
