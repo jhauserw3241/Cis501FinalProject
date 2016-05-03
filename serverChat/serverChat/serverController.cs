@@ -13,7 +13,7 @@ namespace serverChat
     public class ServerController : WebSocketBehavior
     {
         private ServerModel data = new ServerModel();
-        public event ServerOutputHandler output;
+        public event ServerOutputHandler Output;
         private int sessionCt = 0;
 
         #region Handle View Output
@@ -24,17 +24,17 @@ namespace serverChat
         // @param e The supplied arguments
         public void HandleGenericInput(object sender, EventArgs e)
         {
-            output("Debug", sessionCt.ToString());
+            Output("Debug", sessionCt.ToString());
             switch (((Button)sender).Name)
             {
                 case "usersButton":
-                    output("UpdateUserList", "");
+                    Output("UpdateUserList", "");
                     break;
                 case "convButton":
-                    output("UpdateConversationList", "");
+                    Output("UpdateConversationList", "");
                     break;
                 default:
-                    output("InvalidInputOption", "");
+                    Output("InvalidInputOption", "");
                     break;
             }
         }
@@ -49,10 +49,10 @@ namespace serverChat
             switch(((ListBox)sender).Name)
             {
                 case "eleListBox":
-                    output("ProvideEleName", ((ListBox)sender).SelectedIndex);
+                    Output("ProvideEleName", ((ListBox)sender).SelectedIndex);
                     break;
                 default:
-                    output("InvalidInputOption");
+                    Output("InvalidInputOption");
                     break;
             }
         }

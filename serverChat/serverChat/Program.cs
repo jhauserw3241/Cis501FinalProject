@@ -29,7 +29,7 @@ namespace serverChat
             view.ConversationsButton.Click += cont.HandleGenericInput;
             view.UsersButton.Click += cont.HandleGenericInput;
             view.ElementListBox.MouseDoubleClick += cont.HandleMouseInput;
-            cont.output += view.HandleFormOutput;
+            cont.Output += view.HandleFormOutput;
 
             // Create connection to the websocket
             // Start a websocket server at port 8001
