@@ -356,6 +356,46 @@ namespace serverChat
             return output;
         }
 
+        // Process Update Conversation Request
+        //
+        // Process a request to update a conversation from a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessUpdateConvRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string convName = uInfo["conv"];
+
+            output.Add("action", "udConv");
+
+            // Get conversation object
+            ServerConversation conv = GetConvObj(convName);
+            if (conv == new ServerConversation())
+            {
+                output.Add("error", "The conversation doesn't exist.");
+                return output;
+            }
+
+            // Update the name
+            if (uInfo.ContainsKey("newConv"))
+            {
+                ChangeConvName(conv, uInfo["newConv"]);
+            }
+
+            // Update the participant list
+            if (uInfo.ContainsKey("par"))
+            {
+                string error = AddParsToConv(convName, uInfo["par"]);
+                if (error != "")
+                {
+                    output.Add("error", error);
+                    return output;
+                }
+            }
+
+            return output;
+        }
+
         // Process Logout Request
         //
         // Process a request for an existing user to logout
@@ -434,6 +474,20 @@ namespace serverChat
         public void AddConvToList(ServerConversation conv)
         {
             UpdateConvList(null, conv);
+        }
+
+        // Change Conversation Name
+        //
+        // Change the conversation name
+        // @param conv The current conversation
+        // @param name The new name for the conversation
+        // @return the updated conversation object
+        public ServerConversation ChangeConvName(ServerConversation conv, string name)
+        {
+            ServerConversation newConv = conv;
+            newConv.SetConversationName(name);
+            UpdateConvList(conv, newConv);
+            return newConv;
         }
 
         // Remove User From List
@@ -602,31 +656,50 @@ namespace serverChat
         // Add the specified participant to the specified conversation
         // @arg convName The name of the conversation
         // @arg username The username of the new participant
-        // @return whether or not the participant was added to the conversation
-        public bool AddParticipantToConversation(string convName, string username)
+        // @return error if it arises
+        public string AddParticipantToConversation(string convName, string username)
         {
-            Dictionary<string, List<string>> convRelationships = data.GetContactRelationshipDict();
-            List<string> participants = GetConvParticipants(convName);
-
-            // Determine if the current conversation exists or not
-            if (participants == new List<string>())
+            // Get conversation
+            ServerConversation oldConv = GetConvObj(convName);
+            if (oldConv == new ServerConversation())
             {
-                return false;
+                return "Conversation doesn't exist.";
             }
 
-            // Put the username of the new participant into the list of participants
-            participants.Add(username);
+            // Get user
+            ServerUser user = GetUserObj(username);
+            if (user == new ServerUser())
+            {
+                return "User doesn't exist.";
+            }
 
-            // Remove the current conversation from the list
-            convRelationships.Remove(convName);
+            // Add the user to the list of participants in the model
+            ServerConversation newConv = oldConv;
+            newConv.AddParicipant(user);
+            UpdateConvList(oldConv, newConv);
 
-            // Add the new list of participants to the contact relationship list
-            convRelationships.Add(convName, participants);
+            return "";
+        }
 
-            // Set the current list of names to the list on the server
-            data.SetContactRelationshipList(convRelationships);
+        // Add Participants To Conversation
+        //
+        // Add the specified participants to the specified conversation
+        // @arg convName The name of the conversation
+        // @arg usernames The string delimited list of usernames to be added
+        // @return an error created during the process if there is one
+        public string AddParsToConv(string convName, string usernames)
+        {
+            string[] newParUnames = usernames.Split(',');
+            for (int i = 0; i < newParUnames.Length; i++)
+            {
+                string curError = AddParticipantToConversation(convName, newParUnames[i]);
+                if (curError != "")
+                {
+                    return curError;
+                }
+            }
 
-            return true;
+            return "";
         }
 
         // Remove Participant From Conversation Participants

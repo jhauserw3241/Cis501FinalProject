@@ -1,0 +1,4 @@
+<!-- This is sent to the user that is being added by the source -->
+<udConv error="Requested participant doesn't exist." />
+
+<udConv error="Conversation doesn't exist." />
