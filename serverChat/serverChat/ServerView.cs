@@ -144,6 +144,9 @@ namespace serverChat
         {
             switch (action)
             {
+                case "Debug":
+                    MessageBox.Show((string)vars[0]);
+                    break;
                 case "UpdateUserList":
                     UpdateUserList();
                     break;

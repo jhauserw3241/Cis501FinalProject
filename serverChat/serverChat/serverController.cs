@@ -14,6 +14,7 @@ namespace serverChat
     {
         private ServerModel data = new ServerModel();
         public event ServerOutputHandler output;
+        private int sessionCt = 0;
 
         #region Handle View Output
         // Handle Generic Input
@@ -23,6 +24,7 @@ namespace serverChat
         // @param e The supplied arguments
         public void HandleGenericInput(object sender, EventArgs e)
         {
+            output("Debug", sessionCt.ToString());
             switch (((Button)sender).Name)
             {
                 case "usersButton":
@@ -94,6 +96,8 @@ namespace serverChat
             Dictionary<string, string> input = DeserializeXml(e.Data);
             string output = "";
 
+            sessionCt = Sessions.Sessions.Count();
+
             //if (!msg.ContainsKey("action")) return;
 
             switch (input["action"])
@@ -134,7 +138,7 @@ namespace serverChat
                     break;
             }
 
-            Send(output);
+            Sessions.Broadcast(output);
         }
         #endregion
 
