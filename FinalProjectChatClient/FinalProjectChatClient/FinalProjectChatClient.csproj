@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="websocket-sharp">
-      <HintPath>..\..\..\..\..\..\Documents\Repos\Cis501FinalProject\Lib\websocket-sharp.dll</HintPath>
+      <HintPath>..\..\Lib\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
