@@ -33,19 +33,19 @@ namespace serverChat
 
             // Create connection to the websocket
             // Start a websocket server at port 8001
-            var ws = new WebSocketServer(8001);
+            var wss = new WebSocketServer(8001);
 
             // Add the Echo websocket service
-            ws.AddWebSocketService<ServerController>("/Chat", ()=>new ServerController(data));
+            wss.AddWebSocketService<ServerController>("/Chat", ()=>new ServerController(data));
 
             // Start the server
-            ws.Start();
+            wss.Start();
 
             // Execute form
             Application.Run(view);
 
             // Stop the server
-            ws.Stop();
+            wss.Stop();
         }
     }
 }
