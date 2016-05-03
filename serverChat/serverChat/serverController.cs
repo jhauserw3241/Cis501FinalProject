@@ -95,6 +95,7 @@ namespace serverChat
         {
             Dictionary<string, string> input = DeserializeXml(e.Data);
             string outputXml = "";
+            Dictionary<string, string> outputDict = new Dictionary<string, string>();
 
             sessionCt = Sessions.IDs.Count();
 
@@ -111,9 +112,16 @@ namespace serverChat
                     Sessions.Broadcast(outputXml);
                     break;
                 case "addCont":
-                    // TODO: Check if the user currently has the specified user as a contact
-                    //// Otherwise, TODO: Add the specified user as a contact
-
+                    // TODO: Send update to everyone involved
+                    outputDict = ProcessAddContactRequest(input);
+                    if (outputDict.ContainsKey("all"))
+                    {
+                        Sessions.Broadcast(outputDict["all"]);
+                    }
+                    else
+                    {
+                        Sessions.Broadcast(outputDict["source"]);
+                    }
                     break;
                 case "rmCont":
                     // TODO: Verify contact is part of user contact list
@@ -211,6 +219,75 @@ namespace serverChat
             output.Add("contDispName", contDispNames);
             output.Add("contState", contStatuses);
 
+            return SerializeXml(output);
+        }
+
+        // Process Add Contact Request
+        //
+        // Process a request to add a contact to a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the username and the xml response
+        public Dictionary<string, string> ProcessAddContactRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string sourceUsername = uInfo["source"];
+            string newContactUsername = uInfo["username"];
+
+            ServerUser sourceUser = GetUserObj(sourceUsername);
+            // Verify that the source user is an existing user
+            if (sourceUser == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The source user doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact isn't already a contact
+            if (sourceUser.GetContactListUsernames().Contains(newContactUsername))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be added as a contact is already a contact.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact is an existing user
+            ServerUser newContact = GetUserObj(newContactUsername);
+            if (newContact == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be added as a contact doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Update the contact relationships of all the users involved
+            List<ServerUser> users = new List<ServerUser>();
+            users.Add(sourceUser);
+            users.Add(newContact);
+            UpdateContactRelationships(users);
+
+            // Get output information
+            output.Add("source", GetSerAddContInfo(newContact));
+            output.Add("newCont", GetSerAddContInfo(sourceUser));
+
+            return output;
+        }
+
+        // Get Serialized Add Contact Information
+        //
+        // Get the serialized string of the contact in the format of an added contact
+        // @param user The user to get the information from
+        // @return the XML string for the contact information
+        public string GetSerAddContInfo(ServerUser user)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            output.Add("action", "addCont");
+            output.Add("username", user.GetUsername());
+            output.Add("dispName", user.GetName());
+            output.Add("state", user.GetStatus().ToString());
             return SerializeXml(output);
         }
         #endregion
