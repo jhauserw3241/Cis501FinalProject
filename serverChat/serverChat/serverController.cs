@@ -125,9 +125,16 @@ namespace serverChat
                     }
                     break;
                 case "rmCont":
-                    // TODO: Verify contact is part of user contact list
-                    // TODO: Remove contact
-
+                    // TODO: Update all users, not just source
+                    outputDict = ProcessRemoveContactRequest(input);
+                    if (outputDict.ContainsKey("all"))
+                    {
+                        Sessions.Broadcast(outputDict["all"]);
+                    }
+                    else
+                    {
+                        Sessions.Broadcast(outputDict["source"]);
+                    }
                     break;
                 case "udConv":
                     // TODO: Verify conversation exists
@@ -274,11 +281,77 @@ namespace serverChat
             List<ServerUser> users = new List<ServerUser>();
             users.Add(sourceUser);
             users.Add(newContact);
-            UpdateContactRelationships(users);
+            if (!UpdateContactRelationships(users, "add"))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "An error occurred during the contact addition process.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
 
             // Get output information
             output.Add("source", GetSerAddContInfo(newContact));
             output.Add("newCont", GetSerAddContInfo(sourceUser));
+
+            return output;
+        }
+
+        // Process Remove Contact Request
+        //
+        // Process a request to remove a contact from a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the username and the xml response
+        public Dictionary<string, string> ProcessRemoveContactRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string sourceUsername = uInfo["source"];
+            string rContactUsername = uInfo["username"];
+
+            ServerUser sourceUser = GetUserObj(sourceUsername);
+            // Verify that the source user is an existing user
+            if (sourceUser == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The source user doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact isn't already a contact
+            if (!sourceUser.GetContactListUsernames().Contains(rContactUsername))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be removed as a contact isn't a contact.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact is an existing user
+            ServerUser oldContact = GetUserObj(rContactUsername);
+            if (oldContact == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be removed as a contact doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Update the contact relationships of all the users involved
+            List<ServerUser> users = new List<ServerUser>();
+            users.Add(sourceUser);
+            users.Add(oldContact);
+            if(!UpdateContactRelationships(users, "remove"))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "An error occurred during the contact addition process.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Get output information
+            output.Add("source", GetSerAddContInfo(oldContact));
+            output.Add("oldCont", GetSerAddContInfo(sourceUser));
 
             return output;
         }
@@ -377,7 +450,7 @@ namespace serverChat
         // Update the contact relationships for all the user involved
         // @param users The list of users who want to become contacts
         // @return whether or not the action was successful
-        public bool UpdateContactRelationships(List<ServerUser> users)
+        public bool UpdateContactRelationships(List<ServerUser> users, string action)
         {
             // Update all the user's contact lists
             int size = users.Count;
@@ -394,7 +467,14 @@ namespace serverChat
                 for (int j = 0; j < tempSize; j++)
                 {
                     ServerUser tempUser = tempUsers.ElementAt(j);
-                    newCurUser.AddContact(tempUser);
+                    if (action == "add")
+                    {
+                        newCurUser.AddContact(tempUser);
+                    }
+                    else if (action == "remove")
+                    {
+                        newCurUser.AddContact(tempUser);
+                    }
                 }
 
                 // Update the model data
