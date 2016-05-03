@@ -246,7 +246,7 @@ namespace FinalProjectChatClient
                         waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
-                            System.Threading.Thread.Sleep(1000);
+                            System.Threading.Thread.Sleep(100);
                         }
                         waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
@@ -268,7 +268,7 @@ namespace FinalProjectChatClient
                         waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
-                            System.Threading.Thread.Sleep(1000);
+                            System.Threading.Thread.Sleep(100);
                         }
                         waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
@@ -291,6 +291,7 @@ namespace FinalProjectChatClient
         /// </summary>
         public void HandleMessage(object sender, MessageEventArgs e)
         {
+            MessageBox.Show("Message Recieved");
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
             clientModel.WaitFlag = false;
