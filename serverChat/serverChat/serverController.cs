@@ -94,7 +94,8 @@ namespace serverChat
         protected override void OnMessage(MessageEventArgs e)
         {
             Dictionary<string, string> input = DeserializeXml(e.Data);
-            string output = "";
+            string outputXml = "";
+            Dictionary<string, string> outputDict = new Dictionary<string, string>();
 
             sessionCt = Sessions.IDs.Count();
 
@@ -103,25 +104,42 @@ namespace serverChat
             switch (input["action"])
             {
                 case "sign":
-                    output = ProcessSignUpRequest(input);
+                    outputXml = ProcessSignUpRequest(input);
+                    Sessions.Broadcast(outputXml);
                     break;
                 case "login":
-                    output = ProcessLoginRequest(input);
+                    // Assign cookie and add it to the list
+                    outputXml = ProcessLoginRequest(input);
+                    Sessions.Broadcast(outputXml);
                     break;
                 case "addCont":
-                    // TODO: Check if the user currently has the specified user as a contact
-                    //// Otherwise, TODO: Add the specified user as a contact
-
+                    // TODO: Send update to everyone involved
+                    outputDict = ProcessAddContactRequest(input);
+                    if (outputDict.ContainsKey("all"))
+                    {
+                        Sessions.Broadcast(outputDict["all"]);
+                    }
+                    else
+                    {
+                        Sessions.Broadcast(outputDict["source"]);
+                    }
                     break;
                 case "rmCont":
-                    // TODO: Verify contact is part of user contact list
-                    // TODO: Remove contact
-
+                    // TODO: Update all users, not just source
+                    outputDict = ProcessRemoveContactRequest(input);
+                    if (outputDict.ContainsKey("all"))
+                    {
+                        Sessions.Broadcast(outputDict["all"]);
+                    }
+                    else
+                    {
+                        Sessions.Broadcast(outputDict["source"]);
+                    }
                     break;
                 case "udConv":
-                    // TODO: Verify conversation exists
-                    // TODO: Update the specified aspects of the conversation
-
+                    // TODO: Update all the users, not just source
+                    outputDict = ProcessUpdateConvRequest(input);
+                    Sessions.Broadcast(outputDict["all"]);
                     break;
                 case "udCont":
                     // TODO: Verify user existence
@@ -132,13 +150,17 @@ namespace serverChat
                     // TODO: Pass message
 
                     break;
+                case "logout":
+                    // TODO: Remove their cookie from the list
+                    // TODO: Send update to everyone involved
+                    outputDict = ProcessLogoutRequest(input);
+                    Sessions.Broadcast(outputDict["source"]);
+                    break;
                 default:
                     // TODO: Pass error message
 
                     break;
             }
-
-            Sessions.Broadcast(output);
         }
         #endregion
 
@@ -171,7 +193,7 @@ namespace serverChat
 
         // Process Login Request
         //
-        // Process a request for a an existing user to login
+        // Process a request for an existing user to login
         // @param uInfo The information for the existing user
         // @return a string containing the xml response
         public string ProcessLoginRequest(Dictionary<string, string> uInfo)
@@ -213,6 +235,326 @@ namespace serverChat
 
             return SerializeXml(output);
         }
+
+        // Process Add Contact Request
+        //
+        // Process a request to add a contact to a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the username and the xml response
+        public Dictionary<string, string> ProcessAddContactRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string sourceUsername = uInfo["source"];
+            string newContactUsername = uInfo["username"];
+
+            ServerUser sourceUser = GetUserObj(sourceUsername);
+            // Verify that the source user is an existing user
+            if (sourceUser == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The source user doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact isn't already a contact
+            if (sourceUser.GetContactListUsernames().Contains(newContactUsername))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be added as a contact is already a contact.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact is an existing user
+            ServerUser newContact = GetUserObj(newContactUsername);
+            if (newContact == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be added as a contact doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Update the contact relationships of all the users involved
+            List<ServerUser> users = new List<ServerUser>();
+            users.Add(sourceUser);
+            users.Add(newContact);
+            if (!UpdateContactRelationships(users, "add"))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "An error occurred during the contact addition process.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Get output information
+            output.Add("source", GetSerAddContInfo(newContact));
+            output.Add("newCont", GetSerAddContInfo(sourceUser));
+
+            return output;
+        }
+
+        // Process Remove Contact Request
+        //
+        // Process a request to remove a contact from a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the username and the xml response
+        public Dictionary<string, string> ProcessRemoveContactRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string sourceUsername = uInfo["source"];
+            string rContactUsername = uInfo["username"];
+
+            ServerUser sourceUser = GetUserObj(sourceUsername);
+            // Verify that the source user is an existing user
+            if (sourceUser == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The source user doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact isn't already a contact
+            if (!sourceUser.GetContactListUsernames().Contains(rContactUsername))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be removed as a contact isn't a contact.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Verify that the new contact is an existing user
+            ServerUser oldContact = GetUserObj(rContactUsername);
+            if (oldContact == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user to be removed as a contact doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Update the contact relationships of all the users involved
+            List<ServerUser> users = new List<ServerUser>();
+            users.Add(sourceUser);
+            users.Add(oldContact);
+            if(!UpdateContactRelationships(users, "remove"))
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "An error occurred during the contact addition process.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Get output information
+            output.Add("source", GetSerAddContInfo(oldContact));
+            output.Add("oldCont", GetSerAddContInfo(sourceUser));
+
+            return output;
+        }
+
+        // Process Update Conversation Request
+        //
+        // Process a request to update a conversation from a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessUpdateConvRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string convName = uInfo["conv"];
+
+            dataToSer.Add("action", "udConv");
+
+            // Get conversation object
+            ServerConversation conv = GetConvObj(convName);
+            if (conv == new ServerConversation())
+            {
+                dataToSer.Add("error", "The conversation doesn't exist.");
+                output.Add("all", SerializeXml(dataToSer));
+                return output;
+            }
+
+            // Update the name
+            if (uInfo.ContainsKey("newConv"))
+            {
+                string newName = uInfo["newConv"];
+                ChangeConvName(conv, newName);
+                dataToSer.Add("newConv", newName);
+            }
+
+            // Update the participant list
+            if (uInfo.ContainsKey("par"))
+            {
+                string error = AddParsToConv(convName, uInfo["par"]);
+                if (error != "")
+                {
+                    dataToSer.Add("error", error);
+                    output.Add("all", SerializeXml(dataToSer));
+                    return output;
+                }
+            }
+
+            //// Compile the success message for all the conversation participants
+            //List<string> partUsernames = conv.GetParticipantListUsernames();
+            //int size = partUsernames.Count;
+            //for(int i = 0; i < size; i++)
+            //{
+            //    output.Add("")
+            //}
+
+            output.Add("all", SerializeXml(dataToSer));
+
+            return output;
+        }
+
+        // Process Update Contact Request
+        //
+        // Process a request to update a contact from a specific user
+        // @param uInfo The information for the existing user
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessUpdateContRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string sourceUsername = uInfo["username"];
+
+            dataToSer.Add("action", "udCont");
+            dataToSer.Add("username", sourceUsername);
+
+            // Get user
+            ServerUser oldUser = GetUserObj(sourceUsername);
+            if (oldUser == new ServerUser())
+            {
+                dataToSer.Add("error", "User doesn't exist.");
+                // TODO: Update "source" with source username
+                output.Add("source", SerializeXml(dataToSer));
+                return output;
+            }
+            ServerUser newUser = oldUser;
+
+            // Update the display name
+            if (uInfo.ContainsKey("newDispName"))
+            {
+                string newDispName = uInfo["newDispName"];
+                newUser.SetName(newDispName);
+                dataToSer.Add("newDispName", newDispName);
+            }
+
+            // Update the display name
+            if (uInfo.ContainsKey("newPassword"))
+            {
+                string newPassword = uInfo["newPassword"];
+                newUser.SetPassword(newPassword);
+                dataToSer.Add("newPassword", newPassword);
+            }
+
+            // Update the display name
+            if (uInfo.ContainsKey("newState"))
+            {
+                string newStatus = uInfo["newState"];
+                STATUS newStatusObj = ConvertStringStatus(newStatus);
+                UpdateUserStatus(sourceUsername, newStatusObj);
+                dataToSer.Add("newState", newStatus);
+            }
+
+            //// Compile the success message for all the conversation participants
+            //List<string> partUsernames = conv.GetParticipantListUsernames();
+            //int size = partUsernames.Count;
+            //for(int i = 0; i < size; i++)
+            //{
+            //    output.Add("")
+            //}
+
+            output.Add("all", SerializeXml(dataToSer));
+
+            return output;
+        }
+
+        // Process Logout Request
+        //
+        // Process a request for an existing user to logout
+        // @param uInfo The information for the existing user
+        // @return a string containing the xml response
+        public Dictionary<string, string> ProcessLogoutRequest(Dictionary<string, string> uInfo)
+        {
+            Dictionary<string, string> dataToSer = new Dictionary<string, string>();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string username = uInfo["username"];
+
+            // Get the user object that matches the provided username
+            ServerUser user = GetUserObj(username);
+
+            // Check if the user exists
+            if (user == new ServerUser())
+            {
+                dataToSer.Add("action", "error");
+                dataToSer.Add("error", "The user doesn't exist.");
+                output.Add("all", SerializeXml(output));
+                return output;
+            }
+
+            // Set the user status to online
+            UpdateUserStatus(username, STATUS.Offline);
+
+            dataToSer.Add("action", "logout");
+            output.Add("source", SerializeXml(dataToSer));
+
+            List<string> contUnames = user.GetContactListUsernames();
+            int contNum = contUnames.Count;
+            for (int i = 0; i < contNum; i++)
+            {
+                string curUsername = contUnames.ElementAt(i);
+                dataToSer = new Dictionary<string, string>();
+                dataToSer.Add("action", "udCont");
+                dataToSer.Add("username", username);
+                dataToSer.Add("state", STATUS.Offline.ToString());
+
+                output.Add(curUsername, SerializeXml(dataToSer));
+            }
+
+            return output;
+        }
+
+        // Get Serialized Add Contact Information
+        //
+        // Get the serialized string of the contact in the format of an added contact
+        // @param user The user to get the information from
+        // @return the XML string for the contact information
+        public string GetSerAddContInfo(ServerUser user)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            output.Add("action", "addCont");
+            output.Add("username", user.GetUsername());
+            output.Add("dispName", user.GetName());
+            output.Add("state", user.GetStatus().ToString());
+            return SerializeXml(output);
+        }
+        #endregion
+
+        #region Convert Data Types
+        // Convert String to Status
+        //
+        // Convert the string to a status type
+        // @param stringStatus The string containing the status
+        // @return the status type
+        public STATUS ConvertStringStatus(string stringStatus)
+        {
+            switch (stringStatus)
+            {
+                case "Online":
+                    return STATUS.Online;
+                case "Away":
+                    return STATUS.Away;
+                case "Offline":
+                    return STATUS.Offline;
+                default:
+                    return STATUS.Offline;
+            }
+        }
         #endregion
 
         #region Modify Model Data
@@ -222,14 +564,7 @@ namespace serverChat
         // @arg user The current user
         public void AddUserToList(ServerUser user)
         {
-            // Get the list of all users from the model
-            List<ServerUser> userList = data.GetUserList();
-
-            // Add the current user object
-            userList.Add(user);
-
-            // Set the current user list to the model user list
-            data.SetUserList(userList);
+            UpdateUserList(null, user);
         }
 
         // Add Conversation To List
@@ -238,14 +573,21 @@ namespace serverChat
         // @param conv The current conversation
         public void AddConvToList(ServerConversation conv)
         {
-            // Get the list of all conversations from the model
-            List<ServerConversation> convList = data.GetConversationList();
+            UpdateConvList(null, conv);
+        }
 
-            // Add the current conversation object
-            convList.Add(conv);
-
-            // Set the current conversation list to the model conversation list
-            data.SetConversationList(convList);
+        // Change Conversation Name
+        //
+        // Change the conversation name
+        // @param conv The current conversation
+        // @param name The new name for the conversation
+        // @return the updated conversation object
+        public ServerConversation ChangeConvName(ServerConversation conv, string name)
+        {
+            ServerConversation newConv = conv;
+            newConv.SetConversationName(name);
+            UpdateConvList(conv, newConv);
+            return newConv;
         }
 
         // Remove User From List
@@ -254,17 +596,46 @@ namespace serverChat
         // @arg username The username for the current user
         public void RemoveUserFromList(string username)
         {
-            // Get the list of all users from the model
-            List<ServerUser> userList = data.GetUserList();
+            UpdateUserList(GetUserObj(username), null);
+        }
 
-            // Get the user object from the list in the model
-            ServerUser user = GetUserObj(username);
+        // Update Contact Relationships
+        //
+        // Update the contact relationships for all the user involved
+        // @param users The list of users who want to become contacts
+        // @return whether or not the action was successful
+        public bool UpdateContactRelationships(List<ServerUser> users, string action)
+        {
+            // Update all the user's contact lists
+            int size = users.Count;
+            for (int i = 0; i < size; i++)
+            {
+                // Get relevant information
+                List<ServerUser> tempUsers = users;
+                ServerUser oldCurUser = users.ElementAt(i);
+                ServerUser newCurUser = oldCurUser;
+                tempUsers.Remove(newCurUser);
 
-            // Remove the user object from the list of all users from the model
-            userList.Remove(user);
+                // Update the contact list of the current user
+                int tempSize = tempUsers.Count;
+                for (int j = 0; j < tempSize; j++)
+                {
+                    ServerUser tempUser = tempUsers.ElementAt(j);
+                    if (action == "add")
+                    {
+                        newCurUser.AddContact(tempUser);
+                    }
+                    else if (action == "remove")
+                    {
+                        newCurUser.AddContact(tempUser);
+                    }
+                }
 
-            // Set the user list to the updated list
-            data.SetUserList(userList);
+                // Update the model data
+                UpdateUserList(oldCurUser, newCurUser);
+            }
+
+            return true;
         }
 
         // Update User Status
@@ -274,16 +645,58 @@ namespace serverChat
         // @param status The new status for the current user
         public void UpdateUserStatus(string username, STATUS newStatus)
         {
-            // Remove the user from the list
+            ServerUser oldUser = GetUserObj(username);
+            ServerUser newUser = oldUser;
+            newUser.SetStatus(newStatus);
+
+            UpdateUserList(oldUser, newUser);
+        }
+
+        // Update Conversation List
+        //
+        // Update the conversation list in the model
+        // @param rConv The conversation element to remove
+        // @param aConv The conversation element to add
+        public void UpdateConvList(ServerConversation rConv, ServerConversation aConv)
+        {
+            List<ServerConversation> convList = data.GetConversationList();
+
+            // Check if the conversation object to remove has been specified
+            if (rConv != null)
+            {
+                convList.Remove(rConv);
+            }
+
+            // Check if the conversation object to add has been specified
+            if (aConv != null)
+            {
+                convList.Add(aConv);
+            }
+
+            data.SetConversationList(convList);
+        }
+
+        // Update User List
+        //
+        // Update the user list in the model
+        // @param rUser The user element to remove
+        // @param aUser The user element to add
+        public void UpdateUserList(ServerUser rUser, ServerUser aUser)
+        {
             List<ServerUser> userList = data.GetUserList();
-            ServerUser curUser = GetUserObj(username);
-            userList.Remove(curUser);
 
-            // Update the user status
-            curUser.SetStatus(newStatus);
+            // Check if the user object to remove has been specified
+            if (rUser != null)
+            {
+                userList.Remove(rUser);
+            }
 
-            // Update the list in the model
-            userList.Add(curUser);
+            // Check if the user object to add has been specified
+            if (aUser != null)
+            {
+                userList.Add(aUser);
+            }
+
             data.SetUserList(userList);
         }
         #endregion
@@ -343,31 +756,50 @@ namespace serverChat
         // Add the specified participant to the specified conversation
         // @arg convName The name of the conversation
         // @arg username The username of the new participant
-        // @return whether or not the participant was added to the conversation
-        public bool AddParticipantToConversation(string convName, string username)
+        // @return error if it arises
+        public string AddParticipantToConversation(string convName, string username)
         {
-            Dictionary<string, List<string>> convRelationships = data.GetContactRelationshipDict();
-            List<string> participants = GetConvParticipants(convName);
-
-            // Determine if the current conversation exists or not
-            if (participants == new List<string>())
+            // Get conversation
+            ServerConversation oldConv = GetConvObj(convName);
+            if (oldConv == new ServerConversation())
             {
-                return false;
+                return "Conversation doesn't exist.";
             }
 
-            // Put the username of the new participant into the list of participants
-            participants.Add(username);
+            // Get user
+            ServerUser user = GetUserObj(username);
+            if (user == new ServerUser())
+            {
+                return "User doesn't exist.";
+            }
 
-            // Remove the current conversation from the list
-            convRelationships.Remove(convName);
+            // Add the user to the list of participants in the model
+            ServerConversation newConv = oldConv;
+            newConv.AddParicipant(user);
+            UpdateConvList(oldConv, newConv);
 
-            // Add the new list of participants to the contact relationship list
-            convRelationships.Add(convName, participants);
+            return "";
+        }
 
-            // Set the current list of names to the list on the server
-            data.SetContactRelationshipList(convRelationships);
+        // Add Participants To Conversation
+        //
+        // Add the specified participants to the specified conversation
+        // @arg convName The name of the conversation
+        // @arg usernames The string delimited list of usernames to be added
+        // @return an error created during the process if there is one
+        public string AddParsToConv(string convName, string usernames)
+        {
+            string[] newParUnames = usernames.Split(',');
+            for (int i = 0; i < newParUnames.Length; i++)
+            {
+                string curError = AddParticipantToConversation(convName, newParUnames[i]);
+                if (curError != "")
+                {
+                    return curError;
+                }
+            }
 
-            return true;
+            return "";
         }
 
         // Remove Participant From Conversation Participants

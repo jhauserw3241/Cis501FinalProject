@@ -1,1 +1,3 @@
 <logout username="admin" cont="newUser69" />
+
+Joy suggests: <logout username="admin" />

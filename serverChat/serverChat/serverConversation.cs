@@ -11,7 +11,7 @@ namespace serverChat
         private string name;
         private string currentMessage;
         private List<string> messageHistory = new List<string>();
-        private List<string> participants = new List<string>();
+        private List<ServerUser> participants = new List<ServerUser>();
 
         // Constructor
         public ServerConversation()
@@ -38,18 +38,18 @@ namespace serverChat
         // Add Participant
         //
         // Add a participant to the conversation
-        // @param username The username of the user to add
-        public void AddParicipant(string username)
+        // @param par The user object for the new participant
+        public void AddParicipant(ServerUser par)
         {
-            participants.Add(username);
+            participants.Add(par);
         }
 
         // Contains Participant
         //
         // Check whether the specified participant is in the conversation
-        // @param par The username of the participant
+        // @param par The server user object
         // @return whether or not the participant is in the conversation
-        public bool ContainsParticipant(string par)
+        public bool ContainsParticipant(ServerUser par)
         {
             return participants.Contains(par);
         }
@@ -85,7 +85,7 @@ namespace serverChat
         //
         // Get the participant list of the conversation
         // @return a string list containing the usernames of the paricipants
-        public List<string> GetParicipantList()
+        public List<ServerUser> GetParicipantList()
         {
             return participants;
         }
@@ -101,7 +101,7 @@ namespace serverChat
 
             for (int i = 0; i < size; i++)
             {
-                usernames.Add(participants.ElementAt(i));
+                usernames.Add(participants.ElementAt(i).GetUsername());
             }
 
             return usernames;
@@ -111,9 +111,9 @@ namespace serverChat
         //
         // Remove a participant to the conversation
         // @param username The username of the user to remove
-        public void RemoveParicipant(string username)
+        public void RemoveParicipant(ServerUser par)
         {
-            participants.Remove(username);
+            participants.Remove(par);
         }
 
         // Set Conversation Name
