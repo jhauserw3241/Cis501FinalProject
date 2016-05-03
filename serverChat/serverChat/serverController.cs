@@ -308,9 +308,6 @@ namespace serverChat
             // Add conversation to list
             AddConvToList(conv);
 
-            // Update the view
-            output("UpdateConversationList");
-
             return "";
         }
 
@@ -335,9 +332,6 @@ namespace serverChat
 
             // Add user to list
             AddUserToList(user);
-
-            // Update the view
-            output("UpdateUserList");
 
             return "";
         }
