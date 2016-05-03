@@ -96,7 +96,7 @@ namespace serverChat
             Dictionary<string, string> input = DeserializeXml(e.Data);
             string output = "";
 
-            sessionCt = Sessions.Sessions.Count();
+            sessionCt = Sessions.IDs.Count();
 
             //if (!msg.ContainsKey("action")) return;
 
