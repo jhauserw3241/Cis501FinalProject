@@ -171,7 +171,7 @@ namespace serverChat
 
         // Process Login Request
         //
-        // Process a request for a an existing user to login
+        // Process a request for an existing user to login
         // @param uInfo The information for the existing user
         // @return a string containing the xml response
         public string ProcessLoginRequest(Dictionary<string, string> uInfo)
