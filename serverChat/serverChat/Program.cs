@@ -36,7 +36,7 @@ namespace serverChat
             var ws = new WebSocketServer(8001);
 
             // Add the Echo websocket service
-            ws.AddWebSocketService<ServerController>("/", ()=>new ServerController(data));
+            ws.AddWebSocketService<ServerController>("/Chat", ()=>new ServerController(data));
 
             // Start the server
             ws.Start();
