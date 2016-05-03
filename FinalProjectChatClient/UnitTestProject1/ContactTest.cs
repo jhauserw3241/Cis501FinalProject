@@ -10,43 +10,43 @@ namespace ChatClientTest
         [TestMethod]
         public void ContactUsernameTest()
         {
-            Contact cnt = new Contact("Bob", "Bob_KSU", "Online");
-            Assert.AreEqual("Bob", cnt.Username);
+            Contact cnt = new Contact("Joy", "Joy_KSU");
+            Assert.AreEqual("Joy", cnt.Username);
         }
 
         [TestMethod]
         public void ContactDisplayTest()
         {
-            Contact cnt = new Contact("Bob", "Bob_KSU", "Online");
-            Assert.AreEqual("Bob_KSU", cnt.DisplayName);
+            Contact cnt = new Contact("Joy", "Joy_KSU");
+            Assert.AreEqual("Joy_KSU", cnt.DisplayName);
         }
 
         [TestMethod]
         public void ContactStatusTest()
         {
-            Contact cnt = new Contact("Bob", "Bob_KSU", "Online");
+            Contact cnt = new Contact("Joy", "Joy_KSU");
             Assert.AreEqual("Online", cnt.Status);
         }
 
         [TestMethod]
         public void ContactToStringTest()
         {
-            Contact cnt = new Contact("Bob", "Bob_KSU", "Online");
+            Contact cnt = new Contact("Joy", "Joy_KSU");
             //Assert.AreEqual("",);
         }
 
         [TestMethod]
         public void ContactDisplaySetTest()
         {
-            Contact cnt = new Contact("Bob", "Bob_KSU", "Online");
-            cnt.DisplayName = "Bob_CIS";
-            Assert.AreEqual("Bob_CIS", cnt.DisplayName);
+            Contact cnt = new Contact("Joy", "Joy_KSU");
+            cnt.DisplayName = "Joy_CIS";
+            Assert.AreEqual("Joy_CIS", cnt.DisplayName);
         }
 
         [TestMethod]
         public void ContactStatusSetTest()
         {
-            Contact cnt = new Contact("Bob", "Bob_KSU", "Online");
+            Contact cnt = new Contact("Joy", "Joy_KSU");
             cnt.Status = "Offline";
             Assert.AreEqual("Offline", cnt.Status);
         }

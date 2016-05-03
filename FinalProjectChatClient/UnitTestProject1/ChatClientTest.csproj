@@ -50,7 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ChatClientModelTest.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="ContactTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
