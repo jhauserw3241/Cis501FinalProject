@@ -94,7 +94,7 @@ namespace serverChat
         protected override void OnMessage(MessageEventArgs e)
         {
             Dictionary<string, string> input = DeserializeXml(e.Data);
-            string output = "";
+            string outputXml = "";
 
             sessionCt = Sessions.IDs.Count();
 
@@ -103,10 +103,12 @@ namespace serverChat
             switch (input["action"])
             {
                 case "sign":
-                    output = ProcessSignUpRequest(input);
+                    outputXml = ProcessSignUpRequest(input);
+                    Sessions.Broadcast(outputXml);
                     break;
                 case "login":
-                    output = ProcessLoginRequest(input);
+                    outputXml = ProcessLoginRequest(input);
+                    Sessions.Broadcast(outputXml);
                     break;
                 case "addCont":
                     // TODO: Check if the user currently has the specified user as a contact
@@ -137,8 +139,6 @@ namespace serverChat
 
                     break;
             }
-
-            Sessions.Broadcast(output);
         }
         #endregion
 
