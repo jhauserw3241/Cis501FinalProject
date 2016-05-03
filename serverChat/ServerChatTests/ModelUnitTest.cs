@@ -57,12 +57,12 @@ namespace ServerChatTests
 
             Assert.AreEqual(users, model.GetUserList());
         }
-        
 
-        // Test SetUserList() and GetUserList() method
+
+        // Test SetRelationshipDic() and GetRelationshipDic() method
         //
-        // Create a list of users and use the SetUserList() method on the model to set it 
-        // and then compare with value returned by the GetUserList() method
+        // Create a list of users and use the SetRelationshipDic() method on the model to set it 
+        // and then compare with value returned by the GetRelationshipDic() method
         [TestMethod]
         public void SetGetRealationshipDic()
         {
