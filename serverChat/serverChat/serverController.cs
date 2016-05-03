@@ -243,6 +243,38 @@ namespace serverChat
             UpdateUserList(GetUserObj(username), null);
         }
 
+        // Update Contact Relationships
+        //
+        // Update the contact relationships for all the user involved
+        // @param users The list of users who want to become contacts
+        // @return whether or not the action was successful
+        public bool UpdateContactRelationships(List<ServerUser> users)
+        {
+            // Update all the user's contact lists
+            int size = users.Count;
+            for (int i = 0; i < size; i++)
+            {
+                // Get relevant information
+                List<ServerUser> tempUsers = users;
+                ServerUser oldCurUser = users.ElementAt(i);
+                ServerUser newCurUser = oldCurUser;
+                tempUsers.Remove(newCurUser);
+
+                // Update the contact list of the current user
+                int tempSize = tempUsers.Count;
+                for (int j = 0; j < tempSize; j++)
+                {
+                    ServerUser tempUser = tempUsers.ElementAt(j);
+                    newCurUser.AddContact(tempUser);
+                }
+
+                // Update the model data
+                UpdateUserList(oldCurUser, newCurUser);
+            }
+
+            return true;
+        }
+
         // Update User Status
         //
         // Update the user status in the model
