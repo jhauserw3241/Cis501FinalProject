@@ -68,7 +68,7 @@ namespace FinalProjectChatClient
         {
             clientModel = model;
             waitForm = new WaitForm();
-            ws = new WebSocket("ws://127.0.0.1:8001/chat");
+            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
             ws.OnMessage += HandleMessage;
             ws.Connect();
         }
@@ -274,6 +274,8 @@ namespace FinalProjectChatClient
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = signupForm.Username;
+                            clientModel.DisplayName = clientModel.Username;
+                            if (Output != null) Output("UpdateName");
                             exit = true;
                         }
                         break;
@@ -332,7 +334,7 @@ namespace FinalProjectChatClient
                 default:
                     if (mssg.ContainsKey("error"))
                     {
-                        ChatClientForm.ShowError((string)mssg["error"]);
+                        ChatClientForm.ShowError(mssg["error"]);
                         clientModel.ErrorFlag = true;
                     }
                     break;
@@ -461,7 +463,7 @@ namespace FinalProjectChatClient
             {
                 ChatClientForm.ShowError(mssg["error"]);
             }
-            else // For login use only
+            else if (mssg["action"].Equals("login"))
             {
                 un = mssg["contUsername"].Split(',');
                 dn = mssg["contDispName"].Split(',');
@@ -485,6 +487,15 @@ namespace FinalProjectChatClient
                 else
                 {
                     clientModel.ErrorFlag = true;
+                }
+            }
+            else if (mssg["action"].Equals("sign"))
+            {
+                clientModel.State = FlowState.Main;
+                clientModel.Status = "Online";
+                if (Output != null)
+                {
+                    Output("UpdateStatus");
                 }
             }
         }
