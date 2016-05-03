@@ -154,7 +154,7 @@ namespace serverChat
             // Check if the creation was succesful
             if (error == "")
             {
-                output.Add("action", "success");
+                output.Add("action", "sign");
             }
             else
             {
