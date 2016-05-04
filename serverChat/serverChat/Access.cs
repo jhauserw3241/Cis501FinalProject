@@ -117,7 +117,7 @@ namespace serverChat
             }
 
             // Check if the password is correct
-            if (user.GetPassword() != output.GetValue("password"))
+            if (user.GetPassword() != input.GetValue("password"))
             {
                 output.AddElement("action", "error");
                 output.AddElement("error", "The password isn't correct.");
@@ -125,7 +125,7 @@ namespace serverChat
             }
 
             // Set the user status to online
-            dataInt.UpdateUserStatus(output.GetValue("username"), STATUS.Online);
+            dataInt.UpdateUserStatus(input.GetValue("username"), STATUS.Online);
 
             // Get the user contact info to send to the user
             string contUsernames = string.Join(",", user.GetContactListUsernames());
