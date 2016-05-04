@@ -50,12 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Access.cs" />
-    <Compile Include="Chat.cs" />
-    <Compile Include="GenericResponses.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="ModelDataInteraction.cs" />
-    <Compile Include="GuiController.cs" />
+    <Compile Include="ServerController.cs" />
     <Compile Include="ServerConversation.cs" />
     <Compile Include="ServerInteractionElements.cs" />
     <Compile Include="ServerModel.cs" />
@@ -80,7 +75,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

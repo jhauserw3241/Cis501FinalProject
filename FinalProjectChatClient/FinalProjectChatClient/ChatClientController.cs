@@ -68,9 +68,8 @@ namespace FinalProjectChatClient
         {
             clientModel = model;
             waitForm = new WaitForm();
-            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
+            ws = new WebSocket("ws://127.0.0.1:8001/Access");
             ws.OnMessage += HandleMessage;
-            ws.Connect();
         }
 
         #region Input Handlers
@@ -151,8 +150,6 @@ namespace FinalProjectChatClient
                         if (participant != null)
                         {
                             ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, participant.Username));
-                            clientModel.ContactList.Remove(participant);
-                            if (Output != null) Output("RemoveCont", participant.Username);
                         }
                     }
                     e.SuppressKeyPress = true;
@@ -176,6 +173,17 @@ namespace FinalProjectChatClient
                     }
                     e.SuppressKeyPress = true;
                 }
+                else if (sender.Equals(clientForm.RenameConversationTextBox))
+                {
+                    if (clientForm.ConversationTabController.Controls.Count > 0 && !clientForm.RenameConversationTextBox.Text.Equals(String.Empty))
+                    {
+                        string name = clientForm.ConversationTabController.SelectedTab.Text;
+                        
+                        RenameConv(name, clientForm.RenameConversationTextBox.Text);
+                        if (Output != null) Output("RenameConv", name, clientForm.RenameConversationTextBox.Text);
+                    }
+                    e.SuppressKeyPress = true;
+                }
                 else if (sender.Equals(clientForm.MessageBox))
                 {
                     if (e.Modifiers != Keys.Shift)
@@ -187,7 +195,7 @@ namespace FinalProjectChatClient
                             clientModel.WaitFlag = true;
                             while (clientModel.WaitFlag)
                             {
-                                System.Threading.Thread.Sleep(1000);
+                                System.Threading.Thread.Sleep(500);
                             }
                         }
                         e.SuppressKeyPress = true;
@@ -234,6 +242,8 @@ namespace FinalProjectChatClient
             DialogResult st = DialogResult.None;
             bool exit = false;
 
+            ws.Connect();
+
             while (!exit)
             {
                 if (clientModel.State == FlowState.Entry) st = entryForm.ShowDialog();
@@ -246,20 +256,24 @@ namespace FinalProjectChatClient
                         waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
-                            System.Threading.Thread.Sleep(100);
+                            System.Threading.Thread.Sleep(500);
                         }
                         waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
                             exit = true;
+
+                            ws.Close();
+                            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
+                            ws.OnMessage += HandleMessage;
+                            ws.Connect();
                         }
                         else if (clientModel.ErrorFlag)
                         {
                             ws.Send("<login username=\"" + loginForm.Username + "\" error=\"Invalid contact list.\">");
                             clientModel.ErrorFlag = false;
                         }
-                        exit = true;
                         break;
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
@@ -268,7 +282,7 @@ namespace FinalProjectChatClient
                         waitForm.Refresh();
                         while (clientModel.WaitFlag)
                         {
-                            System.Threading.Thread.Sleep(100);
+                            System.Threading.Thread.Sleep(500);
                         }
                         waitForm.Hide();
                         if (clientModel.State == FlowState.Main)
@@ -277,10 +291,16 @@ namespace FinalProjectChatClient
                             clientModel.DisplayName = clientModel.Username;
                             if (Output != null) Output("UpdateName");
                             exit = true;
+
+                            ws.Close();
+                            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
+                            ws.OnMessage += HandleMessage;
+                            ws.Connect();
                         }
                         break;
                     case DialogResult.Cancel:
                         exit = true;
+                        ws.Close();
                         Application.Exit();
                         break;
                 }
@@ -292,7 +312,6 @@ namespace FinalProjectChatClient
         /// </summary>
         public void HandleMessage(object sender, MessageEventArgs e)
         {
-            MessageBox.Show("Message Recieved");
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
             clientModel.WaitFlag = false;
@@ -332,6 +351,9 @@ namespace FinalProjectChatClient
                     break;
                 case "msg":
                     HandleChatMessage(mssg);
+                    break;
+                case "logout":
+                    HandleLogoutMessage(mssg);
                     break;
                 default:
                     if (mssg.ContainsKey("error"))
@@ -387,7 +409,7 @@ namespace FinalProjectChatClient
             waitForm.Refresh();
             while (clientModel.WaitFlag)
             {
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(500);
             }
             waitForm.Hide();
             // If there was no error, add participant to client side
@@ -421,7 +443,7 @@ namespace FinalProjectChatClient
                 waitForm.Refresh();
                 while (clientModel.WaitFlag)
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(500);
                 }
                 waitForm.Hide();
                 // Make sure there were no errors
@@ -447,6 +469,34 @@ namespace FinalProjectChatClient
         private string FormatForChat(string msg)
         {
             return String.Format("[{0:MM/dd/yyyy hh:mm:sstt}] {1}: {2}{3}", DateTime.Now, clientModel.DisplayName, msg, Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Renames a conversation.
+        /// </summary>
+        /// <param name="conv">The conversation to rename.</param>
+        /// <param name="newName">The new name of the conversation.</param>
+        private void RenameConv(string conv, string newName)
+        {
+            // Send initial request to server
+            ws.Send(String.Format("<udConv conv=\"{0}\" newConv=\"{1}\" />", conv, newName));
+            // Wait for a response from the server
+            clientModel.WaitFlag = true;
+            waitForm.Show();
+            waitForm.Refresh();
+            while (clientModel.WaitFlag)
+            {
+                System.Threading.Thread.Sleep(500);
+            }
+            waitForm.Hide();
+            // Make sure there were no errors
+            if (!clientModel.ErrorFlag)
+            {
+                // Update Client Side and leave loop
+                clientModel.ConversationList.Add(newName, clientModel.ConversationList[conv]);
+                clientModel.ConversationList.Remove(conv);
+                if (Output != null) Output("CreateConv", conv, newName);
+            }
         }
 
         #endregion
@@ -547,6 +597,22 @@ namespace FinalProjectChatClient
 
             conv.Remove(cont.Username);
             Output("Message", mssg["conv"], String.Format("{0} has left the conversation.", cont.DisplayName));
+        }
+
+        /// <summary>
+        /// A response from the server to determine if logoff was successful.
+        /// </summary>
+        /// <param name="mssg">The information in the message.</param>
+        private void HandleLogoutMessage(Dictionary<string, string> mssg)
+        {
+            if (mssg.ContainsKey("error"))
+            {
+                ChatClientForm.ShowError(mssg["error"]);
+            }
+            else
+            {
+                clientModel.State = FlowState.Exit;
+            }
         }
 
         /// <summary>
@@ -683,7 +749,29 @@ namespace FinalProjectChatClient
         private void LogoutAction()
         {
             string contList = String.Join(",", clientModel.ContactList.Select(x => x.Username));
-            ws.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
+            bool exit = false;
+
+            ws.Close();
+            ws = new WebSocket("ws://127.0.0.1:8001/Logout");
+            ws.OnMessage += HandleMessage;
+
+            while (!exit)
+            {
+                ws.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
+                waitForm.Refresh();
+                while (clientModel.WaitFlag)
+                {
+                    System.Threading.Thread.Sleep(500);
+                }
+                waitForm.Hide();
+                if (clientModel.State == FlowState.Exit)
+                {
+                    exit = true;
+                }
+            }
+
+            ws.Close();
+            Application.Exit();
         }
 
         /// <summary>
@@ -898,7 +986,6 @@ namespace FinalProjectChatClient
         ~ChatClientController()
         {
             if (clientModel.State == FlowState.Main) LogoutAction();
-            ws.Close();
         }
     }
 }

@@ -29,6 +29,8 @@ namespace FinalProjectChatClient
         private ToolStripMenuItem leaveConversationOption;
         private ToolStripMenuItem addParticipantOption;
         private ToolStripTextBox addParticipantTextBox;
+        private ToolStripMenuItem renameConversationOption;
+        private ToolStripTextBox renameConversationTextBox;
         private StatusStrip infoStrip;
         private ToolStripStatusLabel dispNameLabel;
         private ToolStripStatusLabel userStatusLabel;
@@ -121,6 +123,14 @@ namespace FinalProjectChatClient
         {
             get { return addParticipantTextBox; }
         }
+        public ToolStripMenuItem RenameConversationOption
+        {
+            get { return renameConversationOption; }
+        }
+        public ToolStripTextBox RenameConversationTextBox
+        {
+            get { return renameConversationTextBox; }
+        }
         public StatusStrip InfoStrip
         {
             get { return infoStrip; }
@@ -184,6 +194,8 @@ namespace FinalProjectChatClient
             this.contactsList = new System.Windows.Forms.ListBox();
             this.conversationTabController = new System.Windows.Forms.TabControl();
             this.messageBox = new System.Windows.Forms.TextBox();
+            this.renameConversationOption = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameConversationTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.infoStrip.SuspendLayout();
             this.mainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -315,6 +327,7 @@ namespace FinalProjectChatClient
             this.conversationMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createConversationOption,
             this.addParticipantOption,
+            this.renameConversationOption,
             this.leaveConversationOption});
             this.conversationMenu.Name = "conversationMenu";
             this.conversationMenu.Size = new System.Drawing.Size(128, 29);
@@ -323,7 +336,7 @@ namespace FinalProjectChatClient
             // createConversationOption
             // 
             this.createConversationOption.Name = "createConversationOption";
-            this.createConversationOption.Size = new System.Drawing.Size(159, 30);
+            this.createConversationOption.Size = new System.Drawing.Size(211, 30);
             this.createConversationOption.Text = "Create...";
             // 
             // addParticipantOption
@@ -331,7 +344,7 @@ namespace FinalProjectChatClient
             this.addParticipantOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addParticipantTextBox});
             this.addParticipantOption.Name = "addParticipantOption";
-            this.addParticipantOption.Size = new System.Drawing.Size(159, 30);
+            this.addParticipantOption.Size = new System.Drawing.Size(211, 30);
             this.addParticipantOption.Text = "Add";
             // 
             // addParticipantTextBox
@@ -343,7 +356,7 @@ namespace FinalProjectChatClient
             // 
             this.leaveConversationOption.Enabled = false;
             this.leaveConversationOption.Name = "leaveConversationOption";
-            this.leaveConversationOption.Size = new System.Drawing.Size(159, 30);
+            this.leaveConversationOption.Size = new System.Drawing.Size(211, 30);
             this.leaveConversationOption.Text = "Leave...";
             // 
             // contactsList
@@ -370,6 +383,19 @@ namespace FinalProjectChatClient
             this.messageBox.Name = "messageBox";
             this.messageBox.Size = new System.Drawing.Size(600, 104);
             this.messageBox.TabIndex = 4;
+            // 
+            // renameConversationOption
+            // 
+            this.renameConversationOption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.renameConversationTextBox});
+            this.renameConversationOption.Name = "renameConversationOption";
+            this.renameConversationOption.Size = new System.Drawing.Size(211, 30);
+            this.renameConversationOption.Text = "Rename";
+            // 
+            // renameConversationTextBox
+            // 
+            this.renameConversationTextBox.Name = "renameConversationTextBox";
+            this.renameConversationTextBox.Size = new System.Drawing.Size(100, 31);
             // 
             // ChatClientForm
             // 

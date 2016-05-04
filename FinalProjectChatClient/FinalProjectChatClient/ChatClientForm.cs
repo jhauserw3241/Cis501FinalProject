@@ -68,6 +68,11 @@ namespace FinalProjectChatClient
                 case "CreateConv":
                     CreateConversationTab(param1);
                     break;
+                case "RenameConv":
+                    TabPage conv = conversationTabs.Find(x => x.Item1.Name.Equals(param1)).Item1;
+                    conv.Name = param2;
+                    conv.Text = param2;
+                    break;
                 case "AddPart":
                     AddParticipantTextBox.Text = String.Empty;
                     break;
