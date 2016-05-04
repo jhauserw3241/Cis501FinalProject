@@ -22,7 +22,7 @@ namespace serverChat
 
             // Create objects
             ServerModel data = new ServerModel();
-            ServerController cont = new ServerController(data);
+            GuiController cont = new GuiController();
             ServerView view = new ServerView(data);
 
             // Create connection from view to controller
@@ -36,7 +36,10 @@ namespace serverChat
             var wss = new WebSocketServer(8001);
 
             // Add the Echo websocket service
-            wss.AddWebSocketService<ServerController>("/Chat", ()=>new ServerController(data));
+            wss.AddWebSocketService<Access>("/Access", () => new Access(data));
+            wss.AddWebSocketService<Chat>("/Chat", ()=>new Chat(data));
+
+            //WebSocket curWs = new WebSocket("www.example.com");
 
             // Start the server
             wss.Start();

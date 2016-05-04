@@ -50,7 +50,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServerController.cs" />
+    <Compile Include="Access.cs" />
+    <Compile Include="Chat.cs" />
+    <Compile Include="GenericResponses.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="ModelDataInteraction.cs" />
+    <Compile Include="GuiController.cs" />
     <Compile Include="ServerConversation.cs" />
     <Compile Include="ServerInteractionElements.cs" />
     <Compile Include="ServerModel.cs" />

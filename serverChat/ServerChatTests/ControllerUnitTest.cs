@@ -14,7 +14,7 @@ namespace ServerChatTests
     public class ControllerUnitTest
     {
         private static ServerModel data = new ServerModel();
-        private static ServerController cont = new ServerController(data);
+        private static GuiController cont = new GuiController(data);
 
         [TestMethod]
         public void DeserializeXmlTest1()
