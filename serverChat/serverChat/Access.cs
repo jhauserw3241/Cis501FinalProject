@@ -127,18 +127,8 @@ namespace serverChat
             // Set the user status to online
             dataInt.UpdateUserStatus(input.GetValue("username"), STATUS.Online);
 
-            // Get the user contact info to send to the user
-            string contUsernames = string.Join(",", user.GetContactListUsernames());
-            string contDispNames = string.Join(",", user.GetContactListNames());
-            string contStatuses = string.Join(",", user.GetContactListStatuses());
-
-            output.AddElement("action", "login");
-            output.AddElement("dispName", user.GetName());
-            output.AddElement("contUsername", contUsernames);
-            output.AddElement("contDispName", contDispNames);
-            output.AddElement("contState", contStatuses);
-
-            return output.Serialize();
+            LoginMessage sourceMsg = new LoginMessage(user);
+            return sourceMsg.GetMessage();
         }
         #endregion
     }

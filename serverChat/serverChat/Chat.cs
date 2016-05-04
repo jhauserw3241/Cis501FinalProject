@@ -15,7 +15,6 @@ namespace serverChat
     {
         ServerModel data = new ServerModel();
         ModelDataInteraction dataInt;
-        GenericResponses resp = new GenericResponses();
 
         #region Class Manipulation
         // Constructor
@@ -163,8 +162,10 @@ namespace serverChat
             }
 
             // Get output information
-            output.Add("source", resp.GetSerAddContInfo(newContact));
-            output.Add("newCont", resp.GetSerAddContInfo(sourceUser));
+            AddContactMessage sourceMsg = new AddContactMessage(newContact);
+            AddContactMessage newContMsg = new AddContactMessage(sourceUser);
+            output.Add("source", sourceMsg.GetMessage());
+            output.Add("newCont", newContMsg.GetMessage());
 
             return output;
         }
@@ -223,8 +224,10 @@ namespace serverChat
             }
 
             // Get output information
-            output.Add("source", resp.GetSerAddContInfo(oldContact));
-            output.Add("oldCont", resp.GetSerAddContInfo(sourceUser));
+            AddContactMessage sourceMsg = new AddContactMessage(oldContact);
+            AddContactMessage newContMsg = new AddContactMessage(sourceUser);
+            output.Add("source", sourceMsg.GetMessage());
+            output.Add("oldCont", newContMsg.GetMessage());
 
             return output;
         }
