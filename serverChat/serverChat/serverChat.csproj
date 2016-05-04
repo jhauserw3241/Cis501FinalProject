@@ -58,7 +58,6 @@
     <Compile Include="ModelDataInteraction.cs" />
     <Compile Include="GuiController.cs" />
     <Compile Include="ServerConversation.cs" />
-    <Compile Include="ServerInteractionElements.cs" />
     <Compile Include="ServerModel.cs" />
     <Compile Include="ServerUser.cs" />
     <Compile Include="ServerView.cs">
