@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using WebSocketSharp;
-using WebSocketSharp.Server;
 using System.Windows.Forms;
 
 namespace serverChat
@@ -13,11 +10,6 @@ namespace serverChat
     public class GuiController
     {
         public event ServerOutputHandler Output;
-
-        // Constructor
-        public GuiController()
-        {
-        }
 
         #region Handle View Output
         // Handle Generic Input
