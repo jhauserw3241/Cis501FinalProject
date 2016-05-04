@@ -180,44 +180,6 @@ namespace serverChat
             return new ServerConversation();
         }
 
-        // Get Conversation Participants
-        //
-        // Get the list of participants from the specified conversation
-        // @arg convName The name of the conversation
-        public List<string> GetConvParticipants(string convName)
-        {
-            // Get list of all conversation relationships
-            Dictionary<string, List<string>> convRelationships = data.GetContactRelationshipDict();
-
-            // Get the list of participants in the current conversation
-            List<string> participants = new List<string>();
-            convRelationships.TryGetValue(convName, out participants);
-
-            return participants;
-        }
-
-        // Get Conversation Relationship List
-        //
-        // Get the conversation relationship from the list in the model
-        // @arg groupName The name of the group of contacts
-        // @return the list of usernames for the specified group
-        public List<string> GetConvRelList(string groupName)
-        {
-            Dictionary<string, List<string>> groupList = data.GetContactRelationshipDict();
-            int relationLen = groupList.Count;
-
-            if (relationLen != 0)
-            {
-                for (int i = 0; i < relationLen; i++)
-                {
-                    // TODO: Check if the conversation relationship list and return username list
-                    return new List<string>();
-                }
-            }
-
-            return new List<string>();
-        }
-
         // Get User Object
         //
         // Get the user object from the list in the model
@@ -438,32 +400,6 @@ namespace serverChat
             }
 
             return "";
-        }
-
-        // Remove Participant From Conversation Participants
-        //
-        // Remove the user with the specified username
-        // @arg username The username for the current user
-        // @arg name The name of the conversation
-        public void RemoveParFromConvPars(string username, string name)
-        {
-            // Get the list of contact relationships
-            Dictionary<string, List<string>> contRels = data.GetContactRelationshipDict();
-
-            // Get the list of participants from the current conversation
-            List<string> participants = GetConvParticipants(name);
-
-            // Remove the current conversation group from the list
-            contRels.Remove(name);
-
-            // Add new user to the current contact relationship
-            participants.Add(username);
-
-            // Add the new contact relationship
-            contRels.Add(name, participants);
-
-            // Set the new list of participants as a new relationship
-            data.SetContactRelationshipList(contRels);
         }
         #endregion
     }
