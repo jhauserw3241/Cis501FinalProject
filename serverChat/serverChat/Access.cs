@@ -14,14 +14,23 @@ namespace serverChat
     class Access : WebSocketBehavior
     {
         ServerModel data = ServerModel.Instance;
+        ServerSocket soc;
         ModelDataInteraction dataInt = new ModelDataInteraction();
         public event SendMsgToClient sendMsgClient;
         public event SendMsgToServer sendMsgServer;
 
         #region Class Manipulation
         // Constructor
-        public Access()
+        public Access() : this(null)
         {
+        }
+
+        // Constructor
+        //
+        // @param s The server socket object
+        public Access(ServerSocket s)
+        {
+            soc = s;
         }
         #endregion
 
@@ -240,7 +249,7 @@ namespace serverChat
         // @param user The server user to add to the list of connected users
         public void UpdateSevSoc(ServerUser user)
         {
-            ServerSocket soc = ServerSocket.Instance;
+            //ServerSocket soc = ServerSocket.Instance;
             soc.AddService(user.GetUsername());
         }
         #endregion

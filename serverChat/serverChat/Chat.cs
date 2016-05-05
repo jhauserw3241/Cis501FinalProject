@@ -13,23 +13,29 @@ namespace serverChat
     // Handle generic messages sent to the server from the client
     class Chat : WebSocketBehavior
     {
+        ServerSocket soc;
         ServerModel data = ServerModel.Instance;
         ModelDataInteraction dataInt = new ModelDataInteraction();
-        ServerSocket soc = ServerSocket.Instance;
-        public event SendMsgToClient sendMsgClient;
-        public event SendMsgToServer sendMsgServer;
+        //ServerSocket soc = ServerSocket.Instance;
+        //public event SendMsgToClient sendMsgClient;
+        //public event SendMsgToServer sendMsgServer;
 
         #region Class Manipulation
         // Constructor
-        public Chat() : this(null)
+        public Chat() : this(null, null)
         {
         }
 
         // Constructor
         //
         // @param user The user object for the service
-        public Chat(ServerUser user)
+        // @param s The server socket object
+        public Chat(ServerUser user, ServerSocket s)
         {
+            // Setup the server
+            soc = s;
+
+            // Create the delegate for the new client
             SendMsgToClient del = new SendMsgToClient(Transmit);
             if ((user != new ServerUser()) && (user != null))
             {
@@ -302,6 +308,7 @@ namespace serverChat
             {
                 curMsg.AddElement("error", "The source username wasn't provided.");
                 output.Add("source", curMsg.Serialize());
+                return output;
             }
             string sourceUsername = input.GetValue("username");
 
@@ -483,7 +490,16 @@ namespace serverChat
                 }
                 else
                 {
-                    sendMsgServer(repId, msg);
+                    SendMsgToClient recSend = soc.GetChat(repId);
+                    if (recSend != null)
+                    {
+                        recSend(msg);
+                    }
+                    else
+                    {
+                        Transmit("<error error=\"Delegate could not be found for recipient.\" />");
+                    }
+                    //sendMsgServer(repId, msg);
                 }
             }
         }

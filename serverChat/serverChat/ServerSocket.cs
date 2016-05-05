@@ -10,36 +10,36 @@ namespace serverChat
 {
     class ServerSocket
     {
-        // Instance of the singleton
-        private static ServerSocket inst;
+        //// Instance of the singleton
+        //private static ServerSocket inst;
 
         // Websocket server info
-        private WebSocketServer wss = new WebSocketServer(8001);
+        private WebSocketServer wss;
         private ModelDataInteraction dataInt = new ModelDataInteraction();
         private Dictionary<string, SendMsgToClient> clients = new Dictionary<string, SendMsgToClient>();
 
+        //// Constructor
+        //public static ServerSocket Instance
+        //{
+        //    // Create singleton for class
+        //    get
+        //    {
+        //        if (inst == null)
+        //        {
+        //            inst = new ServerSocket();
+        //        }
+
+        //        return inst;
+        //    }
+        //}
+
         // Constructor
-        public static ServerSocket Instance
+        public ServerSocket()
         {
-            get
-            {
-                if (inst == null)
-                {
-                    inst = new ServerSocket();
-                }
+            wss = new WebSocketServer(8001);
 
-                return inst;
-            }
-        }
-
-        // Add Service
-        //
-        // Add a socket service to the list
-        // @param username The username for the user
-        public void AddService(string username)
-        {
-            ServerUser curUser = dataInt.GetUserObj(username);
-            wss.AddWebSocketService<Chat>("/" + username, () => new Chat(curUser));
+            // Create a generic login/signup page
+            wss.AddWebSocketService<Access>("/Access", () => new Access(this));
         }
 
         // Add Chat
@@ -50,6 +50,30 @@ namespace serverChat
         public void AddChat(string id, SendMsgToClient del)
         {
             clients.Add(id, del);
+        }
+
+        // Add Service
+        //
+        // Add a socket service to the list
+        // @param username The username for the user
+        public void AddService(string username)
+        {
+            ServerUser curUser = dataInt.GetUserObj(username);
+            string url = "/" + username;
+            wss.AddWebSocketService<Chat>(url, () => new Chat(curUser, this));
+        }
+
+        // Get Chat
+        //
+        // Get a chat delegate
+        // @param id The id for the user that the delegate belongs to
+        public SendMsgToClient GetChat(string id)
+        {
+            if (clients.ContainsKey(id))
+            {
+                return clients[id];
+            }
+            return null;
         }
 
         // Remove Chat
@@ -75,9 +99,6 @@ namespace serverChat
         // Start the socket server
         public void Start()
         {
-            // Create a generic login/signup page
-            wss.AddWebSocketService<Access>("/Access");
-
             // Start the server
             wss.Start();
         }

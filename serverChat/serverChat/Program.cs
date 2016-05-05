@@ -32,8 +32,8 @@ namespace serverChat
             GuiController cont = new GuiController();
             ServerView view = new ServerView();
             ServerSocket sevSoc = new ServerSocket();
-            Chat c = new Chat();
-            Access a = new Access();
+            //Chat c = new Chat();
+            //Access a = new Access();
 
             // Load the users from the default file
             data.DeserializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
@@ -45,8 +45,8 @@ namespace serverChat
             cont.Output += view.HandleFormOutput;
 
             // Create connection from handlers to server socket
-            a.sendMsgServer += sevSoc.TransmitMsg;
-            c.sendMsgServer += sevSoc.TransmitMsg;
+            //a.sendMsgServer += sevSoc.TransmitMsg;
+            //c.sendMsgServer += sevSoc.TransmitMsg;
             
             // Create connection to the websocket
             sevSoc.Start();
