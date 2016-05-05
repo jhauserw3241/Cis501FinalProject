@@ -96,7 +96,7 @@ namespace ChatClientTest
         {
             ChatClientModel CCM = new ChatClientModel();
             CCM.State = FlowState.Access;
-            Assert.Equals(FlowState.Access, CCM.State);
+            Assert.AreEqual(FlowState.Access, CCM.State);
         }
 
         [TestMethod]

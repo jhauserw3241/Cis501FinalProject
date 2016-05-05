@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FinalProjectChatClient
 {
-    class ChatClientController
+    public class ChatClientController
     {
         #region Fields
         
