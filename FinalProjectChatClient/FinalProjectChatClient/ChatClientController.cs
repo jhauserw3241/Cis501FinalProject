@@ -83,11 +83,13 @@ namespace FinalProjectChatClient
         {
             if (sender.Equals(clientForm.AwayStatusOption))
             {
+                clientModel.Status = "Away";
                 ws.Send(String.Format("<udCont source=\"{0}\" state=\"Away\" />", clientModel.Username));
                 if (Output != null) Output("UpdateStatus");
             }
             else if (sender.Equals(clientForm.OnlineStatusOption))
             {
+                clientModel.Status = "Online";
                 ws.Send(String.Format("<udCont source=\"{0}\" state=\"Online\" />", clientModel.Username));
                 if (Output != null) Output("UpdateStatus");
             }
