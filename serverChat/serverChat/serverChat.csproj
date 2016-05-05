@@ -59,6 +59,7 @@
     <Compile Include="GuiController.cs" />
     <Compile Include="ServerConversation.cs" />
     <Compile Include="ServerModel.cs" />
+    <Compile Include="ServerSocket.cs" />
     <Compile Include="ServerUser.cs" />
     <Compile Include="ServerView.cs">
       <SubType>Form</SubType>
