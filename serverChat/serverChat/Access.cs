@@ -52,25 +52,25 @@ namespace serverChat
 
             if (input.ContainsKey("action"))
             {
-                switch (input.GetValue("action"))
-                {
-                    case "sign":
-                        output.SetSerMsg(HandleSignUpRequest(input));
-                        break;
-                    case "login":
-                        // Assign cookie and add it to the list
-                        output.SetSerMsg(HandleLoginRequest(input));
-                        break;
-                    default:
-                        // TODO: Pass error message
-                        string tag = input.GetValue("action");
-                        output.AddElement("error", "The following action tag was not handled:  " + tag);
-                        break;
-                }
-            }
-            else
-            {
                 output.AddElement("error", "There was no action tag");
+                Sessions.Broadcast(output.Serialize());
+                return;
+            }
+
+            switch (input.GetValue("action"))
+            {
+                case "sign":
+                    output.SetSerMsg(HandleSignUpRequest(input));
+                    break;
+                case "login":
+                    // Assign cookie and add it to the list
+                    output.SetSerMsg(HandleLoginRequest(input));
+                    break;
+                default:
+                    // TODO: Pass error message
+                    string tag = input.GetValue("action");
+                    output.AddElement("error", "The following action tag was not handled:  " + tag);
+                    break;
             }
 
             Sessions.Broadcast(output.Serialize());
@@ -112,6 +112,13 @@ namespace serverChat
         public string HandleLoginRequest(Message input)
         {
             Message output = new Message();
+
+            if (!input.ContainsKey("username"))
+            {
+                output.AddElement("action", "error");
+                output.AddElement("error", "There is no username");
+                return output.Serialize();
+            }
 
             // Get the user object that matches the provided username
             ServerUser user = dataInt.GetUserObj(input.GetValue("username"));
