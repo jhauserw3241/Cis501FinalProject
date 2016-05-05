@@ -317,7 +317,7 @@ namespace FinalProjectChatClient
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
 
-            switch ((string)mssg["action"])
+            switch (mssg["action"])
             {
                 case "sign":
                 case "login":
