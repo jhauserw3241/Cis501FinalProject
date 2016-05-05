@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace serverChat
 {
-    class AddContactMessage
+    class AddContactMessage : Message
     {
         private ServerUser contact = new ServerUser();
         private Message msg = new Message();

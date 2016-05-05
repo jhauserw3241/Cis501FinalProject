@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace serverChat
 {
-    class LoginMessage
+    class LoginMessage : Message
     {
         private ServerUser user = new ServerUser();
         private Message msg = new Message();
