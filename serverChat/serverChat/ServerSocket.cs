@@ -15,6 +15,7 @@ namespace serverChat
 
         // Websocket server info
         private WebSocketServer wss = new WebSocketServer(8001);
+        private ModelDataInteraction dataInt = new ModelDataInteraction();
         private Dictionary<string, SendMsgToClient> clients = new Dictionary<string, SendMsgToClient>();
 
         // Constructor
@@ -37,8 +38,8 @@ namespace serverChat
         // @param username The username for the user
         public void AddService(string username)
         {
-            ServerUser curUser = new ServerUser(username);
-            wss.AddWebSocketService<Chat>(string.Format("/{0}", username), () => new Chat(curUser));
+            ServerUser curUser = dataInt.GetUserObj(username);
+            wss.AddWebSocketService<Chat>("/" + username, () => new Chat(curUser));
         }
 
         // Add Chat
@@ -51,22 +52,22 @@ namespace serverChat
             clients.Add(id, del);
         }
 
-        // Remove
-        //
-        // Remove a socket service from the list
-        // @param username The username for the user
-        public void Remove(string username)
-        {
-            wss.RemoveWebSocketService(string.Format("/{0}", username));
-        }
-
         // Remove Chat
         //
-        // Remove a chat delegate for further interaction with that person
+        // Add a chat delegate for further interaction with that person
         // @param id The ID of the user
         public void RemoveChat(string id)
         {
             clients.Remove(id);
+        }
+
+        // Remove Service
+        //
+        // Remove a socket service from the list
+        // @param username The username for the user
+        public void RemoveService(string username)
+        {
+            wss.RemoveWebSocketService("/" + username);
         }
 
         // Start

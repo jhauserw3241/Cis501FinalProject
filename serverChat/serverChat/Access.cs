@@ -96,6 +96,10 @@ namespace serverChat
                 curMsg.AddElement("error", error);
             }
 
+            // Update the server socket with the service for the user
+            UpdateSevSoc(user);
+
+            // Add people to send message to
             output.Add("source", curMsg.Serialize());
             return output;
         }
