@@ -14,21 +14,14 @@ namespace serverChat
     class Access : WebSocketBehavior
     {
         ServerModel data = ServerModel.Instance;
-        ModelDataInteraction dataInt;
+        ModelDataInteraction dataInt = new ModelDataInteraction();
+        public event SendMsgToClient sendMsgClient;
+        public event SendMsgToServer sendMsgServer;
 
         #region Class Manipulation
         // Constructor
-        public Access() : this(null)
+        public Access()
         {
-        }
-
-        // Constructor
-        //
-        // @param d The model object
-        public Access(ServerModel d)
-        {
-            data = d;
-            dataInt = new ModelDataInteraction(data);
         }
         #endregion
 
@@ -48,107 +41,203 @@ namespace serverChat
         {
             Message input = new Message(e.Data);
             input.Deserialize();
-            Message output = new Message();
+            Dictionary<string, string> output = new Dictionary<string, string>();
 
-            if (input.ContainsKey("action"))
+            // Handle no action provided
+            if (!input.ContainsKey("action"))
             {
-                switch (input.GetValue("action"))
-                {
-                    case "sign":
-                        output.SetSerMsg(HandleSignUpRequest(input));
-                        break;
-                    case "login":
-                        // Assign cookie and add it to the list
-                        output.SetSerMsg(HandleLoginRequest(input));
-                        break;
-                    default:
-                        // TODO: Pass error message
-                        string tag = input.GetValue("action");
-                        output.AddElement("error", "The following action tag was not handled:  " + tag);
-                        break;
-                }
-            }
-            else
-            {
-                output.AddElement("error", "There was no action tag");
+                output = ProcessErrorNoAction();
+                SendMsgResponse(output);
+                return;
             }
 
-            Sessions.Broadcast(output.Serialize());
+            switch (input.GetValue("action"))
+            {
+                // Handle sign up request
+                case "sign":
+                    output = ProcessSignUpRequest(input);
+                    SendMsgResponse(output);
+                    break;
+                // Handle login request
+                case "login":
+                    output = ProcessLoginRequest(input);
+                    SendMsgResponse(output);
+                    break;
+                // Handle error case
+                default:
+                    output = ProcessErrorInvalidAction(input);
+                    SendMsgResponse(output);
+                    break;
+            }
         }
         #endregion
 
         #region Handle Request
-        // Handle Sign Up Request
+        // Process Sign Up Request
         //
         // Handle a request for a new user to be created
         // @param input The message containing the input information from the client
         // @return a string containing the xml response
-        public string HandleSignUpRequest(Message input)
+        public Dictionary<string, string> ProcessSignUpRequest(Message input)
         {
-            Message output = new Message();
+            Message curMsg = new Message();
+            Dictionary<string, string> output = new Dictionary<string, string>();
 
             // Create the user
             string error = dataInt.CreateUser(input.GetValue("username"), input.GetValue("password"));
+            ServerUser user = new ServerUser(input.GetValue("username"));
+            user.SetID(dataInt.GetId());
+
+            curMsg.AddElement("action", "sign");
 
             // Check if the creation was succesful
-            if (error == "")
+            if (error != "")
             {
-                output.AddElement("action", "sign");
-            }
-            else
-            {
-                output.AddElement("action", "error");
-                output.AddElement("error", error);
+                curMsg.AddElement("error", error);
             }
 
-            return output.Serialize();
+            output.Add("source", curMsg.Serialize());
+            return output;
         }
 
-        // Handle Login Request
+        // Process Login Request
         //
         // Process a request for an existing user to login
         // @param input The message containing the input information from the client
         // @return a string containing the xml response
-        public string HandleLoginRequest(Message input)
+        public Dictionary<string, string> ProcessLoginRequest(Message input)
         {
-            Message output = new Message();
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            Message curMsg = new Message();
 
-            // Get the user object that matches the provided username
-            ServerUser user = dataInt.GetUserObj(input.GetValue("username"));
+            curMsg.AddElement("action", "login");
 
-            // Check if the user exists
+            // Get the user username
+            if (!input.ContainsKey("username"))
+            {
+                curMsg.AddElement("error", "The username wasn't provided.");
+                output.Add("source", curMsg.Serialize());
+                return output;
+            }
+            string username = input.GetValue("username");
+
+            // Get the user
+            ServerUser user = dataInt.GetUserObj(username);
             if (user == new ServerUser())
             {
-                output.AddElement("action", "error");
-                output.AddElement("error", "The username isn't valid.");
-                return output.Serialize();
+                curMsg.AddElement("error", "The user doesn't exist.");
+                output.Add("source", curMsg.Serialize());
+                return output;
             }
 
-            // Check if the password is correct
-            if (user.GetPassword() != input.GetValue("password"))
+            // Get the user password
+            if (!input.ContainsKey("password"))
             {
-                output.AddElement("action", "error");
-                output.AddElement("error", "The password isn't correct.");
-                return output.Serialize();
+                curMsg.AddElement("error", "The password wasn't provided.");
+                output.Add("source", curMsg.Serialize());
+                return output;
+            }
+            string password = input.GetValue("password");
+
+            // Check if the password is correct
+            if (user.GetPassword() != password)
+            {
+                curMsg.AddElement("error", "The password isn't correct.");
+                output.Add("source", curMsg.Serialize());
+                return output;
             }
 
             // Set the user status to online
-            dataInt.UpdateUserStatus(input.GetValue("username"), STATUS.Online);
+            dataInt.UpdateUserStatus(username, STATUS.Online);
 
             LoginMessage sourceMsg = new LoginMessage(user);
-            return sourceMsg.GetMessage();
+            output.Add("source", sourceMsg.Serialize());
+            return output;
+        }
+
+        // Process an Invalid Action Request
+        //
+        // Process a request that is not handled
+        // @param input The message containing the input information from the client
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessErrorInvalidAction(Message input)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            Message curMsg = new Message();
+
+            // Get the tag
+            if (!input.ContainsKey("action"))
+            {
+                curMsg.AddElement("action", "error");
+                curMsg.AddElement("error", "An action tag wasn't provided.");
+            }
+            string tag = input.GetValue("action");
+
+            curMsg.AddElement("error", "The following action tag was not handled:  " + tag);
+
+            output.Add("source", curMsg.Serialize());
+
+            return output;
+        }
+
+        // Process an Invalid Request
+        //
+        // Process a request that isn't an action request\
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessErrorNoAction()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            Message curMsg = new Message();
+
+            curMsg.AddElement("action", "error");
+            curMsg.AddElement("error", "There was no action tag");
+            output.Add("source", curMsg.Serialize());
+
+            return output;
         }
         #endregion
 
         #region Send Ouptut
-        // Send Message
+        // Send Message Response
+        //
+        // Send the response to the recieed message
+        // @param output A dictionary containing the IDs and the messages to send
+        public void SendMsgResponse(Dictionary<string, string> output)
+        {
+            int size = output.Count;
+            for (int i = 0; i < size; i++)
+            {
+                string repId = output.Keys.ElementAt(i);
+                string msg = output[repId];
+                if (repId == "source")
+                {
+                    Transmit(msg);
+                }
+                else
+                {
+                    sendMsgServer(repId, msg);
+                }
+            }
+        }
+
+        // Transmit
         //
         // Send the message provided to all the client associated with this session
         // @param id The current client's ID
         // @param msg The message to send to the client
-        public void SendMessage(string id, string msg)
+        public void Transmit(string msg)
         {
             Send(msg);
+        }
+
+        // Update Server Socket
+        //
+        // Update the server socket to be able to transmit to this user
+        // @param user The server user to add to the list of connected users
+        public void UpdateSevSoc(ServerUser user)
+        {
+            ServerSocket soc = ServerSocket.Instance;
+            soc.AddService(user.GetUsername());
         }
         #endregion
     }

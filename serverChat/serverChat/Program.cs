@@ -10,8 +10,8 @@ namespace serverChat
 {
     public delegate void GuiInputHandler(string action, params object[] vars);
     public delegate void GuiOutputHandler(string action, params object[] vars);
-    public delegate void ChatHandler(string id, string message);
-    public delegate void AccessHandler(string id, string message);
+    public delegate void SendMsgToClient(string msg);
+    public delegate void SendMsgToServer(string id, string msg);
 
     public enum STATUS { Online, Away, Offline };
 
@@ -44,12 +44,12 @@ namespace serverChat
             view.ElementListBox.MouseDoubleClick += cont.HandleMouseInput;
             cont.Output += view.HandleFormOutput;
 
-            // Create connection from message handling to message output
-            c.Input += sevSoc.Transmit;
-            sevSoc.Output += 
-
+            // Create connection from handlers to server socket
+            a.sendMsgServer += sevSoc.TransmitMsg;
+            c.sendMsgServer += sevSoc.TransmitMsg;
+            
             // Create connection to the websocket
-            sevSoc.Start(data);
+            sevSoc.Start();
 
             // Execute form
             Application.Run(view);

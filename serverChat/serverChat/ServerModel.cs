@@ -13,8 +13,10 @@ namespace serverChat
         private static ServerModel inst;
         // Declare the server lists
         private List<ServerConversation> conversationList = new List<ServerConversation>();
+        private int nextId = 0;
         private List<ServerUser> userList = new List<ServerUser>();
-        
+
+        #region Class Manipulation
         // One-time instantiation constructor
         public static ServerModel Instance
         {
@@ -27,7 +29,9 @@ namespace serverChat
                 return inst;
             }
         }
+        #endregion
 
+        #region Getters
         // Get Conversation List
         //
         // Get the list of all conversations that have been created
@@ -35,6 +39,15 @@ namespace serverChat
         public List<ServerConversation> GetConversationList()
         {
             return conversationList;
+        }
+
+        // Get Next ID
+        //
+        // Get the next ID to hand out
+        // @return the integer value of the next ID to hand out
+        public int GetId()
+        {
+            return nextId;
         }
 
         // Get User List
@@ -45,7 +58,9 @@ namespace serverChat
         {
             return userList;
         }
+        #endregion
 
+        #region Setters
         // Set Conversation List
         //
         // Set the list of all conversations that have been created
@@ -53,6 +68,15 @@ namespace serverChat
         public void SetConversationList(List<ServerConversation> list)
         {
             conversationList = list;
+        }
+
+        // Set Next ID
+        //
+        // Set the next ID value for the next person to request an ID
+        // @param num The ID for the next person
+        public void SetNextId(int num)
+        {
+            nextId = num;
         }
 
         // Set User List
@@ -63,5 +87,6 @@ namespace serverChat
         {
             userList = list;
         }
+        #endregion
     }
 }

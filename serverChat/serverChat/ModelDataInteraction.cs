@@ -13,14 +13,13 @@ namespace serverChat
     // Handle any sort of interaction between the other controllers and the model
     class ModelDataInteraction
     {
-        private ServerModel data;
+        private static ServerModel data = ServerModel.Instance;
 
         // Constructor
         //
         // @param d The data object to use
-        public ModelDataInteraction(ServerModel d)
+        public ModelDataInteraction()
         {
-            data = d;
         }
 
         #region Check Availability
@@ -180,6 +179,17 @@ namespace serverChat
             }
 
             return new ServerConversation();
+        }
+
+        // Get ID
+        //
+        // Get the next ID
+        // @return an integer with the ID
+        public int GetId()
+        {
+            int id = data.GetId();
+            data.SetNextId(id + 1);
+            return id;
         }
 
         // Get User Object

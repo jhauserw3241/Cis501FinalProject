@@ -10,18 +10,45 @@ namespace serverChat
 {
     class ServerSocket
     {
-        WebSocketServer wss = new WebSocketServer(8001);
-        ServerModel data = ServerModel.Instance;
-        public event ChatHandler cOutput;
-        public event AccessHandler aOutput;
+        // Instance of the singleton
+        private static ServerSocket inst;
 
-        // Add
+        // Websocket server info
+        private WebSocketServer wss = new WebSocketServer(8001);
+        private Dictionary<string, SendMsgToClient> clients = new Dictionary<string, SendMsgToClient>();
+
+        // Constructor
+        public static ServerSocket Instance
+        {
+            get
+            {
+                if (inst == null)
+                {
+                    inst = new ServerSocket();
+                }
+
+                return inst;
+            }
+        }
+
+        // Add Service
         //
         // Add a socket service to the list
         // @param username The username for the user
-        public void Add(string username)
+        public void AddService(string username)
         {
-            wss.AddWebSocketService<Chat>(string.Format("/{0}", username), () => new Chat(data));
+            ServerUser curUser = new ServerUser(username);
+            wss.AddWebSocketService<Chat>(string.Format("/{0}", username), () => new Chat(curUser));
+        }
+
+        // Add Chat
+        //
+        // Add a chat delegate for further interaction with that person
+        // @param id The ID of the user
+        // @param del The delegate to interact with the user
+        public void AddChat(string id, SendMsgToClient del)
+        {
+            clients.Add(id, del);
         }
 
         // Remove
@@ -33,50 +60,22 @@ namespace serverChat
             wss.RemoveWebSocketService(string.Format("/{0}", username));
         }
 
-        // Access Transmit
+        // Remove Chat
         //
-        // Transmit the message to the respective recipient for the access
-        // @param recipient The person who will be recieving the message
-        // @param msg The message to send to the recipient
-        public void AccessTransmit(string recipient, string msg)
+        // Remove a chat delegate for further interaction with that person
+        // @param id The ID of the user
+        public void RemoveChat(string id)
         {
-
-            aOutput(recipient, msg);
+            clients.Remove(id);
         }
-
-        // Chat Messsage Transmit
-        //
-        // Transmit the message to the respective recipient for the chat
-        // @param recipient The person who will be recieving the message
-        // @param msg The message to send to the recipient
-        public void ChatMsgTransmit(string recipient, string msg)
-        {
-            cOutput(recipient, msg);
-        }
-
-        //// Send
-        ////
-        //// Send the provided message to the provided recipient
-        //// @param recipient The user to send the message to
-        //// @param msg The message to send to the client
-        //public void Send(string clientId, string msg)
-        //{
-        //    //WebSocketServer cur = web
-        //    //wss.WebSocketServices
-        //    //Send(clientId, msg);
-        //    //base.Sessions.SendTo(clientId, msg);
-        //}
 
         // Start
         //
         // Start the socket server
-        // @param d The model object
-        public void Start(ServerModel d)
+        public void Start()
         {
-            data = d;
-
             // Create a generic login/signup page
-            wss.AddWebSocketService<Access>("/Access", () => new Access(data));
+            wss.AddWebSocketService<Access>("/Access");
 
             // Start the server
             wss.Start();
@@ -88,6 +87,22 @@ namespace serverChat
         public void Stop()
         {
             wss.Stop();
+        }
+
+        // Transmit Message
+        //
+        // Transmit the specified message to the all the specified recipients
+        // @param ids The id of the user
+        // @param msg The message for the user
+        public void TransmitMsg(string id, string msg)
+        {
+            if (!clients.ContainsKey(id))
+            {
+                return;
+            }
+
+            SendMsgToClient del = clients[id];
+            del(msg);
         }
     }
 }

@@ -9,6 +9,8 @@ namespace serverChat
 {
     class Message
     {
+        private string from = "";
+        private List<string> to = new List<string>();
         private string serMsg = "";
         private Dictionary<string, string> msgEles = new Dictionary<string, string>();
 
@@ -42,6 +44,14 @@ namespace serverChat
         public Dictionary<string, string> GetMsgParts()
         {
             return msgEles;
+        }
+
+        // Get Recipients
+        //
+        // Get the list of IDs for the recipients for the message
+        public List<string> GetRecipientIds()
+        {
+            return to;
         }
 
         // Get XML String
@@ -136,6 +146,15 @@ namespace serverChat
             msgEles.Add(key, val);
         }
 
+        // Add Recipient
+        //
+        // Add the specified recipient to the list of recipients
+        // @param id The ID of the recipient
+        public void AddRecipient(string id)
+        {
+            to.Add(id);
+        }
+
         // Contains Key
         //
         // Whether or not the message elements list contains the specified key
@@ -173,15 +192,6 @@ namespace serverChat
         #endregion
 
         #region Setters
-        // Set Serialized Message
-        //
-        // Set the serialized message string
-        // @param s The serialized string
-        public void SetSerMsg(string s)
-        {
-            serMsg = s;
-        }
-
         // Set Message Parts
         //
         // Set the parts of the message
@@ -189,6 +199,24 @@ namespace serverChat
         public void SetMsgParts(Dictionary<string, string> parts)
         {
             msgEles = parts;
+        }
+
+        // Set Recipients
+        //
+        // Set the list of IDs for the recipients
+        // @param rec The list of recipient IDs
+        public void SetRecipients(List<string> rec)
+        {
+            to = rec;
+        }
+
+        // Set Serialized Message
+        //
+        // Set the serialized message string
+        // @param s The serialized string
+        public void SetSerMsg(string s)
+        {
+            serMsg = s;
         }
         #endregion
     }

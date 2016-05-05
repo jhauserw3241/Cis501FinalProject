@@ -9,12 +9,13 @@ namespace serverChat
     public class ServerUser
     {
         private List<ServerUser> contacts = new List<ServerUser> { };
-        private string ipAddress;
+        private int id;
         private string name;
         private string password;
         private STATUS status;
         private string username;
 
+        #region Class Manipulation
         // Constructor
         public ServerUser()
         {
@@ -28,16 +29,9 @@ namespace serverChat
             username = uName;
             name = uName;
         }
+        #endregion
 
-        // Add Contact
-        //
-        // Add a contact to the list of contacts
-        // @param contact The user to be added as another contact for the current user
-        public void AddContact(ServerUser contact)
-        {
-            contacts.Add(contact);
-        }
-
+        #region Getters
         // Get Contact List
         //
         // Get the list of contacts for the current user
@@ -98,13 +92,22 @@ namespace serverChat
             return usernames;
         }
 
-        // Get IP Address
+        // Get ID
         //
-        // Get the IP address fro the current user
-        // @return a string containing the ip address
-        public string GetIpAddress()
+        // Get the ID for the current user
+        // @return an integer containing the ID
+        public int GetId()
         {
-            return ipAddress;
+            return id;
+        }
+
+        // Get ID String
+        //
+        // Get the ID string for the current user
+        // @return a string containing the ID
+        public string GetIdString()
+        {
+            return id.ToString();
         }
 
         // Get Name
@@ -142,6 +145,17 @@ namespace serverChat
         {
             return username;
         }
+        #endregion
+
+        #region Modify
+        // Add Contact
+        //
+        // Add a contact to the list of contacts
+        // @param contact The user to be added as another contact for the current user
+        public void AddContact(ServerUser contact)
+        {
+            contacts.Add(contact);
+        }
 
         // Remove Contact
         //
@@ -173,14 +187,16 @@ namespace serverChat
                 }
             }
         }
+        #endregion
 
-        // Set IP Address
+        #region Setters
+        // Set ID
         //
-        // Set the IP address for the current user
-        // @param address A string containing the user's IP address
-        public void SetIpAddress(string address)
+        // Set the ID for the current user
+        // @param i The ID for the current user
+        public void SetID(int i)
         {
-            ipAddress = address;
+            id = i;
         }
 
         // Set Name
@@ -218,5 +234,6 @@ namespace serverChat
         {
             username = name;
         }
+        #endregion
     }
 }

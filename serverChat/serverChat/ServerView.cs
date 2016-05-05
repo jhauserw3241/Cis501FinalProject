@@ -60,7 +60,7 @@ namespace serverChat
             currentInfo.AppendText(string.Format("Username: {0}", user.GetUsername()));
             currentInfo.AppendText(string.Format("Display Name: {0}", user.GetName()));
             currentInfo.AppendText(string.Format("Password: {0}", user.GetPassword()));
-            currentInfo.AppendText(string.Format("IP Address: {0}", user.GetIpAddress()));
+            currentInfo.AppendText(string.Format("IP Address: {0}", user.GetId().ToString()));
             currentInfo.AppendText(string.Format("Status: {0}", user.GetStatus().ToString()));
             currentInfo.AppendText(string.Format("Contacts: {0}", user.GetContactListUsernames().ToString()));
         }
