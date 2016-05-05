@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebSocketSharp;
+using System.Xml.Serialization;
 
 namespace serverChat
 {
@@ -86,6 +88,30 @@ namespace serverChat
         public void SetUserList(List<ServerUser> list)
         {
             userList = list;
+        }
+        #endregion
+
+        #region Save/Load Data
+        public void SerializeUserList(string path)
+        {
+            XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
+
+            using (Stream stream = File.Open(path, FileMode.Create))
+            {
+                dataSerializer.Serialize(stream, GetUserList());
+                stream.Close();
+            }
+        }
+
+        public void DeserializeUserList(string path)
+        {
+            XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
+
+            using (Stream stream = File.Open(path, FileMode.Open))
+            {
+                SetUserList((List<ServerUser>)dataSerializer.Deserialize(stream));
+                stream.Close();
+            }
         }
         #endregion
     }

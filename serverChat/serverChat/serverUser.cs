@@ -8,7 +8,7 @@ namespace serverChat
 {
     public class ServerUser
     {
-        private List<ServerUser> contacts = new List<ServerUser> { };
+        private List<ServerUser> contacts = new List<ServerUser>();
         private int id;
         private string name;
         private string password;
@@ -19,6 +19,11 @@ namespace serverChat
         // Constructor
         public ServerUser()
         {
+            id = -1;
+            name = "";
+            password = "";
+            status = STATUS.Offline;
+            username = "";
         }
 
         // Constructor

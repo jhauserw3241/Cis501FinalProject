@@ -8,20 +8,6 @@ namespace ChatClientTest
     public class ChatClientModelTest
     {
         [TestMethod]
-        public void ContactListTest()
-        {
-            ChatClientModel CCM = new ChatClientModel();
-
-        }
-
-        [TestMethod]
-        public void ConversationListTest()
-        {
-            ChatClientModel CCM = new ChatClientModel();
-
-        }
-
-        [TestMethod]
         public void DisplayNameTest()
         {
             ChatClientModel CCM = new ChatClientModel();
@@ -46,14 +32,14 @@ namespace ChatClientTest
         public void StateTest()
         {
             ChatClientModel CCM = new ChatClientModel();
-
+            Assert.AreEqual(FlowState.Entry, CCM.State);
         }
 
         [TestMethod]
         public void StatusTest()
         {
             ChatClientModel CCM = new ChatClientModel();
-            Assert.AreEqual("Online", CCM.Status);
+            Assert.AreEqual("Offline", CCM.Status);
         }
 
         [TestMethod]
@@ -67,12 +53,18 @@ namespace ChatClientTest
         public void ContactListSetTest()
         {
             ChatClientModel CCM = new ChatClientModel();
+            System.Collections.Generic.List<Contact> cont = new System.Collections.Generic.List<Contact>() { new Contact("Bob", "Bob_KSU", "Offline") };
+            CCM.ContactList = cont;
+            Assert.AreEqual(cont, CCM.ContactList);
         }
 
         [TestMethod]
         public void ConversationListSetTest()
         {
             ChatClientModel CCM = new ChatClientModel();
+            System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> conv = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>() { { "New_Conv", new System.Collections.Generic.List<string>() { "Bob" } } };
+            CCM.ConversationList = conv;
+            Assert.AreEqual(conv, CCM.ConversationList);
         }
 
         [TestMethod]
@@ -103,7 +95,8 @@ namespace ChatClientTest
         public void StateSetTest()
         {
             ChatClientModel CCM = new ChatClientModel();
-
+            CCM.State = FlowState.Access;
+            Assert.AreEqual(FlowState.Access, CCM.State);
         }
 
         [TestMethod]

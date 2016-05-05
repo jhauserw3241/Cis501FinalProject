@@ -36,7 +36,7 @@ namespace serverChat
             Access a = new Access();
 
             // Load the users from the default file
-            ModelDataInteraction.DeserializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
+            data.DeserializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
 
             // Create connection from view to controller
             view.ConversationsButton.Click += cont.HandleGenericInput;
@@ -58,7 +58,7 @@ namespace serverChat
             sevSoc.Stop();
 
             // Save the users to the default file
-            ModelDataInteraction.SerializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
+            data.SerializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
         }
     }
 }
