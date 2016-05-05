@@ -134,6 +134,7 @@ namespace FinalProjectChatClient
             {
                 if (sender.Equals(clientForm.AddContactTextBox))
                 {
+                    e.SuppressKeyPress = true;
                     if (!clientForm.AddContactTextBox.Text.Equals(String.Empty))
                     {
                         ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, clientForm.AddContactTextBox.Text));
@@ -141,7 +142,6 @@ namespace FinalProjectChatClient
                         WaitForResponse();
                         if (Output != null) Output("ClrAddCont");
                     }
-                    e.SuppressKeyPress = true;
                 }
                 else if (sender.Equals(clientForm.RemoveContactTextBox))
                 {
@@ -263,7 +263,6 @@ namespace FinalProjectChatClient
                     case DialogResult.Yes:
                         clientModel.State = FlowState.Access;
                         LoginAction();
-                        WaitForResponse();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
@@ -283,7 +282,6 @@ namespace FinalProjectChatClient
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
                         SignupAction();
-                        WaitForResponse();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = signupForm.Username;
@@ -313,7 +311,7 @@ namespace FinalProjectChatClient
         {
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
-            MessageBox.Show("Message Recieved");
+            MessageBox.Show("Message Recieved: " + e.Data.ToString());
 
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
@@ -405,7 +403,6 @@ namespace FinalProjectChatClient
         {
             ws.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
             // Wait for a response from the server
-            clientModel.WaitFlag = true;
             WaitForResponse();
             // If there was no error, add participant to client side
             if (!clientModel.ErrorFlag)
@@ -433,7 +430,6 @@ namespace FinalProjectChatClient
                 // Send initial request to server
                 ws.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
                 // Wait for a response from the server
-                clientModel.WaitFlag = true;
                 WaitForResponse();
                 // Make sure there were no errors
                 if (!clientModel.ErrorFlag)
@@ -470,7 +466,6 @@ namespace FinalProjectChatClient
             // Send initial request to server
             ws.Send(String.Format("<udConv conv=\"{0}\" newConv=\"{1}\" />", conv, newName));
             // Wait for a response from the server
-            clientModel.WaitFlag = true;
             WaitForResponse();
             // Make sure there were no errors
             if (!clientModel.ErrorFlag)
@@ -541,12 +536,14 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The content of this message.</param>
         private void HandleAddContactMessage(Dictionary<string, string> mssg)
         {
+            MessageBox.Show("Contact Message Received.");
             if (mssg.ContainsKey("error"))
             {
                 ChatClientForm.ShowError(mssg["error"]);
             }
             else
             {
+                MessageBox.Show("Adding Contact...");
                 Contact cont = new Contact(mssg["username"], mssg["dispName"], mssg["state"]);
                 clientModel.ContactList.Add(cont);
                 if (Output != null) Output("AddCont");
@@ -708,7 +705,7 @@ namespace FinalProjectChatClient
                         if (result.Equals("Success"))
                         {
                             ws.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-                            clientModel.WaitFlag = true;
+                            WaitForResponse();
                         }
                         else
                         {
@@ -734,9 +731,9 @@ namespace FinalProjectChatClient
             string contList = String.Join(",", clientModel.ContactList.Select(x => x.Username));
             bool exit = false;
 
-            ws.Close();
-            ws = new WebSocket("ws://127.0.0.1:8001/Logout");
-            ws.OnMessage += HandleMessage;
+            //ws.Close();
+            //ws = new WebSocket("ws://127.0.0.1:8001/Logout");
+            //ws.OnMessage += HandleMessage;
 
             while (!exit)
             {
@@ -772,7 +769,7 @@ namespace FinalProjectChatClient
                         if (result.Equals("Success"))
                         {
                             ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
-                            clientModel.WaitFlag = true;
+                            WaitForResponse();
                         }
                         else
                         {
@@ -965,6 +962,7 @@ namespace FinalProjectChatClient
         /// </summary>
         private void WaitForResponse()
         {
+            clientModel.WaitFlag = true;
             waitForm.Show();
             waitForm.Refresh();
             while (clientModel.WaitFlag)
