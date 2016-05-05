@@ -32,7 +32,7 @@ namespace serverChat
         }
         #endregion
 
-        #region Get Access Input
+        #region Client Request Input
         // On Open
         //
         // Handle actions to take when the server is first started
@@ -69,7 +69,7 @@ namespace serverChat
         }
         #endregion
 
-        #region Handle Requests
+        #region Handle Request
         // Handle Sign Up Request
         //
         // Handle a request for a new user to be created
@@ -129,6 +129,18 @@ namespace serverChat
 
             LoginMessage sourceMsg = new LoginMessage(user);
             return sourceMsg.GetMessage();
+        }
+        #endregion
+
+        #region Send Ouptut
+        // Send Message
+        //
+        // Send the message provided to all the client associated with this session
+        // @param id The current client's ID
+        // @param msg The message to send to the client
+        public void SendMessage(string id, string msg)
+        {
+            Send(msg);
         }
         #endregion
     }

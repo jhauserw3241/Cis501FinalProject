@@ -9,7 +9,7 @@ namespace serverChat
 {
     public class GuiController
     {
-        public event ServerOutputHandler Output;
+        public event GuiOutputHandler Output;
 
         #region Handle View Output
         // Handle Generic Input

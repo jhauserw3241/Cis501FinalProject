@@ -12,6 +12,8 @@ namespace serverChat
     {
         WebSocketServer wss = new WebSocketServer(8001);
         ServerModel data = new ServerModel();
+        public event ChatHandler cOutput;
+        public event AccessHandler aOutput;
 
         // Add
         //
@@ -31,18 +33,38 @@ namespace serverChat
             wss.RemoveWebSocketService(string.Format("/{0}", username));
         }
 
-        // Send
+        // Access Transmit
         //
-        // Send the provided message to the provided recipient
-        // @param recipient The user to send the message to
-        // @param msg The message to send to the client
-        public void Send(string clientId, string msg)
+        // Transmit the message to the respective recipient for the access
+        // @param recipient The person who will be recieving the message
+        // @param msg The message to send to the recipient
+        public void AccessTransmit(string recipient, string msg)
         {
-            //WebSocketServer cur = web
-            //wss.WebSocketServices
-            //Send(clientId, msg);
-            //base.Sessions.SendTo(clientId, msg);
+            aOutput(recipient, msg);
         }
+
+        // Chat Messsage Transmit
+        //
+        // Transmit the message to the respective recipient for the chat
+        // @param recipient The person who will be recieving the message
+        // @param msg The message to send to the recipient
+        public void ChatMsgTransmit(string recipient, string msg)
+        {
+            cOutput(recipient, msg);
+        }
+
+        //// Send
+        ////
+        //// Send the provided message to the provided recipient
+        //// @param recipient The user to send the message to
+        //// @param msg The message to send to the client
+        //public void Send(string clientId, string msg)
+        //{
+        //    //WebSocketServer cur = web
+        //    //wss.WebSocketServices
+        //    //Send(clientId, msg);
+        //    //base.Sessions.SendTo(clientId, msg);
+        //}
 
         // Start
         //
@@ -62,7 +84,7 @@ namespace serverChat
         // Stop
         //
         // Stop the socket server
-        public void End()
+        public void Stop()
         {
             wss.Stop();
         }

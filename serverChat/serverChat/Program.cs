@@ -8,9 +8,10 @@ using WebSocketSharp.Server;
 
 namespace serverChat
 {
-    public delegate void ServerInputHandler(string action, params object[] vars);
-
-    public delegate void ServerOutputHandler(string action, params object[] vars);
+    public delegate void GuiInputHandler(string action, params object[] vars);
+    public delegate void GuiOutputHandler(string action, params object[] vars);
+    public delegate void ChatHandler(string id, string message);
+    public delegate void AccessHandler(string id, string message);
 
     public enum STATUS { Online, Away, Offline };
 
@@ -30,6 +31,9 @@ namespace serverChat
             ServerModel data = new ServerModel();
             GuiController cont = new GuiController();
             ServerView view = new ServerView(data);
+            ServerSocket sevSoc = new ServerSocket();
+            Chat c = new Chat();
+            Access a = new Access();
 
             // Create connection from view to controller
             view.ConversationsButton.Click += cont.HandleGenericInput;
@@ -37,24 +41,18 @@ namespace serverChat
             view.ElementListBox.MouseDoubleClick += cont.HandleMouseInput;
             cont.Output += view.HandleFormOutput;
 
+            // Create connection from message handling to message output
+            c.Input += sevSoc.Transmit;
+            sevSoc.Output += 
+
             // Create connection to the websocket
-            // Start a websocket server at port 8001
-            var wss = new WebSocketServer(8001);
-
-            // Add the Echo websocket service
-            wss.AddWebSocketService<Access>("/Access", () => new Access(data));
-            wss.AddWebSocketService<Chat>("/Chat", ()=>new Chat(data));
-
-            //WebSocket curWs = new WebSocket("www.example.com");
-
-            // Start the server
-            wss.Start();
+            sevSoc.Start(data);
 
             // Execute form
             Application.Run(view);
 
-            // Stop the server
-            wss.Stop();
+            // End connection to the websocket
+            sevSoc.Stop();
         }
     }
 }

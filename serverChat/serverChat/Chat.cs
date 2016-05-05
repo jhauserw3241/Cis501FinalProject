@@ -15,6 +15,7 @@ namespace serverChat
     {
         ServerModel data = new ServerModel();
         ModelDataInteraction dataInt;
+        public event ChatHandler Input;
 
         #region Class Manipulation
         // Constructor
@@ -393,6 +394,18 @@ namespace serverChat
             }
 
             return output;
+        }
+        #endregion
+
+        #region Send Ouptut
+        // Send Message
+        //
+        // Send the message provided to all the client associated with this session
+        // @param id The current client's ID
+        // @param msg The message to send to the client
+        public void SendMessage(string id, string msg)
+        {
+            Send(msg);
         }
         #endregion
     }
