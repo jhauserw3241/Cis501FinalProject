@@ -13,7 +13,7 @@ namespace serverChat
     // Handle the login and the signup process
     class Access : WebSocketBehavior
     {
-        ServerModel data = new ServerModel();
+        ServerModel data = ServerModel.Instance;
         ModelDataInteraction dataInt;
 
         #region Class Manipulation

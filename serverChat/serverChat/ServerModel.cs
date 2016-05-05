@@ -9,9 +9,24 @@ namespace serverChat
 {
     public class ServerModel
     {
+        // Instance of the singleton
+        private static ServerModel inst;
         // Declare the server lists
-        private List<ServerConversation> conversationList = new List<ServerConversation>();
+        private List<ServerConversation> conversationList = new List<ServerConversation>();;
         private List<ServerUser> userList = new List<ServerUser>();
+        
+        // One-time instantiation constructor
+        public static ServerModel Instance
+        {
+            get {
+                if (inst == null)
+                {
+                    inst = new ServerModel();
+                }
+
+                return inst;
+            }
+        }
 
         // Get Conversation List
         //
