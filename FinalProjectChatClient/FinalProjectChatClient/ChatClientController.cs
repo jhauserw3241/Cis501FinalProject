@@ -137,8 +137,10 @@ namespace FinalProjectChatClient
                     if (!clientForm.AddContactTextBox.Text.Equals(String.Empty))
                     {
                         ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, clientForm.AddContactTextBox.Text));
+
+                        WaitForResponse();
+                        if (Output != null) Output("ClrAddCont");
                     }
-                    if (Output != null) Output("ClrAddCont");
                     e.SuppressKeyPress = true;
                 }
                 else if (sender.Equals(clientForm.RemoveContactTextBox))
@@ -150,7 +152,14 @@ namespace FinalProjectChatClient
                         if (participant != null)
                         {
                             ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, participant.Username));
+                            WaitForResponse();
                         }
+                        else
+                        {
+                            ChatClientForm.ShowError("That username is not in your contacts.");
+                        }
+
+                        if (Output != null) Output("ClrRemCont");
                     }
                     e.SuppressKeyPress = true;
                 }
@@ -254,13 +263,7 @@ namespace FinalProjectChatClient
                     case DialogResult.Yes:
                         clientModel.State = FlowState.Access;
                         LoginAction();
-                        waitForm.Show();
-                        waitForm.Refresh();
-                        while (clientModel.WaitFlag)
-                        {
-                            System.Threading.Thread.Sleep(500);
-                        }
-                        waitForm.Hide();
+                        WaitForResponse();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
@@ -280,13 +283,7 @@ namespace FinalProjectChatClient
                     case DialogResult.No:
                         clientModel.State = FlowState.Access;
                         SignupAction();
-                        waitForm.Show();
-                        waitForm.Refresh();
-                        while (clientModel.WaitFlag)
-                        {
-                            System.Threading.Thread.Sleep(500);
-                        }
-                        waitForm.Hide();
+                        WaitForResponse();
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = signupForm.Username;
@@ -407,13 +404,7 @@ namespace FinalProjectChatClient
             ws.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
             // Wait for a response from the server
             clientModel.WaitFlag = true;
-            waitForm.Show();
-            waitForm.Refresh();
-            while (clientModel.WaitFlag)
-            {
-                System.Threading.Thread.Sleep(500);
-            }
-            waitForm.Hide();
+            WaitForResponse();
             // If there was no error, add participant to client side
             if (!clientModel.ErrorFlag)
             {
@@ -441,13 +432,7 @@ namespace FinalProjectChatClient
                 ws.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
                 // Wait for a response from the server
                 clientModel.WaitFlag = true;
-                waitForm.Show();
-                waitForm.Refresh();
-                while (clientModel.WaitFlag)
-                {
-                    System.Threading.Thread.Sleep(500);
-                }
-                waitForm.Hide();
+                WaitForResponse();
                 // Make sure there were no errors
                 if (!clientModel.ErrorFlag)
                 {
@@ -484,13 +469,7 @@ namespace FinalProjectChatClient
             ws.Send(String.Format("<udConv conv=\"{0}\" newConv=\"{1}\" />", conv, newName));
             // Wait for a response from the server
             clientModel.WaitFlag = true;
-            waitForm.Show();
-            waitForm.Refresh();
-            while (clientModel.WaitFlag)
-            {
-                System.Threading.Thread.Sleep(500);
-            }
-            waitForm.Hide();
+            WaitForResponse();
             // Make sure there were no errors
             if (!clientModel.ErrorFlag)
             {
@@ -760,12 +739,7 @@ namespace FinalProjectChatClient
             while (!exit)
             {
                 ws.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
-                waitForm.Refresh();
-                while (clientModel.WaitFlag)
-                {
-                    System.Threading.Thread.Sleep(500);
-                }
-                waitForm.Hide();
+                WaitForResponse();
                 if (clientModel.State == FlowState.Exit)
                 {
                     exit = true;
@@ -978,6 +952,24 @@ namespace FinalProjectChatClient
             {
                 return "The passwords don't match.";
             }
+        }
+
+        #endregion
+
+        #region Misc.
+
+        /// <summary>
+        /// Wait for a response from the server.
+        /// </summary>
+        private void WaitForResponse()
+        {
+            waitForm.Show();
+            waitForm.Refresh();
+            while (clientModel.WaitFlag)
+            {
+                System.Threading.Thread.Sleep(500);
+            }
+            waitForm.Hide();
         }
 
         #endregion

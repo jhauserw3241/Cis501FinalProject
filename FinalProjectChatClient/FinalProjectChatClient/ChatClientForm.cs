@@ -65,6 +65,9 @@ namespace FinalProjectChatClient
                 case "ClrAddCont":
                     addContactTextBox.Text = String.Empty;
                     break;
+                case "ClrRemCont":
+                    removeContactTextBox.Text = String.Empty;
+                    break;
                 case "CreateConv":
                     CreateConversationTab(param1);
                     break;
