@@ -13,7 +13,7 @@ namespace serverChat
     // Handle generic messages sent to the server from the client
     class Chat : WebSocketBehavior
     {
-        ServerModel data = new ServerModel();
+        ServerModel data = ServerModel.Instance;
         ModelDataInteraction dataInt;
         public event ChatHandler Input;
 
@@ -54,56 +54,67 @@ namespace serverChat
             //Message output = new Message();
             Dictionary<string, string> output = new Dictionary<string, string>();
 
-            switch (input.GetValue("action"))
+            if (input.ContainsKey("action"))
             {
-                case "addCont":
-                    // TODO: Send update to everyone involved
-                    output = ProcessAddContactRequest(input);
-                    if (output.ContainsKey("all"))
-                    {
+                switch (input.GetValue("action"))
+                {
+                    case "addCont":
+                        // TODO: Send update to everyone involved
+                        output = ProcessAddContactRequest(input);
+                        if (output.ContainsKey("all"))
+                        {
+                            Sessions.Broadcast(output["all"]);
+                        }
+                        else
+                        {
+                            Sessions.Broadcast(output["source"]);
+                        }
+                        break;
+                    case "rmCont":
+                        // TODO: Update all users, not just source
+                        output = ProcessRemoveContactRequest(input);
+                        if (output.ContainsKey("all"))
+                        {
+                            Sessions.Broadcast(output["all"]);
+                        }
+                        else
+                        {
+                            Sessions.Broadcast(output["source"]);
+                        }
+                        break;
+                    case "udConv":
+                        // TODO: Update all the users, not just source
+                        output = ProcessUpdateConvRequest(input);
                         Sessions.Broadcast(output["all"]);
-                    }
-                    else
-                    {
-                        Sessions.Broadcast(output["source"]);
-                    }
-                    break;
-                case "rmCont":
-                    // TODO: Update all users, not just source
-                    output = ProcessRemoveContactRequest(input);
-                    if (output.ContainsKey("all"))
-                    {
+                        break;
+                    case "udCont":
+                        // TODO: Verify user existence
+                        // TODO: Update the specified parts of the user object
+                        output = ProcessUpdateContRequest(input);
                         Sessions.Broadcast(output["all"]);
-                    }
-                    else
-                    {
+                        break;
+                    case "msg":
+                        // TODO: Pass message
+                        output = ProcessMessageRequest(input);
                         Sessions.Broadcast(output["source"]);
-                    }
-                    break;
-                case "udConv":
-                    // TODO: Update all the users, not just source
-                    output = ProcessUpdateConvRequest(input);
-                    Sessions.Broadcast(output["all"]);
-                    break;
-                case "udCont":
-                    // TODO: Verify user existence
-                    // TODO: Update the specified parts of the user object
-
-                    break;
-                case "msg":
-                    // TODO: Pass message
-
-                    break;
-                case "logout":
-                    // TODO: Remove their cookie from the list
-                    // TODO: Send update to everyone involved
-                    output = ProcessLogoutRequest(input);
-                    Sessions.Broadcast(output["source"]);
-                    break;
-                default:
-                    // TODO: Pass error message
-
-                    break;
+                        break;
+                    case "logout":
+                        // TODO: Remove their cookie from the list
+                        // TODO: Send update to everyone involved
+                        output = ProcessLogoutRequest(input);
+                        Sessions.Broadcast(output["source"]);
+                        break;
+                    default:
+                        // TODO: Pass error message
+                        output = ProcessErrorInvalidAction(input);
+                        Sessions.Broadcast(output["source"]);
+                        break;
+                }
+            }
+            else
+            {
+                output = ProcessErrorNoAction();
+                Sessions.Broadcast(output["source"]);
             }
         }
         #endregion
@@ -392,6 +403,53 @@ namespace serverChat
 
                 output.Add(curUsername, curMsg.Serialize());
             }
+
+            return output;
+        }
+        
+        // Process Sending a Message
+        //
+        // Process a request to send a message to a conversation
+        // @param input The message containing the input information from the client
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessMessageRequest(Message input)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            input.RemoveElement("source");
+            output.Add("source", input.Serialize());
+            return output;
+        }
+
+        // Process an Invalid Action Request
+        //
+        // Process a request that is not handled
+        // @param input The message containing the input information from the client
+        // @return a dictionary containing the xml response
+        public Dictionary<string, string> ProcessErrorInvalidAction(Message input)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            Message curMsg = new Message();
+            string tag = input.GetValue("action");
+
+            curMsg.AddElement("error", "The following action tag was not handled:  " + tag);
+
+            output.Add("source", curMsg.Serialize());
+
+            return output;
+        }
+
+        // Process an Invalid Request
+        //
+        // Process a request that isn't an action request\
+        // @return a dictionary containing the xml response
+        public Dictionary<string,string> ProcessErrorNoAction()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            Message curMsg = new Message();
+
+            curMsg.AddElement("error", "There was no action tag");
+
+            output.Add("source", curMsg.Serialize());
 
             return output;
         }

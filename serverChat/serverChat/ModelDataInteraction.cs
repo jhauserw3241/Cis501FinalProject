@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace serverChat
 {
@@ -401,6 +403,32 @@ namespace serverChat
 
             return "";
         }
+        #endregion
+
+        #region Save/Load Data
+
+        public static void SerializeUserList(string path)
+        {
+            XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
+
+            using (Stream stream = File.Open(path, FileMode.Create))
+            {
+                dataSerializer.Serialize(stream, data.GetUserList());
+                stream.Close();
+            }
+        }
+
+        public static void DeserializeUserList(string path)
+        {
+            XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
+
+            using (Stream stream = File.Open(path, FileMode.Open))
+            {
+                data.SetUserList((List<ServerUser>)dataSerializer.Deserialize(stream));
+                stream.Close();
+            }
+        }
+
         #endregion
     }
 }

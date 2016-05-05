@@ -13,7 +13,7 @@ namespace serverChat
     // Handle the login and the signup process
     class Access : WebSocketBehavior
     {
-        ServerModel data = new ServerModel();
+        ServerModel data = ServerModel.Instance;
         ModelDataInteraction dataInt;
 
         #region Class Manipulation
@@ -50,19 +50,27 @@ namespace serverChat
             input.Deserialize();
             Message output = new Message();
 
-            switch (input.GetValue("action"))
+            if (input.ContainsKey("action"))
             {
-                case "sign":
-                    output.SetSerMsg(HandleSignUpRequest(input));
-                    break;
-                case "login":
-                    // Assign cookie and add it to the list
-                    output.SetSerMsg(HandleLoginRequest(input));
-                    break;
-                default:
-                    // TODO: Pass error message
-
-                    break;
+                switch (input.GetValue("action"))
+                {
+                    case "sign":
+                        output.SetSerMsg(HandleSignUpRequest(input));
+                        break;
+                    case "login":
+                        // Assign cookie and add it to the list
+                        output.SetSerMsg(HandleLoginRequest(input));
+                        break;
+                    default:
+                        // TODO: Pass error message
+                        string tag = input.GetValue("action");
+                        output.AddElement("error", "The following action tag was not handled:  " + tag);
+                        break;
+                }
+            }
+            else
+            {
+                output.AddElement("error", "There was no action tag");
             }
 
             Sessions.Broadcast(output.Serialize());

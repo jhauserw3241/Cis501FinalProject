@@ -11,7 +11,7 @@ namespace serverChat
     class ServerSocket
     {
         WebSocketServer wss = new WebSocketServer(8001);
-        ServerModel data = new ServerModel();
+        ServerModel data = ServerModel.Instance;
         public event ChatHandler cOutput;
         public event AccessHandler aOutput;
 
@@ -40,6 +40,7 @@ namespace serverChat
         // @param msg The message to send to the recipient
         public void AccessTransmit(string recipient, string msg)
         {
+
             aOutput(recipient, msg);
         }
 

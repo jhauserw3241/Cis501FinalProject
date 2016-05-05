@@ -13,7 +13,7 @@ namespace serverChat
     public partial class ServerView : Form
     {
         // Declare objects
-        private ServerModel data = new ServerModel();
+        private ServerModel data = ServerModel.Instance;
         private ServerUser user = new ServerUser();
         private ServerConversation conv = new ServerConversation();
         private List<ServerUser> viewUserList = new List<ServerUser>();
@@ -25,10 +25,8 @@ namespace serverChat
         // Constructor
         //
         // @param d The model object
-        public ServerView(ServerModel d)
+        public ServerView()
         {
-            data = d;
-
             // Initialize the form
             InitializeComponent();
         }
