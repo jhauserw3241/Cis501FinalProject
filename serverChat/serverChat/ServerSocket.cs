@@ -11,7 +11,7 @@ namespace serverChat
     class ServerSocket
     {
         WebSocketServer wss = new WebSocketServer(8001);
-        ServerModel data = new ServerModel();
+        ServerModel data = ServerModel.Instance;
 
         // Add
         //

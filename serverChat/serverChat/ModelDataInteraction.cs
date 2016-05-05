@@ -407,7 +407,7 @@ namespace serverChat
 
         #region Save/Load Data
 
-        private void SerializeUserList(string path)
+        public static void SerializeUserList(string path)
         {
             XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
 
@@ -418,7 +418,7 @@ namespace serverChat
             }
         }
 
-        private void DeserializeUserList(string path)
+        public static void DeserializeUserList(string path)
         {
             XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
 

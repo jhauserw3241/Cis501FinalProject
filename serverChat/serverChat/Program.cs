@@ -27,9 +27,12 @@ namespace serverChat
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Create objects
-            ServerModel data = new ServerModel();
+            ServerModel data = ServerModel.Instance;
             GuiController cont = new GuiController();
             ServerView view = new ServerView(data);
+
+            // Load the users from the default file
+            ModelDataInteraction.DeserializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
 
             // Create connection from view to controller
             view.ConversationsButton.Click += cont.HandleGenericInput;
@@ -55,6 +58,9 @@ namespace serverChat
 
             // Stop the server
             wss.Stop();
+
+            // Save the users to the default file
+            ModelDataInteraction.SerializeUserList(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "ServerUsers.xml");
         }
     }
 }
