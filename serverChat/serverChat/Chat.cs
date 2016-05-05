@@ -53,67 +53,65 @@ namespace serverChat
             //Message output = new Message();
             Dictionary<string, string> output = new Dictionary<string, string>();
 
-            if (input.ContainsKey("action"))
-            {
-                switch (input.GetValue("action"))
-                {
-                    case "addCont":
-                        // TODO: Send update to everyone involved
-                        output = ProcessAddContactRequest(input);
-                        if (output.ContainsKey("all"))
-                        {
-                            Sessions.Broadcast(output["all"]);
-                        }
-                        else
-                        {
-                            Sessions.Broadcast(output["source"]);
-                        }
-                        break;
-                    case "rmCont":
-                        // TODO: Update all users, not just source
-                        output = ProcessRemoveContactRequest(input);
-                        if (output.ContainsKey("all"))
-                        {
-                            Sessions.Broadcast(output["all"]);
-                        }
-                        else
-                        {
-                            Sessions.Broadcast(output["source"]);
-                        }
-                        break;
-                    case "udConv":
-                        // TODO: Update all the users, not just source
-                        output = ProcessUpdateConvRequest(input);
-                        Sessions.Broadcast(output["all"]);
-                        break;
-                    case "udCont":
-                        // TODO: Verify user existence
-                        // TODO: Update the specified parts of the user object
-                        output = ProcessUpdateContRequest(input);
-                        Sessions.Broadcast(output["all"]);
-                        break;
-                    case "msg":
-                        // TODO: Pass message
-                        output = ProcessMessageRequest(input);
-                        Sessions.Broadcast(output["source"]);
-                        break;
-                    case "logout":
-                        // TODO: Remove their cookie from the list
-                        // TODO: Send update to everyone involved
-                        output = ProcessLogoutRequest(input);
-                        Sessions.Broadcast(output["source"]);
-                        break;
-                    default:
-                        // TODO: Pass error message
-                        output = ProcessErrorInvalidAction(input);
-                        Sessions.Broadcast(output["source"]);
-                        break;
-                }
-            }
-            else
+            if (!input.ContainsKey("action"))
             {
                 output = ProcessErrorNoAction();
                 Sessions.Broadcast(output["source"]);
+                return;
+            }
+            switch (input.GetValue("action"))
+            {
+                case "addCont":
+                    // TODO: Send update to everyone involved
+                    output = ProcessAddContactRequest(input);
+                    if (output.ContainsKey("all"))
+                    {
+                        Sessions.Broadcast(output["all"]);
+                    }
+                    else
+                    {
+                        Sessions.Broadcast(output["source"]);
+                    }
+                    break;
+                case "rmCont":
+                    // TODO: Update all users, not just source
+                    output = ProcessRemoveContactRequest(input);
+                    if (output.ContainsKey("all"))
+                    {
+                        Sessions.Broadcast(output["all"]);
+                    }
+                    else
+                    {
+                        Sessions.Broadcast(output["source"]);
+                    }
+                    break;
+                case "udConv":
+                    // TODO: Update all the users, not just source
+                    output = ProcessUpdateConvRequest(input);
+                    Sessions.Broadcast(output["all"]);
+                    break;
+                case "udCont":
+                    // TODO: Verify user existence
+                    // TODO: Update the specified parts of the user object
+                    output = ProcessUpdateContRequest(input);
+                    Sessions.Broadcast(output["all"]);
+                    break;
+                case "msg":
+                    // TODO: Pass message
+                    output = ProcessMessageRequest(input);
+                    Sessions.Broadcast(output["source"]);
+                    break;
+                case "logout":
+                    // TODO: Remove their cookie from the list
+                    // TODO: Send update to everyone involved
+                    output = ProcessLogoutRequest(input);
+                    Sessions.Broadcast(output["source"]);
+                    break;
+                default:
+                    // TODO: Pass error message
+                    output = ProcessErrorInvalidAction(input);
+                    Sessions.Broadcast(output["source"]);
+                    break;
             }
         }
         #endregion
