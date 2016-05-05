@@ -230,7 +230,7 @@ namespace FinalProjectChatClient
         /// <param name="e">The supplied arguments.</param>
         public void HandleMouseInput(object sender, MouseEventArgs e)
         {
-            if (sender.Equals(clientForm.ContactsList))
+            if (sender.Equals(clientForm.ContactsList) && clientModel.ContactList.Count > 0)
             {
                 Contact cont = ((Contact)clientForm.ContactsList.SelectedItem);
                 string name = cont.DisplayName;
@@ -312,6 +312,8 @@ namespace FinalProjectChatClient
         public void HandleMessage(object sender, MessageEventArgs e)
         {
             Dictionary<string, string> mssg = ReadXML(e.Data);
+
+            MessageBox.Show("Message Recieved");
 
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
