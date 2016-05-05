@@ -38,10 +38,10 @@ namespace FinalProjectChatClient
         /// Creates a new instance of a chat client form.
         /// </summary>
         /// <param name="model">The model from which most client side information is pulled.</param>
-        public ChatClientForm(ChatClientModel model)
+        public ChatClientForm()
         {
             InitializeComponent();
-            clientModel = model;
+            clientModel = ChatClientModel.Instance;
             conversationTabs = new List<Tuple<TabPage, Label>>();
         }
 

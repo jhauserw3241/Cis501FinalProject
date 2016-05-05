@@ -19,15 +19,15 @@ namespace FinalProjectChatClient
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Create model shared by major components
-            ChatClientModel clientModel = new ChatClientModel();
+            ChatClientModel clientModel = ChatClientModel.Instance;
 
             // Create controller for conversation creation form
-            ConvCreateController convCreate = new ConvCreateController(clientModel, new ConvCreatePopUp());
+            ConvCreateController convCreate = new ConvCreateController(new ConvCreatePopUp());
 
             // Create central controller
-            ChatClientController clientController = new ChatClientController(clientModel);
+            ChatClientController clientController = new ChatClientController();
             // Create and add forms to controller
-            clientController.ClientForm = new ChatClientForm(clientModel);
+            clientController.ClientForm = new ChatClientForm();
             clientController.CreateForm = convCreate.PopUp;
             clientController.EntryForm = new EntryPopUp();
             clientController.LoginForm = new LoginPopUp();

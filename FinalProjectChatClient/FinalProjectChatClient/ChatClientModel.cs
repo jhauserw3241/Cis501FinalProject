@@ -9,6 +9,9 @@ namespace FinalProjectChatClient
 {
     public class ChatClientModel
     {
+        #region Fields
+        private static ChatClientModel instance;
+        #endregion
 
         #region Properties
 
@@ -16,6 +19,18 @@ namespace FinalProjectChatClient
         public Dictionary<string, List<string>> ConversationList { get; set; }
         public string DisplayName { get; set; }
         public bool ErrorFlag { get; set; }
+        public static ChatClientModel Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ChatClientModel();
+                }
+
+                return instance;
+            }
+        }
         public string Username { get; set; }
         public FlowState State { get; set; }
         public string Status { get; set; }

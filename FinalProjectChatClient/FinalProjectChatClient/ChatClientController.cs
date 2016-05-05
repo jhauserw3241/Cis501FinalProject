@@ -64,12 +64,10 @@ namespace FinalProjectChatClient
         /// Constructor for the ChatClientController.
         /// </summary>
         /// <param name="model">The model the constructor will be working with.</param>
-        public ChatClientController(ChatClientModel model)
+        public ChatClientController()
         {
-            clientModel = model;
+            clientModel = ChatClientModel.Instance;
             waitForm = new WaitForm();
-            ws = new WebSocket("ws://127.0.0.1:8001/Access");
-            ws.OnMessage += HandleMessage;
         }
 
         #region Input Handlers
@@ -244,6 +242,8 @@ namespace FinalProjectChatClient
             DialogResult st = DialogResult.None;
             bool exit = false;
 
+            ws = new WebSocket("ws://127.0.0.1:8001/Access");
+            ws.OnMessage += HandleMessage;
             ws.Connect();
 
             while (!exit)
@@ -267,7 +267,7 @@ namespace FinalProjectChatClient
                             exit = true;
 
                             ws.Close();
-                            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
+                            ws = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
                             ws.OnMessage += HandleMessage;
                             ws.Connect();
                         }
@@ -295,7 +295,7 @@ namespace FinalProjectChatClient
                             exit = true;
 
                             ws.Close();
-                            ws = new WebSocket("ws://127.0.0.1:8001/Chat");
+                            ws = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
                             ws.OnMessage += HandleMessage;
                             ws.Connect();
                         }
