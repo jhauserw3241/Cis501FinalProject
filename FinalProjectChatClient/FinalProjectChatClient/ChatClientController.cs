@@ -24,10 +24,10 @@ namespace FinalProjectChatClient
         private LoginPopUp loginForm;
         private SignupPopUp signupForm;
         private WaitForm waitForm;
-        private WebSocket ws;
+        private WebSocket wsa, wsc;
 
         #endregion
-
+        
         #region Properties
         
         public ChatClientForm ClientForm
@@ -82,13 +82,13 @@ namespace FinalProjectChatClient
             if (sender.Equals(clientForm.AwayStatusOption))
             {
                 clientModel.Status = "Away";
-                ws.Send(String.Format("<udCont source=\"{0}\" state=\"Away\" />", clientModel.Username));
+                wsc.Send(String.Format("<udCont source=\"{0}\" state=\"Away\" />", clientModel.Username));
                 if (Output != null) Output("UpdateStatus");
             }
             else if (sender.Equals(clientForm.OnlineStatusOption))
             {
                 clientModel.Status = "Online";
-                ws.Send(String.Format("<udCont source=\"{0}\" state=\"Online\" />", clientModel.Username));
+                wsc.Send(String.Format("<udCont source=\"{0}\" state=\"Online\" />", clientModel.Username));
                 if (Output != null) Output("UpdateStatus");
             }
             else if (sender.Equals(clientForm.CreateConversationOption))
@@ -111,7 +111,7 @@ namespace FinalProjectChatClient
             {
                 TabPage page = clientForm.ConversationTabController.SelectedTab;
 
-                ws.Send(String.Format("<udConv conv=\"{0}\" leave=\"{1}\" />", page.Text, clientModel.Username));
+                wsc.Send(String.Format("<udConv conv=\"{0}\" leave=\"{1}\" />", page.Text, clientModel.Username));
                 clientModel.ConversationList.Remove(page.Text);
                 if (Output != null) Output("LeaveConv");
             }
@@ -137,7 +137,7 @@ namespace FinalProjectChatClient
                     e.SuppressKeyPress = true;
                     if (!clientForm.AddContactTextBox.Text.Equals(String.Empty))
                     {
-                        ws.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, clientForm.AddContactTextBox.Text));
+                        wsc.Send(String.Format("<addCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, clientForm.AddContactTextBox.Text));
 
                         WaitForResponse();
                         if (Output != null) Output("ClrAddCont");
@@ -151,7 +151,7 @@ namespace FinalProjectChatClient
 
                         if (participant != null)
                         {
-                            ws.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, participant.Username));
+                            wsc.Send(String.Format("<rmCont source=\"{0}\" username=\"{1}\" />", clientModel.Username, participant.Username));
                             WaitForResponse();
                         }
                         else
@@ -199,7 +199,7 @@ namespace FinalProjectChatClient
                     {
                         if (clientForm.ConversationTabController.Controls.Count > 0)
                         {
-                            ws.Send(String.Format("<msg source=\"{0}\" conv=\"{1}\" text=\"{2}\" />", clientModel.Username, clientForm.ConversationTabController.SelectedTab.Text, FormatForChat(clientForm.MessageBox.Text)));
+                            wsc.Send(String.Format("<msg source=\"{0}\" conv=\"{1}\" text=\"{2}\" />", clientModel.Username, clientForm.ConversationTabController.SelectedTab.Text, FormatForChat(clientForm.MessageBox.Text)));
                             if (Output != null) Output("ClrMsg");
                             clientModel.WaitFlag = true;
                             while (clientModel.WaitFlag)
@@ -215,7 +215,7 @@ namespace FinalProjectChatClient
                     if (!clientForm.ChangeDispNameTextBox.Text.Equals(String.Empty))
                     {
                         clientModel.DisplayName = clientForm.ChangeDispNameTextBox.Text;
-                        ws.Send(String.Format("<udCont source=\"{0}\" dispName=\"{1}\" />", clientModel.Username, clientModel.DisplayName));
+                        wsc.Send(String.Format("<udCont source=\"{0}\" dispName=\"{1}\" />", clientModel.Username, clientModel.DisplayName));
                         if (Output != null) Output("UpdateName");
                     }
                     e.SuppressKeyPress = true;
@@ -251,9 +251,9 @@ namespace FinalProjectChatClient
             DialogResult st = DialogResult.None;
             bool exit = false;
 
-            ws = new WebSocket("ws://127.0.0.1:8001/Access");
-            ws.OnMessage += HandleMessage;
-            ws.Connect();
+            wsa = new WebSocket("ws://127.0.0.1:8001/Access");
+            wsa.OnMessage += HandleMessage;
+            wsa.Connect();
 
             while (!exit)
             {
@@ -268,14 +268,14 @@ namespace FinalProjectChatClient
                             clientModel.Username = loginForm.Username;
                             exit = true;
 
-                            ws.Close();
-                            ws = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
-                            ws.OnMessage += HandleMessage;
-                            ws.Connect();
+                            //wsa.Close();
+                            wsc = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
+                            wsc.OnMessage += HandleMessage;
+                            wsc.Connect();
                         }
                         else if (clientModel.ErrorFlag)
                         {
-                            ws.Send("<login username=\"" + loginForm.Username + "\" error=\"Invalid contact list.\">");
+                            wsa.Send("<login username=\"" + loginForm.Username + "\" error=\"Invalid contact list.\">");
                             clientModel.ErrorFlag = false;
                         }
                         break;
@@ -289,15 +289,15 @@ namespace FinalProjectChatClient
                             if (Output != null) Output("UpdateName");
                             exit = true;
 
-                            ws.Close();
-                            ws = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
-                            ws.OnMessage += HandleMessage;
-                            ws.Connect();
+                            //ws.Close();
+                            wsc = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
+                            wsc.OnMessage += HandleMessage;
+                            wsc.Connect();
                         }
                         break;
                     case DialogResult.Cancel:
                         exit = true;
-                        ws.Close();
+                        wsa.Close();
                         Application.Exit();
                         break;
                 }
@@ -401,7 +401,7 @@ namespace FinalProjectChatClient
         /// <param name="participant">The participant to add.</param>
         private void AddConvParticipant(string name, string participant)
         {
-            ws.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
+            wsc.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
             // Wait for a response from the server
             WaitForResponse();
             // If there was no error, add participant to client side
@@ -428,7 +428,7 @@ namespace FinalProjectChatClient
                 string conts = String.Join(",", party);
 
                 // Send initial request to server
-                ws.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
+                wsc.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
                 // Wait for a response from the server
                 WaitForResponse();
                 // Make sure there were no errors
@@ -464,7 +464,7 @@ namespace FinalProjectChatClient
         private void RenameConv(string conv, string newName)
         {
             // Send initial request to server
-            ws.Send(String.Format("<udConv conv=\"{0}\" newConv=\"{1}\" />", conv, newName));
+            wsc.Send(String.Format("<udConv conv=\"{0}\" newConv=\"{1}\" />", conv, newName));
             // Wait for a response from the server
             WaitForResponse();
             // Make sure there were no errors
@@ -704,7 +704,7 @@ namespace FinalProjectChatClient
 
                         if (result.Equals("Success"))
                         {
-                            ws.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                            wsa.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
                             WaitForResponse();
                         }
                         else
@@ -737,7 +737,7 @@ namespace FinalProjectChatClient
 
             while (!exit)
             {
-                ws.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
+                wsc.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
                 WaitForResponse();
                 if (clientModel.State == FlowState.Exit)
                 {
@@ -745,7 +745,8 @@ namespace FinalProjectChatClient
                 }
             }
 
-            ws.Close();
+            wsa.Close();
+            wsc.Close();
             Application.Exit();
         }
 
@@ -768,7 +769,7 @@ namespace FinalProjectChatClient
 
                         if (result.Equals("Success"))
                         {
-                            ws.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                            wsa.Send(String.Format("<sign username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
                             WaitForResponse();
                         }
                         else
