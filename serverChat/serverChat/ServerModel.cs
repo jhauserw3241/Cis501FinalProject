@@ -107,6 +107,11 @@ namespace serverChat
         {
             XmlSerializer dataSerializer = new XmlSerializer(typeof(List<ServerUser>));
 
+            if (!Directory.Exists(path))
+            {
+                return;
+            }
+
             using (Stream stream = File.Open(path, FileMode.Open))
             {
                 SetUserList((List<ServerUser>)dataSerializer.Deserialize(stream));
