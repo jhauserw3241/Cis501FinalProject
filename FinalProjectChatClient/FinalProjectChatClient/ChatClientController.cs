@@ -488,7 +488,9 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleAccessMessage(Dictionary<string, string> mssg)
         {
-            string[] un, dn, st;
+            string[] un = new string[0],
+                dn = new string[0],
+                st = new string[0];
 
             if (mssg.ContainsKey("error"))
             {
@@ -496,9 +498,18 @@ namespace FinalProjectChatClient
             }
             else if (mssg["action"].Equals("login"))
             {
-                un = mssg["contUsername"].Split(',');
-                dn = mssg["contDispName"].Split(',');
-                st = mssg["state"].Split(',');
+                if (mssg.ContainsKey("contUsername"))
+                {
+                    un = mssg["contUsername"].Split(',');
+                }
+                if (mssg.ContainsKey("contDisplName"))
+                {
+                    dn = mssg["contDisplName"].Split(',');
+                }
+                if (mssg.ContainsKey("contState"))
+                {
+                    st = mssg["contState"].Split(',');
+                }
 
                 if (un.Length == dn.Length && un.Length == st.Length)
                 {
@@ -705,7 +716,7 @@ namespace FinalProjectChatClient
 
                         if (result.Equals("Success"))
                         {
-                            wsa.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                            wsa.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", loginForm.Username, loginForm.Password));
                             WaitForResponse();
                         }
                         else

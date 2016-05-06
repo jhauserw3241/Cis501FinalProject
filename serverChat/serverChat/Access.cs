@@ -164,7 +164,7 @@ namespace serverChat
             dataInt.UpdateUserStatus(username, STATUS.Online);
 
             LoginMessage sourceMsg = new LoginMessage(user);
-            output.Add("source", sourceMsg.Serialize());
+            output.Add("source", sourceMsg.GetMessage());
             return output;
         }
 

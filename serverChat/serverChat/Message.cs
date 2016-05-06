@@ -118,13 +118,8 @@ namespace serverChat
             }
 
             // Add each of the attributes to the XML string
-            for (int i = 0; i < msgEles.Count; i++)
-            {
-                KeyValuePair<string, string> curEle = msgEles.ElementAt(i);
-
+            foreach (KeyValuePair<string, string> curEle in msgEles) {
                 output += string.Format("{0}=\"{1}\" ", curEle.Key, curEle.Value);
-
-                msgEles.Remove(curEle.Key);
             }
 
             output += "/>";
