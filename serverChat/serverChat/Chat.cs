@@ -116,25 +116,48 @@ namespace serverChat
         {
             Message curMsg = new Message();
             Dictionary<string, string> output = new Dictionary<string, string>();
-            string sourceUsername = input.GetValue("source");
-            string newContactUsername = input.GetValue("username");
 
-            ServerUser sourceUser = dataInt.GetUserObj(sourceUsername);
-            // Verify that the source user is an existing user
-            if (sourceUser == new ServerUser())
+            curMsg.AddElement("action", "addCont");
+
+            // Get source user username
+            if (!input.ContainsKey("source"))
             {
-                curMsg.AddElement("action", "error");
+                curMsg.AddElement("error", "The source username wasn't provided.");
+                output.Add("source", curMsg.Serialize());
+                return output;
+            }
+            string sourceUsername = input.GetValue("source");
+
+            // Get new contact user username
+            if (!input.ContainsKey("username"))
+            {
+                curMsg.AddElement("error", "The new contact username wasn't provided.");
+            }
+            string newContactUsername = input.GetValue("username");
+            
+            // Get source user
+            ServerUser sourceUser = dataInt.GetUserObj(sourceUsername);
+            if (sourceUser == null)
+            {
                 curMsg.AddElement("error", "The source user doesn't exist.");
-                output.Add("all", curMsg.Serialize());
+                output.Add("source", curMsg.Serialize());
+                return output;
+            }
+
+            // Get new contact user
+            ServerUser newContUser = dataInt.GetUserObj(newContactUsername);
+            if (newContUser == null)
+            {
+                curMsg.AddElement("error", "The new contact user doesn't exist.");
+                output.Add("source", curMsg.Serialize());
                 return output;
             }
 
             // Verify that the new contact isn't already a contact
             if (sourceUser.GetContactListUsernames().Contains(newContactUsername))
             {
-                curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "The user to be added as a contact is already a contact.");
-                output.Add("all", curMsg.Serialize());
+                output.Add("source", curMsg.Serialize());
                 return output;
             }
 
@@ -142,9 +165,8 @@ namespace serverChat
             ServerUser newContact = dataInt.GetUserObj(newContactUsername);
             if (newContact == new ServerUser())
             {
-                curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "The user to be added as a contact doesn't exist.");
-                output.Add("all", curMsg.Serialize());
+                output.Add("source", curMsg.Serialize());
                 return output;
             }
 
@@ -154,9 +176,8 @@ namespace serverChat
             users.Add(newContact);
             if (!dataInt.UpdateContactRelationships(users, "add"))
             {
-                curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "An error occurred during the contact addition process.");
-                output.Add("all", curMsg.Serialize());
+                output.Add("source", curMsg.Serialize());
                 return output;
             }
 
@@ -252,7 +273,7 @@ namespace serverChat
             }
             string convName = input.GetValue("conv");
             ServerConversation conv = dataInt.GetConvObj(convName);
-            if (conv == new ServerConversation())
+            if (conv == null)
             {
                 curMsg.AddElement("error", "The conversation doesn't exist.");
                 output.Add("source", curMsg.Serialize());

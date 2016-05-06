@@ -174,7 +174,7 @@ namespace serverChat
                 }
             }
 
-            return new ServerConversation();
+            return null;
         }
 
         // Get ID
@@ -210,7 +210,7 @@ namespace serverChat
                 }
             }
 
-            return new ServerUser();
+            return null;
         }
         #endregion
 
