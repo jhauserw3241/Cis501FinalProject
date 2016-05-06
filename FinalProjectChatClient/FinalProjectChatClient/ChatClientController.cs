@@ -95,7 +95,7 @@ namespace FinalProjectChatClient
             {
                 if (createForm.ShowDialog() == DialogResult.OK)
                 {
-                    string name = createForm.Name;
+                    string name = createForm.ConvName;
 
                     if (!clientModel.ConversationList.ContainsKey(name))
                     {
@@ -330,7 +330,7 @@ namespace FinalProjectChatClient
                     HandleRemContactMessage(mssg);
                     break;
                 case "udConv":
-                    if (mssg.ContainsKey("addPa"))
+                    if (mssg.ContainsKey("par"))
                     {
                         HandleParticipantMessage(mssg);
                     }
@@ -423,8 +423,9 @@ namespace FinalProjectChatClient
         /// <param name="party">The participants in the conversation.</param>
         private void CreateConversation(string name, List<string> party)
         {
+            party.Add(clientModel.Username);
             // Make sure there are actually people in the conversation
-            if (party.Count > 0)
+            if (party.Count > 1)
             {
                 string conts = String.Join(",", party);
 
@@ -432,18 +433,11 @@ namespace FinalProjectChatClient
                 wsc.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, conts));
                 // Wait for a response from the server
                 WaitForResponse();
-                // Make sure there were no errors
-                if (!clientModel.ErrorFlag)
-                {
-                    // Update Client Side and leave loop
-                    clientModel.ConversationList.Add(name, party);
-                    if (Output != null) Output("CreateConv", name);
-                }
             }
             // If the party is empty, then show an error and leave the loop
             else
             {
-                ChatClientForm.ShowError("There was no one else in the conversation!");
+                ChatClientForm.ShowError("There is no one to participate in the conversation!");
             }
         }
 
@@ -548,14 +542,12 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The content of this message.</param>
         private void HandleAddContactMessage(Dictionary<string, string> mssg)
         {
-            MessageBox.Show("Contact Message Received.");
             if (mssg.ContainsKey("error"))
             {
                 ChatClientForm.ShowError(mssg["error"]);
             }
             else
             {
-                MessageBox.Show("Adding Contact...");
                 Contact cont = new Contact(mssg["username"], mssg["dispName"], mssg["state"]);
                 clientModel.ContactList.Add(cont);
                 if (Output != null) Output("AddCont");
@@ -639,6 +631,11 @@ namespace FinalProjectChatClient
                 if (clientModel.ConversationList.ContainsKey(name))
                 {
                     clientModel.ConversationList[name].AddRange(participants);
+                    if (Output != null)
+                    {
+                        Output("CreateConv", name);
+                        Output("Message", name, mssg["text"]);
+                    }
                 }
                 else
                 {
@@ -646,7 +643,6 @@ namespace FinalProjectChatClient
                     if (Output != null)
                     {
                         Output("CreateConv", name);
-                        Output("Message", name, mssg["text"]);
                     }
                 }
             }
