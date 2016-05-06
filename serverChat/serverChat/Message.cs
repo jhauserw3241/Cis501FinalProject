@@ -118,8 +118,7 @@ namespace serverChat
             }
 
             // Add each of the attributes to the XML string
-            int size = msgEles.Count;
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < msgEles.Count; i++)
             {
                 KeyValuePair<string, string> curEle = msgEles.ElementAt(i);
 

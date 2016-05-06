@@ -338,15 +338,15 @@ namespace serverChat
             curMsg.AddElement("action", "udCont");
 
             // Get source username
-            if (!input.ContainsKey("username"))
+            if (!input.ContainsKey("source"))
             {
                 curMsg.AddElement("error", "The source username wasn't provided.");
                 output.Add("source", curMsg.Serialize());
                 return output;
             }
-            string sourceUsername = input.GetValue("username");
+            string sourceUsername = input.GetValue("source");
 
-            curMsg.AddElement("username", sourceUsername);
+            curMsg.AddElement("source", sourceUsername);
 
             // Get user
             ServerUser oldUser = dataInt.GetUserObj(sourceUsername);
@@ -359,28 +359,28 @@ namespace serverChat
             ServerUser newUser = oldUser;
 
             // Update the display name
-            if (input.ContainsKey("newDispName"))
+            if (input.ContainsKey("dispName"))
             {
-                string newDispName = input.GetValue("newDispName");
+                string newDispName = input.GetValue("dispName");
                 newUser.SetName(newDispName);
-                curMsg.AddElement("newDispName", newDispName);
+                curMsg.AddElement("dispName", newDispName);
             }
 
             // Update the display name
-            if (input.ContainsKey("newPassword"))
+            if (input.ContainsKey("password"))
             {
-                string newPassword = input.GetValue("newPassword");
+                string newPassword = input.GetValue("password");
                 newUser.SetPassword(newPassword);
-                input.AddElement("newPassword", newPassword);
+                input.AddElement("password", newPassword);
             }
 
             // Update the display name
-            if (input.ContainsKey("newState"))
+            if (input.ContainsKey("state"))
             {
-                string newStatus = input.GetValue("newState");
+                string newStatus = input.GetValue("state");
                 STATUS newStatusObj = dataInt.ConvertStringStatus(newStatus);
                 dataInt.UpdateUserStatus(sourceUsername, newStatusObj);
-                curMsg.AddElement("newState", newStatus);
+                curMsg.AddElement("state", newStatus);
             }
 
             // Update the user object in the list
