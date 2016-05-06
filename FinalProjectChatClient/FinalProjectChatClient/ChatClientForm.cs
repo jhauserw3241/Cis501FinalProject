@@ -53,13 +53,16 @@ namespace FinalProjectChatClient
         /// <param name="action">What of the form to update.</param>
         public void HandleFormOutput(string action, string param1 = "", string param2 = "")
         {
+            Contact cont;
             switch (action)
             {
                 case "AddCont":
-                    contactsList.Items.Add(clientModel.ContactList.Last());
+                    cont = clientModel.ContactList.Last();
+                    Invoke((MethodInvoker)(() => contactsList.Items.Add(cont)));
                     break;
                 case "RemoveCont":
-                    contactsList.Items.Remove(clientModel.ContactList.Find(x => x.Username.Equals(param1)));
+                    cont = clientModel.ContactList.Find(x => x.Username.Equals(param1));
+                    Invoke((MethodInvoker)(() => contactsList.Items.Remove(cont)));
                     RemoveContactTextBox.Text = String.Empty;
                     break;
                 case "ClrAddCont":
