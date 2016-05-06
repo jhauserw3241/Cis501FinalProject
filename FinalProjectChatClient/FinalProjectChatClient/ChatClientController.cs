@@ -312,8 +312,6 @@ namespace FinalProjectChatClient
         {
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
-            MessageBox.Show(clientModel.Username + " : " + e.Data.ToString());
-
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
 
@@ -514,6 +512,7 @@ namespace FinalProjectChatClient
                     {
                         Output("UpdateStatus");
                         Output("UpdateName");
+                        Output("UpdateContList");
                     }
                 }
                 else
@@ -605,6 +604,8 @@ namespace FinalProjectChatClient
             if (cont != null)
             {
                 cont.DisplayName = mssg["dispName"];
+
+                if (Output != null) Output("UpdateContList");
             }
         }
 
@@ -667,6 +668,8 @@ namespace FinalProjectChatClient
             if (cont != null)
             {
                 cont.Status = mssg["state"];
+
+                if (Output != null) Output("UpdateContList");
 
                 if (mssg["state"].Equals("Offline"))
                 {

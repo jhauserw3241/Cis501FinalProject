@@ -98,6 +98,13 @@ namespace FinalProjectChatClient
                     dispNameLabel.Text = "Name: " + clientModel.DisplayName;
                     changeDispNameTextBox.Text = String.Empty;
                     break;
+                case "UpdateContList":
+                    Invoke((MethodInvoker)(() => contactsList.Items.Clear()));
+                    foreach (Contact cnt in clientModel.ContactList)
+                    {
+                        Invoke((MethodInvoker)(() => contactsList.Items.Add(cnt)));
+                    }
+                    break;
             }
         }
 
