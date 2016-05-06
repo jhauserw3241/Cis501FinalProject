@@ -57,23 +57,5 @@ namespace ServerChatTests
 
             Assert.AreEqual(users, model.GetUserList());
         }
-
-
-        // Test SetRelationshipDic() and GetRelationshipDic() method
-        //
-        // Create a list of users and use the SetRelationshipDic() method on the model to set it 
-        // and then compare with value returned by the GetRelationshipDic() method
-        [TestMethod]
-        public void SetGetRealationshipDic()
-        {
-            List<string> strs = new List <string>{ "str1", "str2", "str3", "str4"};
-            List<List<string>> lists = new List <List<string>>{ strs, strs, strs, strs};
-
-            Dictionary <string, List<string>> dict = new Dictionary<string, List<string>>();
-
-            model.SetContactRelationshipList(dict);
-            Assert.AreEqual(dict, model.GetContactRelationshipDict());
-
-        }
         }
     }
