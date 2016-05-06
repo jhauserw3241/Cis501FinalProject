@@ -10,28 +10,10 @@ namespace serverChat
 {
     class ServerSocket
     {
-        //// Instance of the singleton
-        //private static ServerSocket inst;
-
         // Websocket server info
         private WebSocketServer wss;
         private ModelDataInteraction dataInt = new ModelDataInteraction();
         private Dictionary<string, SendMsgToClient> clients = new Dictionary<string, SendMsgToClient>();
-
-        //// Constructor
-        //public static ServerSocket Instance
-        //{
-        //    // Create singleton for class
-        //    get
-        //    {
-        //        if (inst == null)
-        //        {
-        //            inst = new ServerSocket();
-        //        }
-
-        //        return inst;
-        //    }
-        //}
 
         // Constructor
         public ServerSocket()

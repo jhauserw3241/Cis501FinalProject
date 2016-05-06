@@ -19,6 +19,7 @@ namespace serverChat
         //ServerSocket soc = ServerSocket.Instance;
         //public event SendMsgToClient sendMsgClient;
         //public event SendMsgToServer sendMsgServer;
+        ServerUser user = new ServerUser();
 
         #region Class Manipulation
         // Constructor
@@ -28,18 +29,21 @@ namespace serverChat
 
         // Constructor
         //
-        // @param user The user object for the service
+        // @param u The user object for the service
         // @param s The server socket object
-        public Chat(ServerUser user, ServerSocket s)
+        public Chat(ServerUser u, ServerSocket s)
         {
             // Setup the server
             soc = s;
 
+            // Update the user object
+            user = u;
+
             // Create the delegate for the new client
             SendMsgToClient del = new SendMsgToClient(Transmit);
-            if ((user != new ServerUser()) && (user != null))
+            if ((u != new ServerUser()) && (u != null))
             {
-                soc.AddChat(user.GetId().ToString(), del);
+                soc.AddChat(u.GetId().ToString(), del);
             }
         }
         #endregion
@@ -50,6 +54,15 @@ namespace serverChat
         // Handle actions to take when the server is first started
         protected override void OnOpen()
         {
+        }
+
+        // On Close
+        //
+        // Handle actions when the client's connection to this server object is disconnected
+        protected override void OnClose(CloseEventArgs e)
+        {
+            soc.RemoveChat(user.GetId().ToString());
+            soc.RemoveService("/" + user.GetUsername());
         }
 
         // On Message
@@ -419,7 +432,7 @@ namespace serverChat
             // Set the user status to online
             dataInt.UpdateUserStatus(username, STATUS.Offline);
 
-            curMsg.AddElement("action", "logout");
+            //curMsg.AddElement("action", "logout");
             output.Add("source", curMsg.Serialize());
 
             List<ServerUser> contacts = user.GetContactList();
