@@ -312,6 +312,8 @@ namespace FinalProjectChatClient
         {
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
+            MessageBox.Show(clientModel.Username + " : " + e.Data.ToString());
+
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
 
@@ -574,7 +576,7 @@ namespace FinalProjectChatClient
             Contact cont = clientModel.ContactList.Find(x => x.Username.Equals(mssg["leave"]));
 
             conv.Remove(cont.Username);
-            Output("Message", mssg["conv"], String.Format("{0} has left the conversation.", cont.DisplayName));
+            if (Output != null) Output("Message", mssg["conv"], String.Format("{0} has left the conversation.", cont.DisplayName));
         }
 
         /// <summary>

@@ -319,7 +319,7 @@ namespace serverChat
                 }
                 else
                 {
-                    curMsg.AddElement("text", String.Join("\n", conv.GetMessageHistory()));
+                    curMsg.AddElement("text", String.Join("", conv.GetMessageHistory()));
                 }
             }
 
@@ -519,6 +519,8 @@ namespace serverChat
                 return output;
             }
             string text = input.GetValue("text");
+
+            conv.AddMessageToHistory(text);
 
             curMsg.AddElement("conv", convName);
             curMsg.AddElement("text", text);
