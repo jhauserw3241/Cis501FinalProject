@@ -86,7 +86,7 @@ namespace FinalProjectChatClient
                     RemoveConversationTab(conversationTabController.SelectedTab);
                     break;
                 case "Message":
-                    conversationTabs.Find(x => x.Item1.Name.Equals(param1)).Item2.Text += param2;
+                    Invoke((MethodInvoker)(() => conversationTabs.Find(x => x.Item1.Name.Equals(param1)).Item2.Text += param2));
                     break;
                 case "ClrMsg":
                     messageBox.Text = String.Empty;

@@ -309,6 +309,10 @@ namespace serverChat
                     output.Add(-2, curMsg.Serialize());
                     return output;
                 }
+                else
+                {
+                    curMsg.AddElement("text", String.Join("\n", conv.GetMessageHistory()));
+                }
             }
 
             if (input.ContainsKey("leave"))

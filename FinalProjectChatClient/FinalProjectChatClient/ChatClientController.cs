@@ -631,11 +631,6 @@ namespace FinalProjectChatClient
                 if (clientModel.ConversationList.ContainsKey(name))
                 {
                     clientModel.ConversationList[name].AddRange(participants);
-                    if (Output != null)
-                    {
-                        Output("CreateConv", name);
-                        Output("Message", name, mssg["text"]);
-                    }
                 }
                 else
                 {
@@ -643,6 +638,7 @@ namespace FinalProjectChatClient
                     if (Output != null)
                     {
                         Output("CreateConv", name);
+                        Output("Message", name, mssg["text"]);
                     }
                 }
             }

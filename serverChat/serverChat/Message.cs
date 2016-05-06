@@ -109,8 +109,6 @@ namespace serverChat
             if (msgEles.ContainsKey("action"))
             {
                 output += (msgEles["action"] + " ");
-
-                msgEles.Remove("action");
             }
             else
             {
@@ -119,7 +117,10 @@ namespace serverChat
 
             // Add each of the attributes to the XML string
             foreach (KeyValuePair<string, string> curEle in msgEles) {
-                output += string.Format("{0}=\"{1}\" ", curEle.Key, curEle.Value);
+                if (curEle.Key != "action")
+                {
+                    output += string.Format("{0}=\"{1}\" ", curEle.Key, curEle.Value);
+                }
             }
 
             output += "/>";
