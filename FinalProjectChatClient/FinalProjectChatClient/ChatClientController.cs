@@ -312,8 +312,6 @@ namespace FinalProjectChatClient
         {
             Dictionary<string, string> mssg = ReadXML(e.Data);
 
-            MessageBox.Show("Message Recieved: " + e.Data.ToString());
-
             clientModel.WaitFlag = false;
             if (!mssg.ContainsKey("action")) return;
 
@@ -402,15 +400,11 @@ namespace FinalProjectChatClient
         /// <param name="participant">The participant to add.</param>
         private void AddConvParticipant(string name, string participant)
         {
-            wsc.Send(String.Format("<udCont conv=\"{0}\" par=\"{1}\" />", name, participant));
+            wsc.Send(String.Format("<udConv conv=\"{0}\" par=\"{1}\" />", name, participant));
             // Wait for a response from the server
             WaitForResponse();
             // If there was no error, add participant to client side
-            if (!clientModel.ErrorFlag)
-            {
-                clientModel.ConversationList[name].Add(participant);
-            }
-            else
+            if (clientModel.ErrorFlag)
             {
                 clientModel.ErrorFlag = false;
             }
@@ -630,7 +624,8 @@ namespace FinalProjectChatClient
 
                 if (clientModel.ConversationList.ContainsKey(name))
                 {
-                    clientModel.ConversationList[name].AddRange(participants);
+                    List<string> party = clientModel.ConversationList[name];
+                    clientModel.ConversationList[name] = party.Union(participants.ToList()).ToList();
                 }
                 else
                 {
