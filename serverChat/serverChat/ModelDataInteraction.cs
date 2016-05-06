@@ -412,6 +412,43 @@ namespace serverChat
 
             return "";
         }
+
+        
+        // Remove Participant From Conversation
+        // 
+        // Remove the user from the conversation in the model
+        // @arg convName The name of the conversation
+        // @arg username The username of the current user
+        // @return An error message if one occurs.
+        public string RemoveParticipantFromConversation(string convName, string username)
+        {
+            ServerConversation conv = data.GetConversationList().Find(x => x.GetConversationName().Equals(convName));
+            ServerUser par = data.GetUserList().Find(x => x.GetUsername().Equals(username));
+
+            if (conv != null)
+            {
+                if (par != null)
+                {
+                    if (conv.ContainsParticipant(par))
+                    {
+                        conv.RemoveParicipant(par);
+                        return "";
+                    }
+                    else
+                    {
+                        return "Conversation doesn't contain the user.";
+                    }
+                }
+                else
+                {
+                    return "User does not exist.";
+                }
+            }
+            else
+            {
+                return "Conversation does not exist.";
+            }
+        }
         #endregion
     }
 }

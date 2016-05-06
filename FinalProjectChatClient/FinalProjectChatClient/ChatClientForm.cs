@@ -129,11 +129,11 @@ namespace FinalProjectChatClient
 
             // Adding tab and text box to form
             conversationTabs.Add(new Tuple<TabPage, Label>(newPage, newLabel));
-            conversationTabController.Controls.Add(newPage);
+            Invoke((MethodInvoker)(() => conversationTabController.Controls.Add(newPage)));
 
             // Enable the leave tab if this is the first conversation
             if (conversationTabController.TabCount == 1)
-                leaveConversationOption.Enabled = true;
+                Invoke((MethodInvoker)(() => leaveConversationOption.Enabled = true));
         }
 
         /// <summary>
@@ -142,9 +142,8 @@ namespace FinalProjectChatClient
         /// <param name="tab">The tab to remove.</param>
         private void RemoveConversationTab(TabPage tab)
         {
-            tab.Controls.RemoveAt(0);
-            conversationTabController.TabPages.Remove(tab);
-            conversationTabs.Remove(conversationTabs.Find(x => x.Item1.Equals(tab)));
+            Invoke((MethodInvoker)(() => conversationTabController.TabPages.Remove(tab)));
+            Invoke((MethodInvoker)(() => conversationTabs.Remove(conversationTabs.Find(x => x.Item1.Equals(tab)))));
             if (conversationTabs.Count == 0) leaveConversationOption.Enabled = false;
         }
 

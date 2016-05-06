@@ -209,8 +209,8 @@ namespace serverChat
         {
             Message curMsg = new Message();
             Dictionary<int, string> output = new Dictionary<int, string>();
-            string sourceUsername = curMsg.GetValue("source");
-            string rContactUsername = curMsg.GetValue("username");
+            string sourceUsername = input.GetValue("source");
+            string rContactUsername = input.GetValue("username");
 
             ServerUser sourceUser = dataInt.GetUserObj(sourceUsername);
             // Verify that the source user is an existing user
@@ -282,12 +282,13 @@ namespace serverChat
                 return output;
             }
             string convName = input.GetValue("conv");
+            curMsg.AddElement("conv", convName);
             ServerConversation conv = dataInt.GetConvObj(convName);
+            // If the conversation doesn't exist, create a new conversation
             if (conv == null)
             {
-                curMsg.AddElement("error", "The conversation doesn't exist.");
-                output.Add(-2, curMsg.Serialize());
-                return output;
+                conv = new ServerConversation(convName);
+                dataInt.AddConvToList(conv);
             }
 
             // Update the name
@@ -310,13 +311,33 @@ namespace serverChat
                 }
             }
 
+            if (input.ContainsKey("leave"))
+            {
+                string error = dataInt.RemoveParticipantFromConversation(convName, input.GetValue("leave"));
+                if (error != "")
+                {
+                    curMsg.AddElement("error", error);
+                    output.Add(-2, curMsg.Serialize());
+                    return output;
+                }
+                else
+                {
+                    curMsg.AddElement("leave", input.GetValue("leave"));
+                }
+            }
+
             // Compile the success message for all the conversation participants
             List<ServerUser> participants = conv.GetParicipantList();
+            List<string> party = new List<string>();
             int size = participants.Count;
             for (int i = 0; i < size; i++)
             {
                 ServerUser curPar = participants.ElementAt(i);
+                party = participants.Select(x => x.GetUsername()).ToList();
+                party.Remove(curPar.GetUsername());
+                curMsg.AddElement("par", String.Join(",", party));
                 output.Add(curPar.GetId(), curMsg.Serialize());
+                curMsg.RemoveElement("par");
             }
 
             return output;
