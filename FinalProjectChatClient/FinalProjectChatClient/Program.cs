@@ -38,6 +38,7 @@ namespace FinalProjectChatClient
             clientController.ClientForm.OnlineStatusOption.Click += clientController.HandleGenericInput;
             clientController.ClientForm.CreateConversationOption.Click += clientController.HandleGenericInput;
             clientController.ClientForm.LogoutProfileOption.Click += clientController.HandleGenericInput;
+            clientController.ClientForm.LeaveConversationOption.Click += clientController.HandleGenericInput;
 
             // Assign controller's key handler to the appropriate form components
             clientController.ClientForm.AddContactTextBox.KeyDown += clientController.HandleKeyInput;

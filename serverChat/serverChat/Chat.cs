@@ -467,7 +467,7 @@ namespace serverChat
                 ServerUser cont = contacts.ElementAt(i);
                 curMsg = new Message();
                 curMsg.AddElement("action", "udCont");
-                curMsg.AddElement("username", username);
+                curMsg.AddElement("source", username);
                 curMsg.AddElement("state", STATUS.Offline.ToString());
 
                 output.Add(cont.GetId(), curMsg.Serialize());
