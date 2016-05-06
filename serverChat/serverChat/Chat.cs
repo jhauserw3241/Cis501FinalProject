@@ -13,13 +13,10 @@ namespace serverChat
     // Handle generic messages sent to the server from the client
     class Chat : WebSocketBehavior
     {
-        ServerSocket soc;
-        ServerModel data = ServerModel.Instance;
-        ModelDataInteraction dataInt = new ModelDataInteraction();
-        //ServerSocket soc = ServerSocket.Instance;
-        //public event SendMsgToClient sendMsgClient;
-        //public event SendMsgToServer sendMsgServer;
-        ServerUser user = new ServerUser();
+        private ServerSocket soc;
+        private ServerModel data = ServerModel.Instance;
+        private ModelDataInteraction dataInt = new ModelDataInteraction();
+        private ServerUser user = new ServerUser();
 
         #region Class Manipulation
         // Constructor

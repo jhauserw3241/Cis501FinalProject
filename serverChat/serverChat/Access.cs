@@ -13,10 +13,9 @@ namespace serverChat
     // Handle the login and the signup process
     class Access : WebSocketBehavior
     {
-        ServerModel data = ServerModel.Instance;
-        ServerSocket soc;
-        ModelDataInteraction dataInt = new ModelDataInteraction();
-        public event SendMsgToServer sendMsgServer;
+        private ServerModel data = ServerModel.Instance;
+        private ServerSocket soc;
+        private ModelDataInteraction dataInt = new ModelDataInteraction();
 
         #region Class Manipulation
         // Constructor
