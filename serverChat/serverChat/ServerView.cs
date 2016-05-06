@@ -50,6 +50,12 @@ namespace serverChat
         {
             currentInfo.AppendText(string.Format("Name: {0}\n", conv.GetConversationName()));
             currentInfo.AppendText(string.Format("Participants: {0}\n", conv.GetParticipantListUsernames().ToString()));
+            List<ServerUser> participants = conv.GetParicipantList();
+            for (int i = 0; i < participants.Count; i++)
+            {
+                ServerUser par = participants.ElementAt(i);
+                currentInfo.AppendText(string.Format("- {0}\n", par.GetUsername()));
+            }
         }
 
         // Display User Information
@@ -101,11 +107,7 @@ namespace serverChat
         // Remove all of the elements from the eleListBox on the form
         private void RemoveAllListBoxEles()
         {
-            int size = eleListBox.Items.Count;
-            for (int i = 0; i < size; i++)
-            {
-                eleListBox.Items.RemoveAt(i);
-            }
+            eleListBox.Items.Clear();
         }
         #endregion
 

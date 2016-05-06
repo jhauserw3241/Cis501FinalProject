@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Access.cs" />
+    <Compile Include="RemoveContactMessage.cs" />
     <Compile Include="AddContactMessage.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="LoginMessage.cs" />

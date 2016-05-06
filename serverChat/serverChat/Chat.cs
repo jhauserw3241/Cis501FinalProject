@@ -180,6 +180,14 @@ namespace serverChat
                 return output;
             }
 
+            // Check if the provided users are already contacts
+            if ((sourceUser.GetContactList().Contains(newContact)) && (newContact.GetContactList().Contains(sourceUser)))
+            {
+                curMsg.AddElement("error", "These users are already contacts.");
+                output.Add(-2, curMsg.Serialize());
+                return output;
+            }
+
             // Update the contact relationships of all the users involved
             List<ServerUser> users = new List<ServerUser>();
             users.Add(sourceUser);
@@ -254,10 +262,10 @@ namespace serverChat
             }
 
             // Get output information
-            AddContactMessage sourceMsg = new AddContactMessage(oldContact);
-            AddContactMessage newContMsg = new AddContactMessage(sourceUser);
+            RemoveContactMessage sourceMsg = new RemoveContactMessage(oldContact);
+            RemoveContactMessage newContMsg = new RemoveContactMessage(sourceUser);
             output.Add(sourceUser.GetId(), sourceMsg.GetMessage());
-            output.Add(sourceUser.GetId(), newContMsg.GetMessage());
+            output.Add(oldContact.GetId(), newContMsg.GetMessage());
 
             return output;
         }
@@ -480,9 +488,48 @@ namespace serverChat
         // @return a dictionary containing the xml response
         public Dictionary<int, string> ProcessMessageRequest(Message input)
         {
+            Message curMsg = new Message();
             Dictionary<int, string> output = new Dictionary<int, string>();
-            input.RemoveElement("source");
-            output.Add(-2, input.Serialize());
+
+            curMsg.AddElement("action", "msg");
+
+            // Get conversation name
+            if (!input.ContainsKey("conv"))
+            {
+                curMsg.AddElement("error", "The conversation name was not provided.");
+                output.Add(-2, curMsg.Serialize());
+                return output;
+            }
+            string convName = input.GetValue("conv");
+
+            // Get conversation
+            ServerConversation conv = dataInt.GetConvObj(convName);
+            if (conv == null)
+            {
+                curMsg.AddElement("error", "The conversation doesn't exist.");
+                output.Add(-2, curMsg.Serialize());
+                return output;
+            }
+
+            // Get text for message
+            if (!input.ContainsKey("text"))
+            {
+                curMsg.AddElement("error", "The text for the message wasn't provided.");
+                output.Add(-2, curMsg.Serialize());
+                return output;
+            }
+            string text = input.GetValue("text");
+
+            curMsg.AddElement("conv", convName);
+            curMsg.AddElement("text", text);
+
+            List<ServerUser> participants = conv.GetParicipantList();
+            for (int i = 0; i < participants.Count; i++)
+            {
+                ServerUser par = participants.ElementAt(i);
+                output.Add(par.GetId(), curMsg.Serialize());
+            }
+            
             return output;
         }
 
