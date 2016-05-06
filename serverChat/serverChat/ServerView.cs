@@ -48,8 +48,8 @@ namespace serverChat
         // Display the information for the conversation
         private void DisplayConvInfo()
         {
-            currentInfo.AppendText(string.Format("Name: {0}", conv.GetConversationName()));
-            currentInfo.AppendText(string.Format("Participants: {0}", conv.GetParticipantListUsernames().ToString()));
+            currentInfo.AppendText(string.Format("Name: {0}\n", conv.GetConversationName()));
+            currentInfo.AppendText(string.Format("Participants: {0}\n", conv.GetParticipantListUsernames().ToString()));
         }
 
         // Display User Information
@@ -57,12 +57,17 @@ namespace serverChat
         // Display the information for the user
         private void DisplayUserInfo()
         {
-            currentInfo.AppendText(string.Format("Username: {0}", user.GetUsername()));
-            currentInfo.AppendText(string.Format("Display Name: {0}", user.GetName()));
-            currentInfo.AppendText(string.Format("Password: {0}", user.GetPassword()));
-            currentInfo.AppendText(string.Format("IP Address: {0}", user.GetId().ToString()));
-            currentInfo.AppendText(string.Format("Status: {0}", user.GetStatus().ToString()));
-            currentInfo.AppendText(string.Format("Contacts: {0}", user.GetContactListUsernames().ToString()));
+            currentInfo.AppendText(string.Format("Username: {0}\n", user.GetUsername()));
+            currentInfo.AppendText(string.Format("Display Name: {0}\n", user.GetName()));
+            currentInfo.AppendText(string.Format("ID: {0}\n", user.GetId().ToString()));
+            currentInfo.AppendText(string.Format("Status: {0}\n", user.GetStatus().ToString()));
+            currentInfo.AppendText("Contacts:\n");
+            List<ServerUser> contacts = user.GetContactList();
+            for (int i = 0; i < contacts.Count; i++)
+            {
+                ServerUser cont = contacts.ElementAt(i);
+                currentInfo.AppendText(string.Format("- {0}\n", cont.GetUsername()));
+            }
         }
 
         // Populate Conversation List Box
@@ -111,7 +116,17 @@ namespace serverChat
         // @param index The index of the selected element in its list
         private void DisplaySelectedInformation(int index)
         {
-            // TODO: Add check to make sure that there are elements in the listbox to select
+            // Check if there is an element for in the list box
+            if (eleListBox.Items.Count == 0)
+            {
+                MessageBox.Show("ERROR: There aren't any elements to select.");
+                return;
+            }
+
+            // Clear the textbox
+            currentInfo.Clear();
+
+            // Determine which type of element to search for
             if ((userFlag == true) || (convFlag == false))
             {
                 // Update the user object with the selected user element
