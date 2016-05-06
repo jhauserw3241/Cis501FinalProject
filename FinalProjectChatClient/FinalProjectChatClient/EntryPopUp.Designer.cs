@@ -48,8 +48,8 @@
             this.informationLabel.Name = "informationLabel";
             this.informationLabel.Size = new System.Drawing.Size(569, 58);
             this.informationLabel.TabIndex = 0;
-            this.informationLabel.Text = "If you already have an account please select \"Login\".\nOtherwise, select \"Sign Up\"" +
-    " to get started!";
+            this.informationLabel.Text = "If you already have an account please select \"Login\".\nOtherwise, select \"Signup\" " +
+    "to get started!";
             this.informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // loginButton
@@ -74,7 +74,7 @@
             this.signupButton.Name = "signupButton";
             this.signupButton.Size = new System.Drawing.Size(92, 35);
             this.signupButton.TabIndex = 2;
-            this.signupButton.Text = "Sign Up";
+            this.signupButton.Text = "Signup";
             this.signupButton.UseVisualStyleBackColor = true;
             this.signupButton.Click += new System.EventHandler(this.signupButton_Click);
             // 
@@ -89,8 +89,8 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EntryPopUp";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Login or SingUp";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Login or Signup";
             this.ResumeLayout(false);
             this.PerformLayout();
 

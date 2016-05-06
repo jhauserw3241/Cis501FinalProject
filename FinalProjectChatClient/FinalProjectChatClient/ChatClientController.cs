@@ -266,9 +266,9 @@ namespace FinalProjectChatClient
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
+                            loginForm.ClearTextFields();
                             exit = true;
-
-                            //wsa.Close();
+                            
                             wsc = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
                             wsc.OnMessage += HandleMessage;
                             wsc.Connect();
@@ -286,6 +286,7 @@ namespace FinalProjectChatClient
                         {
                             clientModel.Username = signupForm.Username;
                             clientModel.DisplayName = clientModel.Username;
+                            signupForm.ClearTextFields();
                             if (Output != null) Output("UpdateName");
                             exit = true;
 
@@ -718,6 +719,7 @@ namespace FinalProjectChatClient
                     }
                     break;
                 case DialogResult.Cancel:
+                    loginForm.ClearTextFields();
                     clientModel.State = FlowState.Entry;
                     break;
             }
@@ -731,10 +733,6 @@ namespace FinalProjectChatClient
             string contList = String.Join(",", clientModel.ContactList.Select(x => x.Username));
             bool exit = false;
 
-            //ws.Close();
-            //ws = new WebSocket("ws://127.0.0.1:8001/Logout");
-            //ws.OnMessage += HandleMessage;
-
             while (!exit)
             {
                 wsc.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
@@ -747,7 +745,6 @@ namespace FinalProjectChatClient
 
             wsa.Close();
             wsc.Close();
-            Application.Exit();
         }
 
         /// <summary>
@@ -783,6 +780,7 @@ namespace FinalProjectChatClient
                     }
                     break;
                 case DialogResult.Cancel:
+                    signupForm.ClearTextFields();
                     clientModel.State = FlowState.Entry;
                     break;
             }
