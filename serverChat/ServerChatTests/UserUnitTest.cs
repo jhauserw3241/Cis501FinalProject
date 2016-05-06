@@ -62,18 +62,6 @@ namespace ServerChatTests
             Assert.AreEqual(status, user.GetStatus());
         }
 
-        // Test SetIpAddress() and GetIpAddress() methods
-        //
-        // Set a value with the set method and then compare with the value returned 
-        // by the get method
-        [TestMethod]
-        public void SetGetIPAddress()
-        {
-            string Ip = "130.140.80.32";
-            user.SetIpAddress(Ip);
-            Assert.AreEqual(Ip, user.GetIpAddress());
-        }
-
         // Test SetPassword() and GetPassword() methods
         //
         // Set a value with the set method and then compare with the value returned by the get method

@@ -34,12 +34,7 @@ namespace ServerChatTests
             List<ServerUser> users = new List<ServerUser> { pedro, joy, anthony, ryan };
             datatest.SetUserList(users);
 
-            List<string> strs = new List<string> { "str1", "str2", "str3", "str4" };
-            List<List<string>> lists = new List<List<string>> { strs, strs, strs, strs };
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
-            datatest.SetContactRelationshipList(dict);
-
-            ServerView viewtest = new ServerView(datatest);
+            ServerView viewtest = new ServerView();
         }
 
     }

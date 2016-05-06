@@ -57,22 +57,32 @@ namespace ServerChatTests
         [TestMethod]
         public void AddGetConversationParticipants()
         {
-            List<string> usernames = new List<string> { "pedro", "joy", "ryan", "anthony" };
-            foreach (string u in usernames) conversation.AddParicipant(u);
-            Assert.AreEqual(usernames[0], conversation.GetParicipantList()[0]);
-            Assert.AreEqual(usernames[1], conversation.GetParicipantList()[1]);
-            Assert.AreEqual(usernames[2], conversation.GetParicipantList()[2]);
-            Assert.AreEqual(usernames[3], conversation.GetParicipantList()[3]);
+            ServerUser u1 = new ServerUser("pedro");
+            ServerUser u2 = new ServerUser("joy");
+            ServerUser u3 = new ServerUser("anthony");
+            ServerUser u4 = new ServerUser("ryan");
+
+            List<ServerUser> users = new List<ServerUser> { u1, u2, u3, u4};
+            foreach (ServerUser u in users) conversation.AddParicipant(u);
+            Assert.AreEqual(users[0], conversation.GetParicipantList()[0]);
+            Assert.AreEqual(users[1], conversation.GetParicipantList()[1]);
+            Assert.AreEqual(users[2], conversation.GetParicipantList()[2]);
+            Assert.AreEqual(users[3], conversation.GetParicipantList()[3]);
         }
 
         [TestMethod]
         public void RemoveConversationParticipant()
         {
-            List<string> usernames = new List<string> { "pedro", "joy", "ryan", "anthony" };
-            foreach (string u in usernames) conversation.AddParicipant(u);
-            string user = "joy";
-            conversation.RemoveParicipant(user);
-            Assert.IsFalse(conversation.GetParicipantList().Contains(user));
+            ServerUser u1 = new ServerUser("pedro");
+            ServerUser u2 = new ServerUser("joy");
+            ServerUser u3 = new ServerUser("anthony");
+            ServerUser u4 = new ServerUser("ryan");
+
+            List<ServerUser> users = new List<ServerUser> { u1, u2, u3, u4 };
+            foreach (ServerUser u in users) conversation.AddParicipant(u);
+
+            conversation.RemoveParicipant(u2);
+            Assert.IsFalse(conversation.GetParicipantList().Contains(u2));
         }
     }
 }
