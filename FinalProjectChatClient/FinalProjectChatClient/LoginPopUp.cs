@@ -27,6 +27,15 @@ namespace FinalProjectChatClient
             DialogResult = DialogResult.None;
         }
 
+        /// <summary>
+        /// Clears the text fields.
+        /// </summary>
+        public void ClearTextFields()
+        {
+            usernameTextBox.Text = String.Empty;
+            passwordTextBox.Text = String.Empty;
+        }
+
         private void okButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;

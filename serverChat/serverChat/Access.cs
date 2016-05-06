@@ -183,7 +183,7 @@ namespace serverChat
             UpdateSevSoc(user);
 
             LoginMessage sourceMsg = new LoginMessage(user);
-            output.Add(-2, sourceMsg.Serialize());
+            output.Add(-2, sourceMsg.GetMessage());
             return output;
         }
 

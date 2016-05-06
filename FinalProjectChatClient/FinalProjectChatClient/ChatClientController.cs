@@ -266,9 +266,9 @@ namespace FinalProjectChatClient
                         if (clientModel.State == FlowState.Main)
                         {
                             clientModel.Username = loginForm.Username;
+                            loginForm.ClearTextFields();
                             exit = true;
-
-                            //wsa.Close();
+                            
                             wsc = new WebSocket("ws://127.0.0.1:8001/" + clientModel.Username);
                             wsc.OnMessage += HandleMessage;
                             wsc.Connect();
@@ -286,6 +286,7 @@ namespace FinalProjectChatClient
                         {
                             clientModel.Username = signupForm.Username;
                             clientModel.DisplayName = clientModel.Username;
+                            signupForm.ClearTextFields();
                             if (Output != null) Output("UpdateName");
                             exit = true;
 
@@ -487,7 +488,9 @@ namespace FinalProjectChatClient
         /// <param name="mssg">The dictionary of keywords and their values.</param>
         private void HandleAccessMessage(Dictionary<string, string> mssg)
         {
-            string[] un, dn, st;
+            string[] un = new string[0],
+                dn = new string[0],
+                st = new string[0];
 
             if (mssg.ContainsKey("error"))
             {
@@ -495,9 +498,18 @@ namespace FinalProjectChatClient
             }
             else if (mssg["action"].Equals("login"))
             {
-                un = mssg["contUsername"].Split(',');
-                dn = mssg["contDispName"].Split(',');
-                st = mssg["state"].Split(',');
+                if (mssg.ContainsKey("contUsername"))
+                {
+                    un = mssg["contUsername"].Split(',');
+                }
+                if (mssg.ContainsKey("contDisplName"))
+                {
+                    dn = mssg["contDisplName"].Split(',');
+                }
+                if (mssg.ContainsKey("contState"))
+                {
+                    st = mssg["contState"].Split(',');
+                }
 
                 if (un.Length == dn.Length && un.Length == st.Length)
                 {
@@ -704,7 +716,7 @@ namespace FinalProjectChatClient
 
                         if (result.Equals("Success"))
                         {
-                            wsa.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", signupForm.Username, signupForm.Password1));
+                            wsa.Send(String.Format("<login username=\"{0}\" password=\"{1}\" />", loginForm.Username, loginForm.Password));
                             WaitForResponse();
                         }
                         else
@@ -718,6 +730,7 @@ namespace FinalProjectChatClient
                     }
                     break;
                 case DialogResult.Cancel:
+                    loginForm.ClearTextFields();
                     clientModel.State = FlowState.Entry;
                     break;
             }
@@ -731,10 +744,6 @@ namespace FinalProjectChatClient
             string contList = String.Join(",", clientModel.ContactList.Select(x => x.Username));
             bool exit = false;
 
-            //ws.Close();
-            //ws = new WebSocket("ws://127.0.0.1:8001/Logout");
-            //ws.OnMessage += HandleMessage;
-
             while (!exit)
             {
                 wsc.Send(String.Format("<logout username=\"{0}\" cont=\"{1}\" />", clientModel.Username, contList));
@@ -747,7 +756,6 @@ namespace FinalProjectChatClient
 
             wsa.Close();
             wsc.Close();
-            Application.Exit();
         }
 
         /// <summary>
@@ -783,6 +791,7 @@ namespace FinalProjectChatClient
                     }
                     break;
                 case DialogResult.Cancel:
+                    signupForm.ClearTextFields();
                     clientModel.State = FlowState.Entry;
                     break;
             }
