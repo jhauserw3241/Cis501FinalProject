@@ -121,6 +121,7 @@ namespace serverChat
             ServerUser user = new ServerUser(uname);
             user.SetPassword(pass);
             user.SetStatus(STATUS.Online);
+            user.SetID(GetNextId());
 
             // Add user to list
             AddUserToList(user);
@@ -177,11 +178,11 @@ namespace serverChat
             return null;
         }
 
-        // Get ID
+        // Get Next ID
         //
         // Get the next ID
         // @return an integer with the ID
-        public int GetId()
+        public int GetNextId()
         {
             int id = data.GetId();
             data.SetNextId(id + 1);
@@ -268,8 +269,10 @@ namespace serverChat
             for (int i = 0; i < size; i++)
             {
                 // Get relevant information
-                List<ServerUser> tempUsers = users;
-                ServerUser oldCurUser = users.ElementAt(i);
+                ServerUser[] tmpUsers = new ServerUser[size];
+                users.CopyTo(tmpUsers);
+                List<ServerUser> tempUsers = tmpUsers.ToList();
+                ServerUser oldCurUser = tempUsers.ElementAt(i);
                 ServerUser newCurUser = oldCurUser;
                 tempUsers.Remove(newCurUser);
 

@@ -106,15 +106,6 @@ namespace serverChat
             return id;
         }
 
-        // Get ID String
-        //
-        // Get the ID string for the current user
-        // @return a string containing the ID
-        public string GetIdString()
-        {
-            return id.ToString();
-        }
-
         // Get Name
         //
         // Get the display name for the current user

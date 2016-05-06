@@ -13,7 +13,7 @@ namespace serverChat
         // Websocket server info
         private WebSocketServer wss;
         private ModelDataInteraction dataInt = new ModelDataInteraction();
-        private Dictionary<string, SendMsgToClient> clients = new Dictionary<string, SendMsgToClient>();
+        private Dictionary<int, SendMsgToClient> clients = new Dictionary<int, SendMsgToClient>();
 
         // Constructor
         public ServerSocket()
@@ -29,7 +29,7 @@ namespace serverChat
         // Add a chat delegate for further interaction with that person
         // @param id The ID of the user
         // @param del The delegate to interact with the user
-        public void AddChat(string id, SendMsgToClient del)
+        public void AddChat(int id, SendMsgToClient del)
         {
             clients.Add(id, del);
         }
@@ -49,7 +49,7 @@ namespace serverChat
         //
         // Get a chat delegate
         // @param id The id for the user that the delegate belongs to
-        public SendMsgToClient GetChat(string id)
+        public SendMsgToClient GetChat(int id)
         {
             if (clients.ContainsKey(id))
             {
@@ -62,7 +62,7 @@ namespace serverChat
         //
         // Add a chat delegate for further interaction with that person
         // @param id The ID of the user
-        public void RemoveChat(string id)
+        public void RemoveChat(int id)
         {
             clients.Remove(id);
         }
@@ -98,7 +98,7 @@ namespace serverChat
         // Transmit the specified message to the all the specified recipients
         // @param ids The id of the user
         // @param msg The message for the user
-        public void TransmitMsg(string id, string msg)
+        public void TransmitMsg(int id, string msg)
         {
             if (!clients.ContainsKey(id))
             {

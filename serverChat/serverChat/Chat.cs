@@ -43,7 +43,7 @@ namespace serverChat
             SendMsgToClient del = new SendMsgToClient(Transmit);
             if ((u != new ServerUser()) && (u != null))
             {
-                soc.AddChat(u.GetId().ToString(), del);
+                soc.AddChat(u.GetId(), del);
             }
         }
         #endregion
@@ -61,7 +61,7 @@ namespace serverChat
         // Handle actions when the client's connection to this server object is disconnected
         protected override void OnClose(CloseEventArgs e)
         {
-            soc.RemoveChat(user.GetId().ToString());
+            soc.RemoveChat(user.GetId());
             soc.RemoveService("/" + user.GetUsername());
         }
 
@@ -74,7 +74,7 @@ namespace serverChat
             Message input = new Message(e.Data);
             input.Deserialize();
             //Message output = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             // Handle no action provided
             if (!input.ContainsKey("action"))
@@ -125,10 +125,10 @@ namespace serverChat
         // Process a request to add a contact to a specific user
         // @param input The message containing the input information from the client
         // @return a dictionary containing the username and the xml response
-        public Dictionary<string, string> ProcessAddContactRequest(Message input)
+        public Dictionary<int, string> ProcessAddContactRequest(Message input)
         {
             Message curMsg = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             curMsg.AddElement("action", "addCont");
 
@@ -136,7 +136,7 @@ namespace serverChat
             if (!input.ContainsKey("source"))
             {
                 curMsg.AddElement("error", "The source username wasn't provided.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             string sourceUsername = input.GetValue("source");
@@ -153,7 +153,7 @@ namespace serverChat
             if (sourceUser == null)
             {
                 curMsg.AddElement("error", "The source user doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -162,7 +162,7 @@ namespace serverChat
             if (newContUser == null)
             {
                 curMsg.AddElement("error", "The new contact user doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -170,7 +170,7 @@ namespace serverChat
             if (sourceUser.GetContactListUsernames().Contains(newContactUsername))
             {
                 curMsg.AddElement("error", "The user to be added as a contact is already a contact.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -179,7 +179,7 @@ namespace serverChat
             if (newContact == new ServerUser())
             {
                 curMsg.AddElement("error", "The user to be added as a contact doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -190,15 +190,15 @@ namespace serverChat
             if (!dataInt.UpdateContactRelationships(users, "add"))
             {
                 curMsg.AddElement("error", "An error occurred during the contact addition process.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
             // Get output information
             AddContactMessage sourceMsg = new AddContactMessage(newContact);
             AddContactMessage newContMsg = new AddContactMessage(sourceUser);
-            output.Add(sourceUser.GetId().ToString(), sourceMsg.GetMessage());
-            output.Add(newContact.GetId().ToString(), newContMsg.GetMessage());
+            output.Add(sourceUser.GetId(), sourceMsg.GetMessage());
+            output.Add(newContact.GetId(), newContMsg.GetMessage());
 
             return output;
         }
@@ -208,10 +208,10 @@ namespace serverChat
         // Process a request to remove a contact from a specific user
         // @param input The message containing the input information from the client
         // @return a dictionary containing the username and the xml response
-        public Dictionary<string, string> ProcessRemoveContactRequest(Message input)
+        public Dictionary<int, string> ProcessRemoveContactRequest(Message input)
         {
             Message curMsg = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             string sourceUsername = curMsg.GetValue("source");
             string rContactUsername = curMsg.GetValue("username");
 
@@ -221,7 +221,7 @@ namespace serverChat
             {
                 curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "The source user doesn't exist.");
-                output.Add("all", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -230,7 +230,7 @@ namespace serverChat
             {
                 curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "The user to be removed as a contact isn't a contact.");
-                output.Add("all", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -240,7 +240,7 @@ namespace serverChat
             {
                 curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "The user to be removed as a contact doesn't exist.");
-                output.Add("all", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -252,15 +252,15 @@ namespace serverChat
             {
                 curMsg.AddElement("action", "error");
                 curMsg.AddElement("error", "An error occurred during the contact addition process.");
-                output.Add("all", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
             // Get output information
             AddContactMessage sourceMsg = new AddContactMessage(oldContact);
             AddContactMessage newContMsg = new AddContactMessage(sourceUser);
-            output.Add(sourceUser.GetId().ToString(), sourceMsg.GetMessage());
-            output.Add(sourceUser.GetId().ToString(), newContMsg.GetMessage());
+            output.Add(sourceUser.GetId(), sourceMsg.GetMessage());
+            output.Add(sourceUser.GetId(), newContMsg.GetMessage());
 
             return output;
         }
@@ -270,10 +270,10 @@ namespace serverChat
         // Process a request to update a conversation from a specific user
         // @param input The message containing the input information from the client
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessUpdateConvRequest(Message input)
+        public Dictionary<int, string> ProcessUpdateConvRequest(Message input)
         {
             Message curMsg = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             curMsg.AddElement("action", "udConv");
 
@@ -281,7 +281,7 @@ namespace serverChat
             if (!input.ContainsKey("conv"))
             {
                 curMsg.AddElement("error", "The source user doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             string convName = input.GetValue("conv");
@@ -289,7 +289,7 @@ namespace serverChat
             if (conv == null)
             {
                 curMsg.AddElement("error", "The conversation doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -308,7 +308,7 @@ namespace serverChat
                 if (error != "")
                 {
                     curMsg.AddElement("error", error);
-                    output.Add("source", curMsg.Serialize());
+                    output.Add(-2, curMsg.Serialize());
                     return output;
                 }
             }
@@ -319,7 +319,7 @@ namespace serverChat
             for (int i = 0; i < size; i++)
             {
                 ServerUser curPar = participants.ElementAt(i);
-                output.Add(curPar.GetId().ToString(), curMsg.Serialize());
+                output.Add(curPar.GetId(), curMsg.Serialize());
             }
 
             return output;
@@ -330,10 +330,10 @@ namespace serverChat
         // Process a request to update a contact from a specific user
         // @param input The message containing the input information from the client
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessUpdateContRequest(Message input)
+        public Dictionary<int, string> ProcessUpdateContRequest(Message input)
         {
             Message curMsg = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             curMsg.AddElement("action", "udCont");
 
@@ -341,7 +341,7 @@ namespace serverChat
             if (!input.ContainsKey("source"))
             {
                 curMsg.AddElement("error", "The source username wasn't provided.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             string sourceUsername = input.GetValue("source");
@@ -353,7 +353,7 @@ namespace serverChat
             if (oldUser == new ServerUser())
             {
                 curMsg.AddElement("error", "User doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             ServerUser newUser = oldUser;
@@ -392,9 +392,9 @@ namespace serverChat
             for (int i = 0; i < size; i++)
             {
                 ServerUser cont = contacts.ElementAt(i);
-                output.Add(cont.GetId().ToString(), curMsg.Serialize());
+                output.Add(cont.GetId(), curMsg.Serialize());
             }
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
 
             return output;
         }
@@ -404,10 +404,10 @@ namespace serverChat
         // Process a request for an existing user to logout
         // @param input The message containing the input information from the client
         // @return a string containing the xml response
-        public Dictionary<string, string> ProcessLogoutRequest(Message input)
+        public Dictionary<int, string> ProcessLogoutRequest(Message input)
         {
             Message curMsg = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             curMsg.AddElement("action", "logout");
 
@@ -415,7 +415,7 @@ namespace serverChat
             if (!input.ContainsKey("username"))
             {
                 curMsg.AddElement("error", "The username wasn't provided.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             string username = input.GetValue("username");
@@ -425,7 +425,7 @@ namespace serverChat
             if (user == new ServerUser())
             {
                 curMsg.AddElement("error", "The user doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -433,7 +433,7 @@ namespace serverChat
             dataInt.UpdateUserStatus(username, STATUS.Offline);
 
             //curMsg.AddElement("action", "logout");
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
 
             List<ServerUser> contacts = user.GetContactList();
             int size = contacts.Count;
@@ -445,7 +445,7 @@ namespace serverChat
                 curMsg.AddElement("username", username);
                 curMsg.AddElement("state", STATUS.Offline.ToString());
 
-                output.Add(cont.GetId().ToString(), curMsg.Serialize());
+                output.Add(cont.GetId(), curMsg.Serialize());
             }
 
             return output;
@@ -456,11 +456,11 @@ namespace serverChat
         // Process a request to send a message to a conversation
         // @param input The message containing the input information from the client
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessMessageRequest(Message input)
+        public Dictionary<int, string> ProcessMessageRequest(Message input)
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             input.RemoveElement("source");
-            output.Add("source", input.Serialize());
+            output.Add(-2, input.Serialize());
             return output;
         }
 
@@ -469,9 +469,9 @@ namespace serverChat
         // Process a request that is not handled
         // @param input The message containing the input information from the client
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessErrorInvalidAction(Message input)
+        public Dictionary<int, string> ProcessErrorInvalidAction(Message input)
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             Message curMsg = new Message();
 
             // Get the tag
@@ -484,7 +484,7 @@ namespace serverChat
 
             curMsg.AddElement("error", "The following action tag was not handled:  " + tag);
 
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
 
             return output;
         }
@@ -493,14 +493,14 @@ namespace serverChat
         //
         // Process a request that isn't an action request\
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessErrorNoAction()
+        public Dictionary<int, string> ProcessErrorNoAction()
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             Message curMsg = new Message();
 
             curMsg.AddElement("action", "error");
             curMsg.AddElement("error", "There was no action tag");
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
 
             return output;
         }
@@ -511,14 +511,14 @@ namespace serverChat
         //
         // Send the response to the recieed message
         // @param output A dictionary containing the IDs and the messages to send
-        public void SendMsgResponse(Dictionary<string, string> output)
+        public void SendMsgResponse(Dictionary<int, string> output)
         {
             int size = output.Count;
             for (int i = 0; i < size; i++)
             {
-                string repId = output.Keys.ElementAt(i);
+                int repId = output.Keys.ElementAt(i);
                 string msg = output[repId];
-                if (repId == "source")
+                if (repId == -2)
                 {
                     Transmit(msg);
                 }
@@ -533,7 +533,6 @@ namespace serverChat
                     {
                         Transmit("<error error=\"Delegate could not be found for recipient.\" />");
                     }
-                    //sendMsgServer(repId, msg);
                 }
             }
         }

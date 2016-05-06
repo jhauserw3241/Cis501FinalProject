@@ -16,7 +16,6 @@ namespace serverChat
         ServerModel data = ServerModel.Instance;
         ServerSocket soc;
         ModelDataInteraction dataInt = new ModelDataInteraction();
-        public event SendMsgToClient sendMsgClient;
         public event SendMsgToServer sendMsgServer;
 
         #region Class Manipulation
@@ -50,7 +49,7 @@ namespace serverChat
         {
             Message input = new Message(e.Data);
             input.Deserialize();
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             // Handle no action provided
             if (!input.ContainsKey("action"))
@@ -87,17 +86,34 @@ namespace serverChat
         // Handle a request for a new user to be created
         // @param input The message containing the input information from the client
         // @return a string containing the xml response
-        public Dictionary<string, string> ProcessSignUpRequest(Message input)
+        public Dictionary<int, string> ProcessSignUpRequest(Message input)
         {
             Message curMsg = new Message();
-            Dictionary<string, string> output = new Dictionary<string, string>();
-
-            // Create the user
-            string error = dataInt.CreateUser(input.GetValue("username"), input.GetValue("password"));
-            ServerUser user = new ServerUser(input.GetValue("username"));
-            user.SetID(dataInt.GetId());
+            Dictionary<int, string> output = new Dictionary<int, string>();
 
             curMsg.AddElement("action", "sign");
+
+            // Get user username
+            if (!input.ContainsKey("username"))
+            {
+                curMsg.AddElement("error", "The username was not provided.");
+                output.Add(-2, curMsg.Serialize());
+                return output;
+            }
+            string username = input.GetValue("username");
+
+            // Get user password
+            if (!input.ContainsKey("password"))
+            {
+                curMsg.AddElement("error", "The password was not provided.");
+                output.Add(-2, curMsg.Serialize());
+                return output;
+            }
+            string password = input.GetValue("password");
+
+            // Create the user
+            string error = dataInt.CreateUser(username, password);
+            ServerUser user = dataInt.GetUserObj(username);
 
             // Check if the creation was succesful
             if (error != "")
@@ -109,7 +125,7 @@ namespace serverChat
             UpdateSevSoc(user);
 
             // Add people to send message to
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
             return output;
         }
 
@@ -118,9 +134,9 @@ namespace serverChat
         // Process a request for an existing user to login
         // @param input The message containing the input information from the client
         // @return a string containing the xml response
-        public Dictionary<string, string> ProcessLoginRequest(Message input)
+        public Dictionary<int, string> ProcessLoginRequest(Message input)
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             Message curMsg = new Message();
 
             curMsg.AddElement("action", "login");
@@ -129,7 +145,7 @@ namespace serverChat
             if (!input.ContainsKey("username"))
             {
                 curMsg.AddElement("error", "The username wasn't provided.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             string username = input.GetValue("username");
@@ -139,7 +155,7 @@ namespace serverChat
             if (user == new ServerUser())
             {
                 curMsg.AddElement("error", "The user doesn't exist.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
@@ -147,7 +163,7 @@ namespace serverChat
             if (!input.ContainsKey("password"))
             {
                 curMsg.AddElement("error", "The password wasn't provided.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
             string password = input.GetValue("password");
@@ -156,15 +172,18 @@ namespace serverChat
             if (user.GetPassword() != password)
             {
                 curMsg.AddElement("error", "The password isn't correct.");
-                output.Add("source", curMsg.Serialize());
+                output.Add(-2, curMsg.Serialize());
                 return output;
             }
 
             // Set the user status to online
             dataInt.UpdateUserStatus(username, STATUS.Online);
 
+            // Update the server socket with the service for the user
+            UpdateSevSoc(user);
+
             LoginMessage sourceMsg = new LoginMessage(user);
-            output.Add("source", sourceMsg.Serialize());
+            output.Add(-2, sourceMsg.Serialize());
             return output;
         }
 
@@ -173,9 +192,9 @@ namespace serverChat
         // Process a request that is not handled
         // @param input The message containing the input information from the client
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessErrorInvalidAction(Message input)
+        public Dictionary<int, string> ProcessErrorInvalidAction(Message input)
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             Message curMsg = new Message();
 
             // Get the tag
@@ -188,7 +207,7 @@ namespace serverChat
 
             curMsg.AddElement("error", "The following action tag was not handled:  " + tag);
 
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
 
             return output;
         }
@@ -197,14 +216,14 @@ namespace serverChat
         //
         // Process a request that isn't an action request\
         // @return a dictionary containing the xml response
-        public Dictionary<string, string> ProcessErrorNoAction()
+        public Dictionary<int, string> ProcessErrorNoAction()
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<int, string> output = new Dictionary<int, string>();
             Message curMsg = new Message();
 
             curMsg.AddElement("action", "error");
             curMsg.AddElement("error", "There was no action tag");
-            output.Add("source", curMsg.Serialize());
+            output.Add(-2, curMsg.Serialize());
 
             return output;
         }
@@ -215,20 +234,28 @@ namespace serverChat
         //
         // Send the response to the recieed message
         // @param output A dictionary containing the IDs and the messages to send
-        public void SendMsgResponse(Dictionary<string, string> output)
+        public void SendMsgResponse(Dictionary<int, string> output)
         {
             int size = output.Count;
             for (int i = 0; i < size; i++)
             {
-                string repId = output.Keys.ElementAt(i);
+                int repId = output.Keys.ElementAt(i);
                 string msg = output[repId];
-                if (repId == "source")
+                if (repId == -2)
                 {
                     Transmit(msg);
                 }
                 else
                 {
-                    sendMsgServer(repId, msg);
+                    SendMsgToClient recSend = soc.GetChat(repId);
+                    if (recSend != null)
+                    {
+                        recSend(msg);
+                    }
+                    else
+                    {
+                        Transmit("<error error=\"Delegate could not be found for recipient.\" />");
+                    }
                 }
             }
         }
