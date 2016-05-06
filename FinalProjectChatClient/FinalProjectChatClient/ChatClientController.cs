@@ -330,13 +330,13 @@ namespace FinalProjectChatClient
                     HandleRemContactMessage(mssg);
                     break;
                 case "udConv":
-                    if (mssg.ContainsKey("par"))
-                    {
-                        HandleParticipantMessage(mssg);
-                    }
-                    else if (mssg.ContainsKey("leave"))
+                    if (mssg.ContainsKey("leave"))
                     {
                         HandleLeaveConvMessage(mssg);
+                    }
+                    else if (mssg.ContainsKey("par"))
+                    {
+                        HandleParticipantMessage(mssg);
                     }
                     break;
                 case "udCont":
